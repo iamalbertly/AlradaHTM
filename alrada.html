@@ -914,7 +914,7 @@
         appStates_btn.classList.add("btn-color-" + local_appstate);
         document.querySelector("#appState").innerHTML = status_display;
 
-        document.querySelector("#submitbutton").innerHTML = status_display + "<label>Peleka</label>"
+        document.querySelector("#submitbutton").innerHTML = status_display + "<label>Peleka</label>";
 
         document.querySelector("#cachedTrans>div>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
         document.querySelector("#cachedTrans>div>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
@@ -2298,9 +2298,8 @@
                                     var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
                                     var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)))
                                     projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
-                                }
-                                //if unitprice isn't set; go set it
-                                if (unitprice == "") {
+                                }  
+                                if (unitprice == "") {  
                                     if (pricetype == "purchase") {
                                         if (whole_multiplier)
                                             unitprice = item.w_purchase_a,
