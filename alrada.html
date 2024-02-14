@@ -988,12 +988,10 @@
         staffName = "",
         warehouseName = 'HQ',
         queryLog = "",
-        responseClone = ""; // 1
-    confirmAddReportToCache = function () {
-
-    }
-    confirmSendReportRightAway = function () { }
-    confirmFormYes = function () { },
+        responseClone = "", // 1
+        confirmAddReportToCache = function () { },
+        confirmSendReportRightAway = function () { },
+        confirmFormYes = function () { },
         confirmFormNo = function () { },
         confirmFormEdit = function () { },
         finalResponseMsg = "",
@@ -1066,27 +1064,9 @@
         var alrada_lastreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
     }
 
-    //     function global(globalvar) {
-    //         var ret = undefined;
-    //         switch (globalvar) {
-    //             case "ALDCACHEwholesale_sale":
-    //                 return `8/1/2024 (homesigara)Uhai 1.6ltrs(plus)5,||8/1
-    //              (boss)Uhai 1.6ltrs(plus)15`;
-    //                 return
-    //                 break;
-    //             default:
-    //                 return undefined;
-    //         }
-    //         return ret;
-    //     }
-    //     function setGlobal(variablename, value) {
-    // return 0;
-    // }
-
     function loadCachedTrans() {
         try {
             if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-                // if (window.location.href.indexOf("http://127.0.0.1:3000/") == 0) {
                 try {
                     for (const TransType in appStates) {
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
@@ -1415,7 +1395,6 @@
                 hideLoadingScreen();
 
             }, 4000);
-
         }
         catch (e) {
             show(e.stack + "-an error");
@@ -1557,7 +1536,6 @@
                 var selectedproductname = el.name.replace("_", " ");
                 document.querySelector("#edit_drinkname").innerHTML = selectedproductname;
                 document.querySelector("#filter-dialog").classList.add("hidden");
-
             });
         });
 
@@ -1568,9 +1546,7 @@
         document.getElementById("news_display").style.pointerEvents = "none"; // Disable interactions
         document.getElementById("mywebview2").style.pointerEvents = "none";
 
-        document.getElementById("loading-title").innerHTML = loadingTitle;
-        document.getElementById("loading-subtitle").innerHTML = loadingSubTitle;
-        document.getElementById("loading-text").innerHTML = loadingMsg;
+        document.getElementById("loading-title").innerHTML = loadingTitle; document.getElementById("loading-subtitle").innerHTML = loadingSubTitle; document.getElementById("loading-text").innerHTML = loadingMsg;
 
         document.getElementById("loading-screen").classList.remove("hidden");
     }
@@ -2462,7 +2438,6 @@
         document.querySelector("a.submitbutton").classList.remove('btn-color-wholesale_sale');
 
         closeFilterDialog();
-
     }
     document.querySelector("#warehouseName").innerHTML = warehouseName;
     /* if in debugger */
