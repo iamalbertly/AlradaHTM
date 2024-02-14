@@ -1009,7 +1009,7 @@
         results = document.getElementById('results');
     function getwarehouseName() {
         warehouseName = prompt("Ingiza Jina la shop", "HQ");
-        if (warehouseName != null) {
+        if (    warehouseName != null) {
             document.getElementById("warehouseName").innerHTML = warehouseName;
         } else warehouseName = "HQ";
     }
@@ -1026,6 +1026,7 @@
                     var settingsObj = JSON.parse(global('ALDSETTING'));
             } catch (e) { }
             loadCachedTrans();
+            show("Load Settings...");
         } else {
             //set the name to me
             staffName = "Al";
