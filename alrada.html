@@ -781,6 +781,7 @@
         display: none;
     }
 </style>
+
 <head>
     <link rel="shortcut icon" href="#">
 </head>
@@ -925,7 +926,7 @@
 
     const month = date.getMonth(),
         day = date.getDate(),
-        hour = (date.getUTCHours() + 3), // Adjust for your timezone
+        hour = (date.getUTCHours() + 3),
         minute = date.getMinutes();
 
     let partOfDay;
@@ -971,7 +972,7 @@
         /* if not in debugger */
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             window.location.href = location;
-        } else { //if in debugger
+        } else { 
             console.log("goto: " + location);
         }
     }
@@ -986,13 +987,13 @@
         currentAppStateIndex = 0,
         names = [],
         categories = {},
-        ald_lstreply="",
-        writtenInSearch ="",
+        ald_lstreply = "",
+        writtenInSearch = "",
         editingquery ="",
         staffName ="",
         warehouseName ='HQ',
-        queryLog ="",
-        responseClone = "", // 1
+        queryLog = "",
+        responseClone = "",
         confirmAddReportToCache = function () { },
         confirmSendReportRightAway = function () { },
         confirmFormYes = function () { },
@@ -1010,7 +1011,7 @@
         results = document.getElementById('results');
     function getwarehouseName() {
         warehouseName = prompt("Ingiza Jina la shop", "HQ");
-        if (    warehouseName != null) {
+        if (warehouseName != null) {
             document.getElementById("warehouseName").innerHTML = warehouseName;
         } else warehouseName = "HQ";
     }
@@ -1020,7 +1021,7 @@
             document.getElementById("date").innerHTML = mydate;
         } else mydate = document.getElementById("date").innerHTML;
     }
-    try {        //if this doesn't fail that means were in the phone.
+    try { 
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             try {
                 if (global('ALDSETTING'))
@@ -1029,7 +1030,6 @@
             loadCachedTrans();
             show("Load Settings...");
         } else {
-            //set the name to me
             staffName = "Al";
         }
 
@@ -1066,7 +1066,7 @@
     }
     catch (e) {
         show("error laoding defaults: " + e.stack);
-         ald_lstreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
+        ald_lstreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
     }
 
     function loadCachedTrans() {
@@ -1106,17 +1106,15 @@
 
     function createList(products = names, prefix = "") {
         try {
-            results.innerHTML = ""; // Clear previous content
+            results.innerHTML = "";
             products.forEach(productLink => {
                 results.innerHTML += productLink;
             });
 
-            // Clear input values on click
             document.querySelectorAll("input").forEach(el => {
                 el.addEventListener("click", () => el.value = "");
             });
 
-            // Focus and data management for focused products
             document.querySelectorAll("a.product").forEach(el => {
                 el.addEventListener("click", (e) => {
                     document.querySelector("#myinputbar").classList.remove("hyper");
@@ -1128,7 +1126,6 @@
                     }
 
                     currentFocusedProduct = document.querySelector("li.product[name='" + nm + "']");
-                    // Manage focus and pressed states
                     if (currentFocusedProduct) {
                         if (document.querySelector("li.product.hovering")) document.querySelector("li.product.hovering").classList.remove("hovering");
                         document.querySelector("#myinputbar").classList.remove("hyper");
@@ -1145,7 +1142,6 @@
 
                     document.querySelector("#myinputbar").classList.add("hyper");
 
-                    // Handle quantity and submit button updates
                     const clickedvalue = e.srcElement.getAttribute('name');
                     const local_appstate = appStates[currentAppStateIndex];
                     const input = document.querySelector(".product.pressed > input:not(.hidden)");
@@ -1156,7 +1152,7 @@
                     document.getElementById("submitbutton").innerHTML = newlink;
                     document.getElementById("submitbutton").href = "/" + newlink;
 
-                    input.focus(); // Ensure focus stays on the input
+                    input.focus(); 
                 });
             });
 
@@ -2300,8 +2296,8 @@
                                     var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
                                     var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)))
                                     projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
-                                }  
-                                if (unitprice == "") {  
+                                }
+                                if (unitprice == "") {
                                     if (pricetype == "purchase") {
                                         if (whole_multiplier)
                                             unitprice = item.w_purchase_a,
@@ -2453,7 +2449,7 @@
     try {
         var ALRADADATE = day + " / " + month;
     } catch (e) {
-        
+
     }
 
 </script>
