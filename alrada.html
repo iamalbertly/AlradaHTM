@@ -1336,14 +1336,14 @@
                 showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
             });
 
-            const params = new URLSearchParams();
-            params.append('payload',values);
             const posturl = "https://script.google.com/macros/s/AKfycbxe984Xw8wz8ZElNXnNsLpMvjVoCYw2kSOMOFcbYG5ioe50CBHNKAM_9T_5ov07FlF7/exec";
-
+            const url = new URL(posturl);
+            const params = new URLSearchParams(url.search);
+            params.append('payload',values);
+            
             fetch(posturl, { method: 'GET', headers: { 'Content-Type': 'application/json' }, body: params })
                 .then(response => {
                     responseClone = response.clone();
-
                     if (!response.ok) {
                         return response.text().then(text => {
                             throw new Error('ErrServer response: ' + text, false, true);
