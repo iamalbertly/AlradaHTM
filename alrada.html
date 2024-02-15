@@ -847,7 +847,9 @@
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 
 <script>
-    show("staff: "+staffName);
+    try{
+    show("staff: "+staffName);}
+    catch(e){}
     function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (const cookie of cookies) {
@@ -989,7 +991,7 @@
         writtenInSearch = "",
         editingquery = "",
         warehouseName = 'HQ',
-        staffName =  (!staffName)? "Al":staffName;
+        staffName =  (typeof staffName =="undefined")? "Al":staffName;
         queryLog = "",
         responseClone = "",
         confirmAddReportToCache = function () { },
@@ -1321,8 +1323,6 @@
 
             var json_response = JSON.parse(cachedTransObjectString[transactionType]).json_response;
 
-            const posturl = "https://script.google.com/macros/s/AKfycbyoyton0-dUELgipTaCiyvqoksDCkbL0Nrj82Ouj05iBoNwN9ydVld0cjpnYBqzuIXW/exec";
-
             const timestampMilliseconds = (new Date()).getTime();
             const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
             const values = JSON.stringify({ usr: staffName, data: data, time: timestampMilliseconds, cmd: "add_transaction" });
@@ -1336,8 +1336,11 @@
                 showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
             });
 
+            const params = new URLSearchParams();
+            params.append('payload',values);
+            const posturl = "https://script.google.com/macros/s/AKfycbxe984Xw8wz8ZElNXnNsLpMvjVoCYw2kSOMOFcbYG5ioe50CBHNKAM_9T_5ov07FlF7/exec";
 
-            fetch(posturl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: values })
+            fetch(posturl, { method: 'GET', headers: { 'Content-Type': 'application/json' }, body: params })
                 .then(response => {
                     responseClone = response.clone();
 
@@ -2077,6 +2080,7 @@
                 }
                 else if (family = "confirmCachedEntry") {
                     cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                    cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
                     cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                     cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
 
