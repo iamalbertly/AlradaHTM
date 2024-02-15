@@ -1280,10 +1280,10 @@
 
     function addInputEventListeners() {
         document.querySelectorAll("#myinputbar> input").forEach(input => {
-            input.addEventListener("focus", function (e) {
+            input.addEventListener("focus", e => {
                 document.querySelector("#myinputbar").classList.add("hyper");
             });
-            input.addEventListener("focusout", function (e) {
+            input.addEventListener("focusout", e => {
                 document.querySelector("#myinputbar").classList.remove("hyper");
             });
         });
@@ -1342,7 +1342,7 @@
             });
 
 
-                        fetch(posturl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: values })
+            fetch(posturl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: values })
                 .then(response => {
                     responseClone = response.clone();
 
@@ -1357,7 +1357,7 @@
                     clearvalues();
                     cachedTransObjectString[transactionType] = "";
                     cachedTransactionQueries[transactionType] = "";
-                                        cachedTransCount[transactionType] = 0;
+                    cachedTransCount[transactionType] = 0;
                     cachedTransCashTotal[transactionType] = 0;
                     try {
                         document.querySelector("#btnSend2Cache").classList.remove("disabled");
@@ -1447,7 +1447,7 @@
 
             productdetails_string = GetProductDetails(queryLog);
             cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;
-                        cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+            cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
             json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
             cachedTransactionQueries[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery;
             cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseTotal);
@@ -1489,7 +1489,7 @@
             }
             productdetails_string = GetProductDetails(queryLog);
 
-            cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;               cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string)
+            cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string; cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string)
 
             json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
 
@@ -1543,7 +1543,7 @@
 
     function showLoadingScreen(loadingTitle, loadingSubTitle, loadingMsg) {
         hideLoadingScreen();
-        document.getElementById("news_display").style.pointerEvents = "none";         document.getElementById("mywebview2").style.pointerEvents = "none";
+        document.getElementById("news_display").style.pointerEvents = "none"; document.getElementById("mywebview2").style.pointerEvents = "none";
 
         document.getElementById("loading-title").innerHTML = loadingTitle; document.getElementById("loading-subtitle").innerHTML = loadingSubTitle; document.getElementById("loading-text").innerHTML = loadingMsg;
 
@@ -1551,7 +1551,7 @@
     }
     function hideLoadingScreen() {
         document.getElementById("news_display").style.pointerEvents = "";
-        document.getElementById("mywebview2").style.pointerEvents = "";         document.getElementById("loading-title").innerHTML = "";
+        document.getElementById("mywebview2").style.pointerEvents = ""; document.getElementById("loading-title").innerHTML = "";
         document.getElementById("loading-subtitle").innerHTML = "";
         document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = "";
         document.getElementById("loading-text").innerHTML = "...";
@@ -1564,7 +1564,7 @@
         document.getElementById("mywebview2").style.pointerEvents = "";
         document.getElementById("loading-screen").classList.add("hidden");
 
-        
+
         var dialogContent = `<code><ul id="entries">`;
         for (const itemcount in cachedTransObjectJson[appStates[currentAppStateIndex]].json_response) {
             var row = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response[itemcount];
@@ -1591,7 +1591,7 @@
     function initializeListeners() {
         document.querySelector("#resultpad").addEventListener("click", (e) => {
             try {
-                                if ((document.querySelector("#result_display").innerHTML != "") && (document.querySelector("#filter-dialog").classList.contains("hidden") == false)) {                                     }
+                if ((document.querySelector("#result_display").innerHTML != "") && (document.querySelector("#filter-dialog").classList.contains("hidden") == false)) { }
                 if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
 
@@ -1641,7 +1641,7 @@
                         }
                     }
                     if (appStates[currentAppStateIndex] != "stocktake") {
-                                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                        var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                         var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
                         if (firstpart != "" && secondpart != "") {
                             var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
@@ -1650,17 +1650,17 @@
                             query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
                         }
                     }
-                                        query = `(${warehouseName.toLowerCase()})${query}`;
+                    query = `(${warehouseName.toLowerCase()})${query}`;
                     date = new Date();
 
-                    query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();                     if (appStates[currentAppStateIndex] == "stocktake") {
+                    query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                         queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                     } else {
                         queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                     }
 
-                                        productdetails_string = GetProductDetails(queryLog.replace(/^,/, ""));
+                    productdetails_string = GetProductDetails(queryLog.replace(/^,/, ""));
                     productdetails_json = JSON.parse(productdetails_string);
                     queryLog = productdetails_json.finalQuery;
                     document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
@@ -1675,7 +1675,7 @@
 
                     if (appStates[currentAppStateIndex] == "stocktake") {
                         var el = "li.product[name='" + e.srcElement.pathname.replace("/", "") + "']";
-                                                document.querySelector(el).classList.add("hidden");
+                        document.querySelector(el).classList.add("hidden");
                     }
                     document.getElementById("warehouseName").focus();
                 } catch (e) {
@@ -1721,7 +1721,7 @@
 
         document.querySelector("#selectmode").addEventListener("click", e => {
             document.querySelector("#choose-mode").classList.add("hidden");
-                        document.querySelector("#querydialog").classList.remove("hidden");
+            document.querySelector("#querydialog").classList.remove("hidden");
 
             document.querySelector("#querydialog>input").focus();
 
@@ -1733,7 +1733,7 @@
                 var query = document.querySelector("#query").value;
                 if (query == "") return 0;
                 if (appStates[currentAppStateIndex] != "stocktake") {
-                                        var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                    var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                     var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
                     if (firstpart != "" && secondpart != "") {
                         var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
@@ -1742,17 +1742,17 @@
                         query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
                     }
                 }
-                                query = `(${warehouseName.toLowerCase()})${query}`;
+                query = `(${warehouseName.toLowerCase()})${query}`;
                 date = new Date();
 
-                query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();                 if (appStates[currentAppStateIndex] == "stocktake") {
+                query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                     queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                 } else {
                     queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                 }
 
-                                productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
+                productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
                 queryLog = productdetails_json.finalQuery;
                 document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                 document.querySelectorAll(".disabled").forEach(el => {
@@ -1800,7 +1800,8 @@
                 currentQuery = currentQuery.replaceAll(/(\d+\/\d+[\/\d+]{0,5})/gm, `${newdatetext}`)
 
             }
-            else if (isclosing.toLowerCase() == "ndio") {                 if (/(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery))
+            else if (isclosing.toLowerCase() == "ndio") {
+                if (/(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery))
                     var datetext = /(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery)[0].trim();
 
                 var dd = eval(/(\d+)\/\d+[(\/\d+)]{0,5}/gm.exec(datetext)[1]) + 1;
@@ -1834,13 +1835,13 @@
             if (total != null) cachedTransCashTotal[appStates[currentAppStateIndex]] = ((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
         }
 
-                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
 
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             for (const TransType in cachedTransactionQueries) {
                 var transaction = cachedTransactionQueries[TransType];
-                                setGlobal(`ALDCACHE${TransType}`, transaction)
+                setGlobal(`ALDCACHE${TransType}`, transaction)
             }
         }
 
@@ -1857,7 +1858,7 @@
         const npsValues = {};
         const runningSpeedRanges = {};
         products_jsonString.forEach(product => {
-            const category = product.category_breakdown.split("_")[2].toLowerCase();             if (!categories[category]) {
+            const category = product.category_breakdown.split("_")[2].toLowerCase(); if (!categories[category]) {
                 categories[category] = [];
             }
             if (!categories[category][product.OfficialName]) {
@@ -1911,7 +1912,7 @@
 
 
     function getRunningSpeedRange(speed) {
-  
+
         if (speed <= 5) {
             return "Slow";
         } else if (speed <= 10) {
@@ -1924,7 +1925,7 @@
 
     function showFilterDialog() {
         const dialog = document.getElementById("filter-dialog");
-        if (dialog.children.length === 0) { 
+        if (dialog.children.length === 0) {
             dialog.appendChild(createFilterDialogContent());
 
             document.querySelectorAll("li.product.active").forEach(product => {
@@ -2020,7 +2021,7 @@
                 dialog.innerHTML = content;
                 confirmFormEdit = function (e) {
                     if (e.key != "Enter") return;
-      
+
                     var newval = document.querySelector("#filter-dialog>div>input").value;
                     var newediting = editing.replace(sign + oldval, sign + newval);
                     var newquery = oldquery.replace(editing, newediting);
@@ -2134,7 +2135,7 @@
         }
         if (target.type != "checkbox") return;
 
-        const filterType = target.id; 
+        const filterType = target.id;
         const products = document.querySelectorAll("li.product");
 
         const matchingProducts = [];
@@ -2191,7 +2192,7 @@
         if (typeof returntype == 'undefined') var returntype = "single";
         let rowmsg = "";
 
-        if (typeof productsJsonString == 'undefined') { 
+        if (typeof productsJsonString == 'undefined') {
             if (typeof settingsObj != 'undefined') {
                 var productsJsonString = settingsObj.settings.alradaitemnames;
             }
@@ -2227,7 +2228,7 @@
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
                 myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                 whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
-                retail_multiplier = 0, transCarton = ""; 
+                retail_multiplier = 0, transCarton = "";
             var getmultipliers = getendvalue.split(" ");
 
             getmultipliers = getmultipliers[0];
@@ -2242,7 +2243,7 @@
             rawproductname = rawproductname.replace(/\s[r,p]\d+\.{0,1}\d{0,}|\+[r,p]\d+\.{0,1}\d{0,}v$/, "");
             rawproductname = rawproductname.replace(/=\d+\.{0,1}\d{0,}|[r,p]\d+\.{0,1}\d{0,}$/, "").replace(/^\(.*\)/, "").replace(/\+$/, "").trim();
 
-            if (!/\$\d+$/.test(product)) { 
+            if (!/\$\d+$/.test(product)) {
                 if (pricetype == "" || pricetype == undefined)
                     pricetype = (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
                         ? "retail"
@@ -2255,11 +2256,12 @@
                     }
                     else
                         JSON.parse(cleanasjson).some(function (item, i) {
-                    
-                            if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {                                 transCarton = item.carton;
-                   
+
+                            if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {
+                                transCarton = item.carton;
+
                                 if (getendvalue.match(/\#/)) {
-                                    w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;                          
+                                    w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;
                                     r_remain = (!/[r,p]\d+/g.test(getendvalue)) ? "" : eval(/[r,p](\d+)/g.exec(getendvalue)[1]) / item.carton;
                                     remain = w_remain + r_remain;
                                 }
