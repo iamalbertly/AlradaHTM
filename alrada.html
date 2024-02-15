@@ -989,11 +989,15 @@
         } else mydate = document.getElementById("date").innerHTML;
     }
     try {
+        alert(typeof settingsObj);
+        alert(settingsObj);
         if (settingsObj != undefined) {
+            show("settingsObj was not undefined");
             loadCachedTrans();
             createProductsView();
         }
         else if (settingsObj == undefined) {
+            show("settingsObj was indeed undefined")
             if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
                 try {
                     if (global('ALDSETTING'))
@@ -1001,7 +1005,7 @@
                 } catch (e) { }
                 loadCachedTrans();
             } else { staffName = "Al"; }
-
+            show("going to fetch alradasettings.json from online")
             fetch('alradasettings.json')
                 .then(response => {
                     responseClone = response.clone();
