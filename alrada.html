@@ -780,7 +780,8 @@
             style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
             <div id="date" onclick="getShopDate()"></span>
                 <script>var date = new Date(); var mydate = date.getDate() + "/" + eval(date.getMonth() + 1) + "/" + eval(date.getFullYear()); document.getElementById("date").innerHTML = mydate; </script>
-            </div></button>
+            </div>
+        </button>
         <div id="appStates" class="flex-column" style="width: 100%;"><button id="appState"
                 class="highlight-border"><span>💰</span>MAUZO &nbsp; </button></div><button
             style="display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;background: center;align-items: center;margin-top: .9px;"
@@ -988,7 +989,11 @@
         } else mydate = document.getElementById("date").innerHTML;
     }
     try {
-        if (settingsObj == undefined) {
+        if (settingsObj != undefined) {
+            loadCachedTrans();
+            createProductsView();
+        }
+        else if (settingsObj == undefined) {
             if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
                 try {
                     if (global('ALDSETTING'))
@@ -1017,17 +1022,16 @@
                     createProductsView();
                 })
                 .catch((error) => { });
-
-            /* if not in debugger */
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-                try {
-                    if (global('ALRADAUSER'))
-                        staffName = global('ALRADAUSER');
-                    ald_lstreply = global('ALDLSTREPLY');
-                } catch (e) { }
-            }
-            staffName = (staffName == "") ? "XX" : staffName;
         }
+        /* if not in debugger */
+        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+            try {
+                if (global('ALRADAUSER'))
+                    staffName = global('ALRADAUSER');
+                ald_lstreply = global('ALDLSTREPLY');
+            } catch (e) { }
+        }
+        staffName = (staffName == "") ? "XX" : staffName;
     } catch (e) {
         show("error laoding defaults: " + e.stack, true);
         ald_lstreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
