@@ -1030,8 +1030,6 @@
                     if (global('ALDSETTING'))
                         var settingsObj = JSON.parse(global('ALDSETTING'));
                 } catch (e) { }
-                loadCachedTrans();
-             
             fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
                 .then(response => {
                     responseClone = response.clone();
