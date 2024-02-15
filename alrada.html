@@ -1336,7 +1336,7 @@
                 showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
             });
 
-            const posturl = "https://script.google.com/macros/s/AKfycbxe984Xw8wz8ZElNXnNsLpMvjVoCYw2kSOMOFcbYG5ioe50CBHNKAM_9T_5ov07FlF7/exec";
+            const posturl = "https://script.google.com/macros/s/AKfycbwsohLr5bSzCWsRVUY1MUckx2_v5BBB2RSh57iSk5s3vUKGMM224NTPX2g1RP7YFhXj/exec";
             const url = new URL(posturl);
             const params = new URLSearchParams(url.search);
             params.append('payload',values);
