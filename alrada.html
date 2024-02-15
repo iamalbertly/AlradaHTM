@@ -956,7 +956,7 @@
         }
     }
 
-    function show(msg, timer = true, clip = true, flash = true) {
+    function show(msg, timer = false, clip = true, flash = true) {
         /* if not in debugger */
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             try {
@@ -1028,7 +1028,6 @@
                     var settingsObj = JSON.parse(global('ALDSETTING'));
             } catch (e) { }
             loadCachedTrans();
-            show("Load Settings...");
         } else {
             staffName = "Al";
         }
@@ -1042,7 +1041,7 @@
                             show("recieved the following: " + bodyText)
                         });
                     return response.text().then(text => {
-                        throw new Error('Server response: ' + text, false, true);
+                        throw new Error('Server response: ' + text, true, true);
                     });
                 }
                 return response.json();
@@ -1065,7 +1064,7 @@
         staffName = (staffName == "") ? "XX" : staffName;
     }
     catch (e) {
-        show("error laoding defaults: " + e.stack);
+        show("error laoding defaults: " + e.stack,true);
         ald_lstreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
     }
 
@@ -1100,7 +1099,7 @@
 
                 } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
             }
-        } catch (e) { show("error loadCachedTrans::" + e.stack); }
+        } catch (e) { show("error loadCachedTrans::" + e.stack,true); }
         clearvalues();
     }
 
@@ -1311,7 +1310,7 @@
             if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
                 status = global(`ALDSNDSTATUS${transactionType}`);
                 if (status == "sending") {
-                    show("Bado Repoti ya Mwisho Haijakamilika kwenda", true);
+                    show("Bado Repoti ya Mwisho Haijakamilika kwenda");
                     return;
                 }
             }
@@ -1320,7 +1319,7 @@
             if (cachedTransactionQueries[transactionType] == 0) return;
             hideLoadingScreen();
             if (!JSON.parse(cachedTransObjectString[transactionType]).json_response) {
-                show("Hujafadhi chochote...", false);
+                show("Hujafadhi chochote...");
                 return 0;
             };
 
@@ -1374,7 +1373,7 @@
                     } catch (e) {
                         show(e.stack + "-there was an error");
                     }
-                    show("Repoti Imetumwa...", false);
+                    show("Repoti Imetumwa...");
                     goto("command||beep");
                     createProductsView();
 
@@ -1384,7 +1383,7 @@
                         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
                             setGlobal(`ALDSNDSTATUS${transactionType}`, 'sending_failed');
                         }
-                        show("Tatizo la network. Ebu cheki internet alafu Jaribu Tena. " + error.stack);
+                        show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
                     } else {
                         responseClone.text()
                             .then(bodyText => {
@@ -1597,12 +1596,12 @@
 
                 hideLoadingScreen();
                 document.querySelector("#myinputbar").classList.remove("hyper");
-            } catch (e) { show("error loadCachedTrans::" + e.stack); }
+            } catch (e) { show("error loadCachedTrans::" + e.stack,true); }
         });
 
         document.querySelector("#cachedTrans").addEventListener("click", e => {
             if (!JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]).json_response) {
-                show("Huja fadhi chochote...", true);
+                show("Huja fadhi chochote...");
                 return 0;
             }
 
