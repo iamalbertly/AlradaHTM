@@ -1330,18 +1330,21 @@
                 setGlobal(`ALDSNDSTATUS${transactionType}`, 'sending');
             }
             const clipboard = document.querySelector("#clipboard");
+            try{
             clipboard.value = values;
             clipboard.focus();
             navigator.clipboard.writeText(clipboard.value).then(function (x) {
                 showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
             });
+        }catch(e){}
 
-            const posturl = "https://script.google.com/macros/s/AKfycbwsohLr5bSzCWsRVUY1MUckx2_v5BBB2RSh57iSk5s3vUKGMM224NTPX2g1RP7YFhXj/exec";
-            const url = new URL(posturl);
-            const params = new URLSearchParams(url.search);
+            const posturl = "https://script.google.com/macros/s/AKfycbwSjP9ufSbzleeYo14tM7tG_7so9MNie71F36J4MSJCzK2vT07efTeP_kKSSlE_56gX/exec";
+            const params = new URLSearchParams(new URL(posturl).search);
             params.append('payload',values);
+      
+            var finalurl = `https://cors-anywhere.herokuapp.com/${posturl}?${params}`;
             
-            fetch(posturl, { method: 'GET', headers: { 'Content-Type': 'application/json' }, body: params })
+            fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
