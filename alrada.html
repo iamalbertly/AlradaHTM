@@ -972,7 +972,7 @@
         /* if not in debugger */
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             window.location.href = location;
-        } else { 
+        } else {
             console.log("goto: " + location);
         }
     }
@@ -989,9 +989,9 @@
         categories = {},
         ald_lstreply = "",
         writtenInSearch = "",
-        editingquery ="",
-        staffName ="",
-        warehouseName ='HQ',
+        editingquery = "",
+        staffName = "",
+        warehouseName = 'HQ',
         queryLog = "",
         responseClone = "",
         confirmAddReportToCache = function () { },
@@ -1021,7 +1021,7 @@
             document.getElementById("date").innerHTML = mydate;
         } else mydate = document.getElementById("date").innerHTML;
     }
-    try { 
+    try {
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             try {
                 if (global('ALDSETTING'))
@@ -1152,7 +1152,7 @@
                     document.getElementById("submitbutton").innerHTML = newlink;
                     document.getElementById("submitbutton").href = "/" + newlink;
 
-                    input.focus(); 
+                    input.focus();
                 });
             });
 
@@ -1162,7 +1162,7 @@
                     var thekey = e.key.toString();
                     var clickedvalue = e.srcElement.getAttribute("name");
                     if (e.key === 'Enter') {
-                        // Trigger the button element with a click
+
                         document.getElementById("submitbutton").click();
                         document.getElementById("warehouseName").focus();
                     }
@@ -1176,7 +1176,6 @@
     function createProductsView() {
         const localAppState = appStates[currentAppStateIndex];
         if (!settingsObj) return;
-
         switch (localAppState) {
             case "wholesale_sale":
             case "wholesale_purchase":
@@ -1185,11 +1184,16 @@
                 products_jsonString = JSON.parse(settingsObj.settings.alradaitemnames).slice(1);
 
                 products_jsonString.sort((a, b) => {
-                    // If b is "Pesa", put a before b
+                    /* If b is "Pesa", put a before b */
                     if (/Pesa/g.test(b.OfficialName)) return -1;
 
-                    // If a is "Pesa", put b before a
+                    /* If a is "Pesa", put b before a */
                     if (/Crate Peke|Fungu la Chupa|Pesa/g.test(a.OfficialName)) return 1;
+
+                    /* Group closely matching OfficialNames together */
+                    if (a.OfficialName.includes(b.OfficialName) || b.OfficialName.includes(a.OfficialName)) {
+                        return 0;
+                    }
 
                     if (a.category_breakdown < b.category_breakdown) return 1;
                     if (a.category_breakdown > b.category_breakdown) return -1;
@@ -1231,7 +1235,6 @@
         addInputEventListeners();
     }
 
-    // Helper functions for readability and code reuse
     function getCategorySign(categoryBreakdown) {
         let categorySign = "";
         if (/alcohol/.test(categoryBreakdown)) {
@@ -1339,8 +1342,7 @@
             });
 
 
-            //send a POST 
-            fetch(posturl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: values })
+                        fetch(posturl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: values })
                 .then(response => {
                     responseClone = response.clone();
 
@@ -1355,8 +1357,7 @@
                     clearvalues();
                     cachedTransObjectString[transactionType] = "";
                     cachedTransactionQueries[transactionType] = "";
-                    // Batch DOM manipulations
-                    cachedTransCount[transactionType] = 0;
+                                        cachedTransCount[transactionType] = 0;
                     cachedTransCashTotal[transactionType] = 0;
                     try {
                         document.querySelector("#btnSend2Cache").classList.remove("disabled");
@@ -1446,8 +1447,7 @@
 
             productdetails_string = GetProductDetails(queryLog);
             cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;
-            //set the results
-            cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                        cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
             json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
             cachedTransactionQueries[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery;
             cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseTotal);
@@ -1489,8 +1489,7 @@
             }
             productdetails_string = GetProductDetails(queryLog);
 
-            cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;   //set the results
-            cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string)
+            cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;               cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string)
 
             json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
 
@@ -1544,8 +1543,7 @@
 
     function showLoadingScreen(loadingTitle, loadingSubTitle, loadingMsg) {
         hideLoadingScreen();
-        document.getElementById("news_display").style.pointerEvents = "none"; // Disable interactions
-        document.getElementById("mywebview2").style.pointerEvents = "none";
+        document.getElementById("news_display").style.pointerEvents = "none";         document.getElementById("mywebview2").style.pointerEvents = "none";
 
         document.getElementById("loading-title").innerHTML = loadingTitle; document.getElementById("loading-subtitle").innerHTML = loadingSubTitle; document.getElementById("loading-text").innerHTML = loadingMsg;
 
@@ -1553,8 +1551,7 @@
     }
     function hideLoadingScreen() {
         document.getElementById("news_display").style.pointerEvents = "";
-        document.getElementById("mywebview2").style.pointerEvents = ""; // Re-enable interactions
-        document.getElementById("loading-title").innerHTML = "";
+        document.getElementById("mywebview2").style.pointerEvents = "";         document.getElementById("loading-title").innerHTML = "";
         document.getElementById("loading-subtitle").innerHTML = "";
         document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = "";
         document.getElementById("loading-text").innerHTML = "...";
@@ -1567,8 +1564,7 @@
         document.getElementById("mywebview2").style.pointerEvents = "";
         document.getElementById("loading-screen").classList.add("hidden");
 
-        //  var json_response = JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]).json_response;
-
+        
         var dialogContent = `<code><ul id="entries">`;
         for (const itemcount in cachedTransObjectJson[appStates[currentAppStateIndex]].json_response) {
             var row = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response[itemcount];
@@ -1595,10 +1591,7 @@
     function initializeListeners() {
         document.querySelector("#resultpad").addEventListener("click", (e) => {
             try {
-                //  document.querySelector("#filter-dialog").classList
-                if ((document.querySelector("#result_display").innerHTML != "") && (document.querySelector("#filter-dialog").classList.contains("hidden") == false)) { //if something in resuls
-                    //      addTransactionToCache(e);
-                }
+                                if ((document.querySelector("#result_display").innerHTML != "") && (document.querySelector("#filter-dialog").classList.contains("hidden") == false)) {                                     }
                 if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
 
@@ -1648,8 +1641,7 @@
                         }
                     }
                     if (appStates[currentAppStateIndex] != "stocktake") {
-                        //if their is a . then create 2 queryes 
-                        var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                         var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
                         if (firstpart != "" && secondpart != "") {
                             var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
@@ -1658,20 +1650,17 @@
                             query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
                         }
                     }
-                    //getlocation isn't set
-                    query = `(${warehouseName.toLowerCase()})${query}`;
+                                        query = `(${warehouseName.toLowerCase()})${query}`;
                     date = new Date();
 
-                    query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); //add date to query
-                    if (appStates[currentAppStateIndex] == "stocktake") {
+                    query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();                     if (appStates[currentAppStateIndex] == "stocktake") {
                         queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                     } else {
                         queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                     }
 
-                    //json value that needs to be parsed
-                    productdetails_string = GetProductDetails(queryLog.replace(/^,/, ""));
+                                        productdetails_string = GetProductDetails(queryLog.replace(/^,/, ""));
                     productdetails_json = JSON.parse(productdetails_string);
                     queryLog = productdetails_json.finalQuery;
                     document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
@@ -1686,8 +1675,7 @@
 
                     if (appStates[currentAppStateIndex] == "stocktake") {
                         var el = "li.product[name='" + e.srcElement.pathname.replace("/", "") + "']";
-                        //hide product
-                        document.querySelector(el).classList.add("hidden");
+                                                document.querySelector(el).classList.add("hidden");
                     }
                     document.getElementById("warehouseName").focus();
                 } catch (e) {
@@ -1733,8 +1721,7 @@
 
         document.querySelector("#selectmode").addEventListener("click", e => {
             document.querySelector("#choose-mode").classList.add("hidden");
-            //shwo thedialog
-            document.querySelector("#querydialog").classList.remove("hidden");
+                        document.querySelector("#querydialog").classList.remove("hidden");
 
             document.querySelector("#querydialog>input").focus();
 
@@ -1746,8 +1733,7 @@
                 var query = document.querySelector("#query").value;
                 if (query == "") return 0;
                 if (appStates[currentAppStateIndex] != "stocktake") {
-                    //if their is a . then create 2 queryes 
-                    var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                                        var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                     var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
                     if (firstpart != "" && secondpart != "") {
                         var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
@@ -1756,20 +1742,17 @@
                         query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
                     }
                 }
-                //getlocation isn't set
-                query = `(${warehouseName.toLowerCase()})${query}`;
+                                query = `(${warehouseName.toLowerCase()})${query}`;
                 date = new Date();
 
-                query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); //add date to query
-                if (appStates[currentAppStateIndex] == "stocktake") {
+                query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();                 if (appStates[currentAppStateIndex] == "stocktake") {
                     queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                 } else {
                     queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                 }
 
-                //json value that needs to be parsed
-                productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
+                                productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
                 queryLog = productdetails_json.finalQuery;
                 document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                 document.querySelectorAll(".disabled").forEach(el => {
@@ -1817,8 +1800,7 @@
                 currentQuery = currentQuery.replaceAll(/(\d+\/\d+[\/\d+]{0,5})/gm, `${newdatetext}`)
 
             }
-            else if (isclosing.toLowerCase() == "ndio") { //if closing change all the dates to tomorrow. 
-                if (/(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery))
+            else if (isclosing.toLowerCase() == "ndio") {                 if (/(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery))
                     var datetext = /(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery)[0].trim();
 
                 var dd = eval(/(\d+)\/\d+[(\/\d+)]{0,5}/gm.exec(datetext)[1]) + 1;
@@ -1852,15 +1834,13 @@
             if (total != null) cachedTransCashTotal[appStates[currentAppStateIndex]] = ((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
         }
 
-        //json value that needs to be parsed
-        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
 
         if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
             for (const TransType in cachedTransactionQueries) {
                 var transaction = cachedTransactionQueries[TransType];
-                //set globalvariable with that transaction type
-                setGlobal(`ALDCACHE${TransType}`, transaction)
+                                setGlobal(`ALDCACHE${TransType}`, transaction)
             }
         }
 
@@ -1877,8 +1857,7 @@
         const npsValues = {};
         const runningSpeedRanges = {};
         products_jsonString.forEach(product => {
-            const category = product.category_breakdown.split("_")[2].toLowerCase(); // Use lowercase for consistency
-            if (!categories[category]) {
+            const category = product.category_breakdown.split("_")[2].toLowerCase();             if (!categories[category]) {
                 categories[category] = [];
             }
             if (!categories[category][product.OfficialName]) {
@@ -1887,7 +1866,7 @@
 
             categories[category][product.OfficialName].push({
                 name: product.OfficialName,
-                classes: category.split(".").map(part => part.toLowerCase()).join(" ") // Collect all classes
+                classes: category.split(".").map(part => part.toLowerCase()).join(" ")
             });
 
             const financialnps = product.category_breakdown.split("_")[3];
@@ -1925,14 +1904,14 @@
      `;
         dialogContent.innerHTML += `
     `;
-        // Add a close button
+
         dialogContent.innerHTML += `<button id="close-dialog" onClick="closeFilterDialog()"> X </button>`;
         return dialogContent;
     }
 
-    // Function to get the running speed range based on a given speed
+
     function getRunningSpeedRange(speed) {
-        // Implement your logic for determining the speed range here
+  
         if (speed <= 5) {
             return "Slow";
         } else if (speed <= 10) {
@@ -1942,12 +1921,12 @@
         }
     }
 
-    // Function to show the filter dialog
+
     function showFilterDialog() {
         const dialog = document.getElementById("filter-dialog");
-        if (dialog.children.length === 0) { // Only create content if it doesn't exist
+        if (dialog.children.length === 0) { 
             dialog.appendChild(createFilterDialogContent());
-            //hide all the items
+
             document.querySelectorAll("li.product.active").forEach(product => {
                 product.classList.remove("active");
             });
@@ -2041,7 +2020,7 @@
                 dialog.innerHTML = content;
                 confirmFormEdit = function (e) {
                     if (e.key != "Enter") return;
-                    //take the value and edit it. 
+      
                     var newval = document.querySelector("#filter-dialog>div>input").value;
                     var newediting = editing.replace(sign + oldval, sign + newval);
                     var newquery = oldquery.replace(editing, newediting);
@@ -2155,12 +2134,12 @@
         }
         if (target.type != "checkbox") return;
 
-        const filterType = target.id; // Get the filter type directly from the ID
+        const filterType = target.id; 
         const products = document.querySelectorAll("li.product");
 
         const matchingProducts = [];
         if (filterType.startsWith("category")) {
-            // Handle category checkbox
+
             const category = filterType.split("_")[1];
             for (const product of products) {
 
@@ -2178,7 +2157,6 @@
                 }
             }
         } else if (filterType === "financial_nps") {
-            // Handle financial NPS slider
             const financialNps = eval(target.value);
             products.forEach(product => {
                 const productNps = eval(product.dataset.financialNps);
@@ -2187,7 +2165,7 @@
                 }
             });
         } else if (filterType === "speed") {
-            // Handle speed range input
+
             const speed = eval(target.value);
             products.forEach(product => {
                 const productSpeed = eval(product.dataset.speed);
@@ -2199,7 +2177,6 @@
         closeFilterDialog();
     }
 
-    // Function to close the filter dialog
     function closeFilterDialog() {
         const dialog = document.querySelectorAll(".mypopupdialog").forEach(el => {
             if (!el.classList.contains("hidden"))
@@ -2214,19 +2191,19 @@
         if (typeof returntype == 'undefined') var returntype = "single";
         let rowmsg = "";
 
-        if (typeof productsJsonString == 'undefined') { //products_jsongString is empty get from settings
+        if (typeof productsJsonString == 'undefined') { 
             if (typeof settingsObj != 'undefined') {
                 var productsJsonString = settingsObj.settings.alradaitemnames;
             }
         };
         if (productsJsonString == undefined) throw new Error("productsJsonString is undefined");
         productsJsonString = productsJsonString.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
-        // Get the headings and body data from the products_jsonString
+
         var data = JSON.parse(productsJsonString);
         var headerRow = Object.keys(data[0]);
         var body = data.map(row => Object.values(row));
 
-        // Create the dataHeadings and dataBody arrays
+
         var dataHeadings = [], dataBody = [];
         headerRow.forEach(function (title) {
             dataHeadings.push(title);
@@ -2250,7 +2227,7 @@
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
                 myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                 whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
-                retail_multiplier = 0, transCarton = ""; // if no pluss sign 
+                retail_multiplier = 0, transCarton = ""; 
             var getmultipliers = getendvalue.split(" ");
 
             getmultipliers = getmultipliers[0];
@@ -2265,7 +2242,7 @@
             rawproductname = rawproductname.replace(/\s[r,p]\d+\.{0,1}\d{0,}|\+[r,p]\d+\.{0,1}\d{0,}v$/, "");
             rawproductname = rawproductname.replace(/=\d+\.{0,1}\d{0,}|[r,p]\d+\.{0,1}\d{0,}$/, "").replace(/^\(.*\)/, "").replace(/\+$/, "").trim();
 
-            if (!/\$\d+$/.test(product)) { //if not malipo
+            if (!/\$\d+$/.test(product)) { 
                 if (pricetype == "" || pricetype == undefined)
                     pricetype = (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
                         ? "retail"
@@ -2277,14 +2254,12 @@
                             displaymultiplier = priceTotal;
                     }
                     else
-                        JSON.parse(cleanasjson).some(function (item, i) { //loop through products
-                            // rawproductname = item.OfficialName;
-                            if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) { //if finds matching productname
-                                transCarton = item.carton;
-                                //calclate the whole number,
+                        JSON.parse(cleanasjson).some(function (item, i) {
+                    
+                            if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {                                 transCarton = item.carton;
+                   
                                 if (getendvalue.match(/\#/)) {
-                                    w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;  // if no pluss sign
-                                    //calculate the r value
+                                    w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;                          
                                     r_remain = (!/[r,p]\d+/g.test(getendvalue)) ? "" : eval(/[r,p](\d+)/g.exec(getendvalue)[1]) / item.carton;
                                     remain = w_remain + r_remain;
                                 }
@@ -2347,7 +2322,7 @@
                 }
 
                 let transDate = `${datetext} ${timetext}`,
-                    transMsg = product;//product.replace(`${datetext} ${timetext}`, "").trim(),
+                    transMsg = product;
                 transUnitPrice = unitprice,
                     transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
                     transStaffID = staffName.slice(0, 2),
@@ -2367,20 +2342,20 @@
                 unitprice = "";
 
             }
-            if ((responseArr.length == 0) || (/\$\d+$/.test(product))) { //if no match found
+            if ((responseArr.length == 0) || (/\$\d+$/.test(product))) {
                 remain = (/\#\d+/.test(product)) ? parseFloat(product.match(/\#\d+/)[0].replace("#", "")) : 0;
-                unitprice = 1;//(/\@\d+/.test(product)) ? parseFloat(product.match(/\@\d+/)[0].replace("@", "")) : 1;
+                unitprice = 1;
                 var rx = new RegExp("\\" + appStateMarks[currentAppStateIndex] + "\\d+");
 
                 multiplier = (rx.test(product)) ? parseFloat(product.match(rx)[0].replace(appStateMarks[currentAppStateIndex], "")) : 1;
                 priceTotal = (/\=\d+/.test(product)) ? parseFloat(product.match(/\=\d+/)[0].replace("=", "")) * -1 : multiplier * unitprice;
                 netpriceTotal = 0;
-                //try and extract no id purchase, or dept from it
+
                 total = total + priceTotal;
                 response = (response + ((rawproductname == "") ? rawproductname : rawproductname) + ((unitprice > 0 && unitprice != "" && unitprice != 1) ? "@" + unitprice : "") + " | " + priceTotal.toLocaleString('en-US').replace(/\.00/g, "")).trim() + "\n";
                 date = new Date();
                 let transDate = `${datetext} ${timetext}`,
-                    transMsg = product; //product.replace(`${datetext} ${timetext}`, "").trim(),
+                    transMsg = product;
                 transUnitPrice = unitprice,
                     transStaffID = staffName.slice(0, 2),
                     transType = (specialTransType == "") ? appStates[currentAppStateIndex] : specialTransType,
