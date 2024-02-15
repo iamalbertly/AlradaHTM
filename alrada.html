@@ -847,6 +847,39 @@
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 
 <script>
+    function getCookie(name) {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.trim().split('=');
+            if (cookieName === name) {
+                return cookieValue;
+            }
+        }
+        return null;
+    }
+
+    if (typeof setGlobal === "function") { /* in tasker*/
+
+    } else {
+        function setGlobal(variableName = "", value = "") {
+            const existingValue = getCookie(variableName);
+            if (existingValue !== null) {
+                if (existingValue !== value) {
+                    document.cookie = `${variableName}=${value}; path=/`;
+                }
+            } else {
+                const expirationDate = new Date();
+                expirationDate.setTime(expirationDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+                const expires = `expires=${expirationDate.toUTCString()}`;
+                document.cookie = `${variableName}=${value}; ${expires}; path=/`;
+            }
+        }
+        function setClip(par1 = "", par2 = "") { }
+        function flashLong(par1 = "", par2 = "") { }
+        function global(variableName = "", par2 = "") { return getCookie(variableName) }
+    }
+
+
     function changeMode(index = "") {
         var oldstate = appStates[currentAppStateIndex];
         if (index == "") {
@@ -924,16 +957,12 @@
     }
 
     function show(msg, timer = false, clip = true, flash = true) {
-        /* if not in debugger */
-        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-            try {
-                if (clip) setClip("show():" + msg, false);
-                if (flash) flashLong(msg);
-            } catch (e) { }
-            if (timer) wait(5000);
-        } else {
-            console.log("log: " + msg);
-        }
+        try {
+            if (clip) setClip("show():" + msg, false);
+            if (flash) flashLong(msg);
+        } catch (e) { }
+        if (timer) wait(5000);
+        console.log("log: " + msg);
     }
     function goto(location) {
         /* if not in debugger */
@@ -950,15 +979,16 @@
         BreakException = {},
         isMultTextArray = {},
         products_jsonString = {},
-        suppliers_jsonString,
+        suppliers_jsonString = {},
+        productsJsonString = undefined;
         currentAppStateIndex = 0,
         names = [],
         categories = {},
         ald_lstreply = "",
         writtenInSearch = "",
         editingquery = "",
-        staffName = "",
         warehouseName = 'HQ',
+        staffName = "Al";
         queryLog = "",
         responseClone = "",
         confirmAddReportToCache = function () { },
@@ -989,23 +1019,19 @@
         } else mydate = document.getElementById("date").innerHTML;
     }
     try {
-        alert(typeof settingsObj);
-        alert(settingsObj);
         if (settingsObj != undefined) {
             show("settingsObj was not undefined");
             loadCachedTrans();
             createProductsView();
         }
         else if (settingsObj == undefined) {
-            show("settingsObj was indeed undefined")
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+            show("settingsObj: undefined")
                 try {
                     if (global('ALDSETTING'))
                         var settingsObj = JSON.parse(global('ALDSETTING'));
                 } catch (e) { }
                 loadCachedTrans();
-            } else { staffName = "Al"; }
-            show("going to fetch alradasettings.json from online")
+             
             fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
                 .then(response => {
                     responseClone = response.clone();
@@ -1022,19 +1048,19 @@
                 })
                 .then(data => {
                     settingsObj = data;
+                    productsJsonString = settingsObj.settings.alradaitemnames;
                     loadCachedTrans();
                     createProductsView();
                 })
                 .catch((error) => { });
         }
-        /* if not in debugger */
-        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+        
             try {
                 if (global('ALRADAUSER'))
                     staffName = global('ALRADAUSER');
                 ald_lstreply = global('ALDLSTREPLY');
             } catch (e) { }
-        }
+        
         staffName = (staffName == "") ? "XX" : staffName;
     } catch (e) {
         show("error laoding defaults: " + e.stack, true);
@@ -1043,7 +1069,6 @@
 
     function loadCachedTrans() {
         try {
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
                 try {
                     for (const TransType in appStates) {
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
@@ -1071,7 +1096,6 @@
                     });
 
                 } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
-            }
         } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
         clearvalues();
     }
@@ -1337,7 +1361,7 @@
                         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                     } catch (e) { }
-                    if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) { setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]); setGlobal(`ALDSNDSTATUS${transactionType}`, 'ready'); }
+                     setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]); setGlobal(`ALDSNDSTATUS${transactionType}`, 'ready'); 
                     try {
                         responseClone.text()
                             .then(bodyText => {
@@ -1444,9 +1468,9 @@
             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+            
                 setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-            }
+            
 
             reCreateCacheCleanupForm();
         };
@@ -1488,9 +1512,9 @@
             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+            
                 setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-            }
+            
             reCreateCacheCleanupForm();
         }
     }
@@ -1806,12 +1830,12 @@
         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
 
-        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+        
             for (const TransType in cachedTransactionQueries) {
                 var transaction = cachedTransactionQueries[TransType];
                 setGlobal(`ALDCACHE${TransType}`, transaction)
             }
-        }
+        
 
         document.querySelectorAll(".hiddenpreview").forEach(el => {
             el.classList.remove("hiddenpreview");
@@ -1957,9 +1981,9 @@
                             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-                            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+    
                                 setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                            }
+                            
                             reCreateCacheCleanupForm();
                         }
                         else if (family == "confirmTransactionEntry") {
@@ -2015,9 +2039,9 @@
                         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-                        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+                       
                             setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                        }
+                        
                         closeFilterDialog();
 
                         reCreateCacheCleanupForm();
@@ -2074,9 +2098,9 @@
                     document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                     document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-                    if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
+                    
                         setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                    }
+                    
                     reCreateCacheCleanupForm();
                 }
                 break;
@@ -2148,18 +2172,13 @@
         });
     }
 
-    function GetProductDetails(query = "(hq)Uhai 600ml @400+1", exactdtail = "", productsJsonString) {
+    function GetProductDetails(query = "(hq)Uhai 600ml @400+1", exactdtail = "") {
         var response = "", itemcount = 1, projectedProfitTotal = 0;
         query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
 
         if (typeof returntype == 'undefined') var returntype = "single";
         let rowmsg = "";
 
-        if (typeof productsJsonString == 'undefined') {
-            if (typeof settingsObj != 'undefined') {
-                var productsJsonString = settingsObj.settings.alradaitemnames;
-            }
-        };
         if (productsJsonString == undefined) throw new Error("productsJsonString is undefined");
         productsJsonString = productsJsonString.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
 
