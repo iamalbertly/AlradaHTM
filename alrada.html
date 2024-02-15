@@ -1342,7 +1342,7 @@
             const params = new URLSearchParams(new URL(posturl).search);
             params.append('payload',values);
       
-            var finalurl = `https://cors-anywhere.herokuapp.com/${posturl}?${params}`;
+            var finalurl = "https://cors-anywhere.herokuapp.com/"+posturl+"?"+params;
             
             fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
                 .then(response => {
