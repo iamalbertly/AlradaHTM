@@ -1121,11 +1121,11 @@
                 });
                 el.addEventListener("focus", (e) => {
                     var nm = e.srcElement.getAttribute("name");
-                    if (nm != oldFocusedProduct && document.querySelector("li.product[name='" + oldFocusedProduct + "']")) {
-                        document.querySelector("li.product[name='" + oldFocusedProduct + "']").classList.remove("hovering");
+                    if (nm != oldFocusedProduct && document.querySelector(`li.product[name='${oldFocusedProduct}']`)) {
+                        document.querySelector(`li.product[name='${oldFocusedProduct}']`).classList.remove("hovering");
                     }
 
-                    currentFocusedProduct = document.querySelector("li.product[name='" + nm + "']");
+                    currentFocusedProduct = document.querySelector(`li.product[name='${nm}']`);
                     if (currentFocusedProduct) {
                         if (document.querySelector("li.product.hovering")) document.querySelector("li.product.hovering").classList.remove("hovering");
                         document.querySelector("#myinputbar").classList.remove("hyper");
