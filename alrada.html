@@ -847,6 +847,7 @@
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 
 <script>
+    show("staff: "+staffName);
     function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (const cookie of cookies) {
@@ -988,7 +989,7 @@
         writtenInSearch = "",
         editingquery = "",
         warehouseName = 'HQ',
-        staffName = "Al";
+        staffName =  (!staffName)? "Al":staffName;
         queryLog = "",
         responseClone = "",
         confirmAddReportToCache = function () { },
