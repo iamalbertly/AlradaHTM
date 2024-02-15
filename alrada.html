@@ -1006,7 +1006,7 @@
                 loadCachedTrans();
             } else { staffName = "Al"; }
             show("going to fetch alradasettings.json from online")
-            fetch('alradasettings.json')
+            fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
