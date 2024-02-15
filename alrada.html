@@ -986,11 +986,12 @@
         currentAppStateIndex = 0,
         names = [],
         categories = {},
-        writtenInSearch = "",
-        editingquery = "",
-        staffName = "",
-        warehouseName = 'HQ',
-        queryLog = "",
+        ald_lstreply="",
+        writtenInSearch ="",
+        editingquery ="",
+        staffName ="",
+        warehouseName ='HQ',
+        queryLog ="",
         responseClone = "", // 1
         confirmAddReportToCache = function () { },
         confirmSendReportRightAway = function () { },
@@ -1058,14 +1059,14 @@
             try {
                 if (global('ALRADAUSER'))
                     staffName = global('ALRADAUSER');
-                var alrada_lastreply = global('ALDLSTREPLY');
+                ald_lstreply = global('ALDLSTREPLY');
             } catch (e) { }
         }
         staffName = (staffName == "") ? "XX" : staffName;
     }
     catch (e) {
         show("error laoding defaults: " + e.stack);
-        var alrada_lastreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
+         ald_lstreply = ".* ,mauzo yako yana kadiriya ..... ...... ..... ..... ..... .... ...... ........";
     }
 
     function loadCachedTrans() {
@@ -2452,7 +2453,7 @@
     try {
         var ALRADADATE = day + " / " + month;
     } catch (e) {
-        //  var alrada_lastreply = " ,mauzo yako yana kadiriya ..... ..... ..... .... ...... ........";
+        
     }
 
 </script>
