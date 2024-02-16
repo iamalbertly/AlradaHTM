@@ -1350,7 +1350,7 @@
             params.append('payload',values);
       
             if(typeof tasker == 'undefined')
-            var finalurl = "https://cors-proxy.htmldriven.com/?url="+(posturl+"?"+params);
+            var finalurl = "https://corsproxy.io/?"+(posturl+"?"+params);
             else
             var finalurl = posturl+"?"+params;
             fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
