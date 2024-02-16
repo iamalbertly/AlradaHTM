@@ -58,7 +58,10 @@
 
     button {
         font-size: 11px;
+        min-height: 100%;
         width: -webkit-fill-available;
+        height: -webkit-fill-available;
+
     }
 
     body {
@@ -343,6 +346,7 @@
         padding: 0 2px 0;
         position: sticky;
         top: 0;
+        min-height:35px;
     }
 
     #myinputbar>div {
@@ -404,7 +408,7 @@
     #resultpad {
         background: #f5f5f5;
         display: block;
-        height: 45%;
+        min-height: 120px;
         margin: 0;
         margin-top: 3px;
         overflow-x: clip;
@@ -776,7 +780,7 @@
 </head>
 <div id="mywebview" class="wholesale_sale" style="min-height:100%;display:block;">
     <div id="news_display"
-        style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;"><button
+        style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px"><button
             style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
             <div id="date" onclick="getShopDate()"></span>
                 <script>var date = new Date(); var mydate = date.getDate() + "/" + eval(date.getMonth() + 1) + "/" + eval(date.getFullYear()); document.getElementById("date").innerHTML = mydate; </script>
@@ -1028,7 +1032,6 @@
             createProductsView();
         }
         else if (settingsObj == undefined) {
-            show("settingsObj: undefined")
                 try {
                     if (global('ALDSETTING'))
                         var settingsObj = JSON.parse(global('ALDSETTING'));
