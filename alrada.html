@@ -1344,8 +1344,10 @@
             const params = new URLSearchParams(new URL(posturl).search);
             params.append('payload',values);
       
-            var finalurl = "https://cors-anywhere.herokuapp.com/"+posturl+"?"+params;
-            
+            if(typeof tasker == 'undefined')
+            var finalurl = "https://corsproxy.io/?"+encodeURIComponent(posturl+"?"+params);
+            else
+            var finalurl = posturl+"?"+params;
             fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
                 .then(response => {
                     responseClone = response.clone();
