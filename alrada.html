@@ -1350,7 +1350,7 @@
             params.append('payload',values);
       
             if(typeof tasker == 'undefined')
-            var finalurl = "https://thingproxy.freeboard.io/fetch/"+encodeURIComponent(posturl+"?"+params);
+            var finalurl = "https://thingproxy.freeboard.io/fetch/"+(posturl+"?"+params);
             else
             var finalurl = posturl+"?"+params;
             fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
@@ -1611,7 +1611,7 @@
         });
 
         document.querySelector("#cachedTrans").addEventListener("click", e => {
-            if (!JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]).json_response) {
+            if (!cachedTransObjectString[appStates[currentAppStateIndex]]) {
                 show("Huja fadhi chochote...");
                 return 0;
             }
