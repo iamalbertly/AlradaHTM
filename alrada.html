@@ -695,7 +695,9 @@
         position: fixed;
         right: 1px;
         top: 1px;
-        width: 20px
+        width: 20px;
+        max-height: 25px;
+    min-height: unset;
     }
 
     #cachedTrans>div>span.part1 {
@@ -722,7 +724,7 @@
         flex-direction: row;
         display: flex;
         position: relative;
-        max-height: 25;
+        max-height: 25px;
         flex-wrap: wrap;
         padding-bottom: 20px;
         text-align: -webkit-left;
@@ -1338,14 +1340,17 @@
             navigator.clipboard.writeText(clipboard.value).then(function (x) {
                 showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
             });
-        }catch(e){}
+        }catch(e){   clipboard.focus();
+            navigator.clipboard.writeText(clipboard.value).then(function (x) {
+                showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
+            }); }
 
             const posturl = "https://script.google.com/macros/s/AKfycbwSjP9ufSbzleeYo14tM7tG_7so9MNie71F36J4MSJCzK2vT07efTeP_kKSSlE_56gX/exec";
             const params = new URLSearchParams(new URL(posturl).search);
             params.append('payload',values);
       
             if(typeof tasker == 'undefined')
-            var finalurl = "https://corsproxy.io/?"+encodeURIComponent(posturl+"?"+params);
+            var finalurl = "https://thingproxy.freeboard.io/fetch/"+encodeURIComponent(posturl+"?"+params);
             else
             var finalurl = posturl+"?"+params;
             fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
