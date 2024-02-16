@@ -32,7 +32,16 @@
     }
 
     li#confirmCachedEntry>div>div>button {
-        width: auto;
+        position: absolute;
+        right: 0px;
+        height: 20px;
+        width: 30px;
+        min-height: unset;
+    }
+
+    #loading-text>code>ul>li {
+        overflow-x: auto;
+        margin-right: 20px;
     }
 
     li#confirmCachedEntry>div>div>div>a,
@@ -344,7 +353,7 @@
         padding: 0 2px 0;
         position: sticky;
         top: 0;
-        min-height:35px;
+        min-height: 35px;
     }
 
     #myinputbar>div {
@@ -674,7 +683,7 @@
         height: 60%;
         justify-content: space-around;
         left: 50%;
-        padding: 20px;
+        padding: 10px;
         position: fixed;
         text-align: center;
         top: 50%;
@@ -697,7 +706,7 @@
         top: 1px;
         width: 20px;
         max-height: 25px;
-    min-height: unset;
+        min-height: unset;
     }
 
     #cachedTrans>div>span.part1 {
@@ -781,7 +790,8 @@
 </head>
 <div id="mywebview" class="wholesale_sale" style="min-height:100%;display:block;">
     <div id="news_display"
-        style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px"><button
+        style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px">
+        <button
             style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
             <div id="date" onclick="getShopDate()"></span>
                 <script>var date = new Date(); var mydate = date.getDate() + "/" + eval(date.getMonth() + 1) + "/" + eval(date.getFullYear()); document.getElementById("date").innerHTML = mydate; </script>
@@ -852,39 +862,33 @@
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 
 <script>
-    try{
-    show("staff: "+staffName);}
-    catch(e){}
-    function getCookie(name) {
-        const cookies = document.cookie.split(';');
-        for (const cookie of cookies) {
-            const [cookieName, cookieValue] = cookie.trim().split('=');
-            if (cookieName === name) {
-                return cookieValue;
-            }
-        }
-        return null;
+    try {
+        show("staff: " + staffName);
     }
+    catch (e) { }
 
     if (typeof setGlobal === "function") { /* in tasker*/
 
     } else {
         function setGlobal(variableName = "", value = "") {
-            const existingValue = getCookie(variableName);
+
+            const existingValue = localStorage.getItem(variableName);
             if (existingValue !== null) {
                 if (existingValue !== value) {
-                    document.cookie = `${variableName}=${value}; path=/`;
+                    localStorage.setItem(variableName, value);
                 }
             } else {
-                const expirationDate = new Date();
-                expirationDate.setTime(expirationDate.getTime() + 30 * 24 * 60 * 60 * 1000);
-                const expires = `expires=${expirationDate.toUTCString()}`;
-                document.cookie = `${variableName}=${value}; ${expires}; path=/`;
+                localStorage.setItem(variableName, value);
             }
+        }
+
+        function global(variableName = "", par2 = "") {
+            var storedValue = localStorage.getItem(variableName);
+            return (storedValue != null) ? storedValue : null;
         }
         function setClip(par1 = "", par2 = "") { }
         function flashLong(par1 = "", par2 = "") { }
-        function global(variableName = "", par2 = "") { return getCookie(variableName) }
+
     }
 
 
@@ -989,15 +993,15 @@
         products_jsonString = {},
         suppliers_jsonString = {},
         productsJsonString = undefined;
-        currentAppStateIndex = 0,
+    currentAppStateIndex = 0,
         names = [],
         categories = {},
         ald_lstreply = "",
         writtenInSearch = "",
         editingquery = "",
         warehouseName = 'HQ',
-        staffName =  (typeof staffName =="undefined")? "Al":staffName;
-        queryLog = "",
+        staffName = (typeof staffName == "undefined") ? "Al" : staffName;
+    queryLog = "",
         responseClone = "",
         confirmAddReportToCache = function () { },
         confirmSendReportRightAway = function () { },
@@ -1028,44 +1032,43 @@
     }
     try {
         if (settingsObj != undefined) {
-            show("settingsObj was not undefined");
             loadCachedTrans();
             createProductsView();
         }
-        else if (settingsObj == undefined) {
-                try {
-                    if (global('ALDSETTING'))
-                        var settingsObj = JSON.parse(global('ALDSETTING'));
-                } catch (e) { }
-            fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
-                .then(response => {
-                    responseClone = response.clone();
-                    if (!response.ok) {
-                        responseClone.text()
-                            .then(function (bodyText) {
-                                show("recieved the following: " + bodyText)
+        else {
+            if (global('ALDSETTING')) {
+                var settingsObj = JSON.parse(global('ALDSETTING'));
+                loadCachedTrans();
+                createProductsView();
+            }
+            else
+                fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
+                    .then(response => {
+                        responseClone = response.clone();
+                        if (!response.ok) {
+                            responseClone.text()
+                                .then(function (bodyText) {
+                                    show("recieved the following: " + bodyText)
+                                });
+                            return response.text().then(text => {
+                                throw new Error('Server response: ' + text, true, true);
                             });
-                        return response.text().then(text => {
-                            throw new Error('Server response: ' + text, true, true);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    settingsObj = data;
-                    productsJsonString = settingsObj.settings.alradaitemnames;
-                    loadCachedTrans();
-                    createProductsView();
-                })
-                .catch((error) => { });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        settingsObj = data;
+                        setGlobal('ALDSETTING', JSON.stringify(settingsObj));
+                        loadCachedTrans();
+                        createProductsView();
+                    })
+                    .catch((error) => { });
         }
-        
-            try {
-                if (global('ALRADAUSER'))
-                    staffName = global('ALRADAUSER');
-                ald_lstreply = global('ALDLSTREPLY');
-            } catch (e) { }
-        
+
+        if (global('ALRADAUSER'))
+            staffName = global('ALRADAUSER');
+        ald_lstreply = global('ALDLSTREPLY');
+
         staffName = (staffName == "") ? "XX" : staffName;
     } catch (e) {
         show("error laoding defaults: " + e.stack, true);
@@ -1074,33 +1077,33 @@
 
     function loadCachedTrans() {
         try {
-                try {
-                    for (const TransType in appStates) {
-                        if (global(`ALDCACHE${appStates[TransType]}`)) {
-                            cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
-                            cachedTransCount[appStates[TransType]] = cachedTransactionQueries[appStates[TransType]].split("||").length;
-                            queryLog = cachedTransactionQueries[appStates[TransType]];
+            try {
+                for (const TransType in appStates) {
+                    if (global(`ALDCACHE${appStates[TransType]}`)) {
+                        cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
+                        cachedTransCount[appStates[TransType]] = cachedTransactionQueries[appStates[TransType]].split("||").length;
+                        queryLog = cachedTransactionQueries[appStates[TransType]];
 
-                            cachedTransObjectString[appStates[TransType]] = GetProductDetails(queryLog);
-                            cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(cachedTransObjectString[appStates[TransType]]);
+                        cachedTransObjectString[appStates[TransType]] = GetProductDetails(queryLog);
+                        cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(cachedTransObjectString[appStates[TransType]]);
 
-                            var total = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseMsg);
+                        var total = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseMsg);
 
-                            if (total != null) cachedTransCashTotal[appStates[TransType]] = eval((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
-                        } else {
-                            cachedTransCount[appStates[TransType]] = 0;
-                            cachedTransCashTotal[appStates[TransType]] = 0;
-                        }
+                        if (total != null) cachedTransCashTotal[appStates[TransType]] = eval((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
+                    } else {
+                        cachedTransCount[appStates[TransType]] = 0;
+                        cachedTransCashTotal[appStates[TransType]] = 0;
                     }
+                }
 
-                    document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[0]];
-                    document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
-                    document.querySelectorAll(".hiddenpreview").forEach(el => {
-                        el.classList.remove("hiddenpreview");
-                        el.classList.add("shownpreview");
-                    });
+                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[0]];
+                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
+                document.querySelectorAll(".hiddenpreview").forEach(el => {
+                    el.classList.remove("hiddenpreview");
+                    el.classList.add("shownpreview");
+                });
 
-                } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
+            } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
         } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
         clearvalues();
     }
@@ -1334,30 +1337,56 @@
                 setGlobal(`ALDSNDSTATUS${transactionType}`, 'sending');
             }
             const clipboard = document.querySelector("#clipboard");
-            try{
-            clipboard.value = values;
-            clipboard.focus();
-            navigator.clipboard.writeText(clipboard.value).then(function (x) {
-                showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
-            });
-        }catch(e){   clipboard.focus();
-            navigator.clipboard.writeText(clipboard.value).then(function (x) {
-                showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
-            }); }
-
+            try {
+                clipboard.value = values;
+                clipboard.focus();
+                navigator.clipboard.writeText(clipboard.value).then(function (x) {
+                    showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
+                });
+            } catch (e) {
+                clipboard.focus();
+                navigator.clipboard.writeText(clipboard.value).then(function (x) {
+                    showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
+                });
+            }
             const posturl = "https://script.google.com/macros/s/AKfycbwSjP9ufSbzleeYo14tM7tG_7so9MNie71F36J4MSJCzK2vT07efTeP_kKSSlE_56gX/exec";
             const params = new URLSearchParams(new URL(posturl).search);
-            params.append('payload',values);
-      
-            if(typeof tasker == 'undefined')
-            var finalurl = "https://corsproxy.io/?"+(posturl+"?"+params);
-            else
-            var finalurl = posturl+"?"+params;
-            fetch(finalurl, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+
+            params.append('payload', values);
+            const geturl = posturl + "?" + params;
+            var options = {};
+            if (typeof tasker == 'undefined') /*if not in tasker*/ {
+
+                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded',
+                        'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
+                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
+                    },
+                    body: new URLSearchParams({ 'my-url': geturl })
+                };
+            }
+            else { /* inside Tasker*/
+                var finalurl = geturl;
+                options = {
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        Origin: '*'
+                    }
+                };
+                show("Sending Report...");
+            }
+
+            fetch(finalurl, options)
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
                         return response.text().then(text => {
+                            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                             throw new Error('ErrServer response: ' + text, false, true);
                         });
                     }
@@ -1375,13 +1404,15 @@
                         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                     } catch (e) { }
-                     setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]); setGlobal(`ALDSNDSTATUS${transactionType}`, 'ready'); 
+                    setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]); setGlobal(`ALDSNDSTATUS${transactionType}`, 'ready');
                     try {
                         responseClone.text()
                             .then(bodyText => {
                                 show('txtServer responded: ' + bodyText, false, true, false);
                             });
                     } catch (e) {
+                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                         show(e.stack + "-there was an error");
                     }
                     show("Repoti Imetumwa...");
@@ -1482,9 +1513,9 @@
             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-            
-                setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-            
+
+            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
 
             reCreateCacheCleanupForm();
         };
@@ -1526,9 +1557,9 @@
             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-            
-                setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-            
+
+            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
             reCreateCacheCleanupForm();
         }
     }
@@ -1844,12 +1875,12 @@
         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
 
-        
-            for (const TransType in cachedTransactionQueries) {
-                var transaction = cachedTransactionQueries[TransType];
-                setGlobal(`ALDCACHE${TransType}`, transaction)
-            }
-        
+
+        for (const TransType in cachedTransactionQueries) {
+            var transaction = cachedTransactionQueries[TransType];
+            setGlobal(`ALDCACHE${TransType}`, transaction)
+        }
+
 
         document.querySelectorAll(".hiddenpreview").forEach(el => {
             el.classList.remove("hiddenpreview");
@@ -1995,9 +2026,9 @@
                             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-    
-                                setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                            
+
+                            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
                             reCreateCacheCleanupForm();
                         }
                         else if (family == "confirmTransactionEntry") {
@@ -2053,9 +2084,9 @@
                         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-                       
-                            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                        
+
+                        setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
                         closeFilterDialog();
 
                         reCreateCacheCleanupForm();
@@ -2113,9 +2144,9 @@
                     document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                     document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
-                    
-                        setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                    
+
+                    setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
                     reCreateCacheCleanupForm();
                 }
                 break;
@@ -2194,10 +2225,10 @@
         if (typeof returntype == 'undefined') var returntype = "single";
         let rowmsg = "";
 
-        if (productsJsonString == undefined) throw new Error("productsJsonString is undefined");
-        productsJsonString = productsJsonString.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
+        if (settingsObj.settings.alradaitemnames == undefined) throw new Error("settingsObj.settings.alradaitemnames is undefined");
+        settingsObj.settings.alradaitemnames = settingsObj.settings.alradaitemnames.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
 
-        var data = JSON.parse(productsJsonString);
+        var data = JSON.parse(settingsObj.settings.alradaitemnames);
         var headerRow = Object.keys(data[0]);
         var body = data.map(row => Object.values(row));
 
@@ -2411,12 +2442,13 @@
 
         closeFilterDialog();
     }
+
+
     document.querySelector("#warehouseName").innerHTML = warehouseName;
-    /* if in debugger */
-    if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1)
-        document.querySelector("a").addEventListener("click", (e) => {
-            e.preventDefault();
-        });
+    /* disable clicks on link */
+    document.querySelector("a").addEventListener("click", (e) => {
+        e.preventDefault();
+    });
 
     try {
         var ALRADADATE = day + " / " + month;
