@@ -784,6 +784,7 @@
         display: none;
     }
 </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <head>
     <link rel="shortcut icon" href="#">
@@ -1219,7 +1220,7 @@
                     const categoryArr = product.category_breakdown.split("_");
                     const cat = categoryArr.join(" ");
                     const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                    return createProductLi(name, name.replaceAll(" ", "_"), cat, price, categorySign, localAppState);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", ''), cat, price, categorySign, localAppState);
                 });
                 break;
             }
@@ -1228,7 +1229,7 @@
                 names = suppliers_jsonString.map(supplier => {
                     const name = supplier.officialname;
                     const contactName = supplier.contactname;
-                    return createProductLi(name, name.replaceAll(" ", "_"), "", "", "", localAppState, contactName);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", ''), "", "", "", localAppState, contactName);
                 });
                 break;
             }
