@@ -1387,7 +1387,6 @@
                                 cachedTransactionQueries[transactionType] = "";
                                 cachedTransCount[transactionType] = 0;
                                 cachedTransCashTotal[transactionType] = 0;
-
                                 document.querySelector("#btnSend2Cache").classList.remove("disabled");
                                 document.querySelector("#btnSend2Cache").disabled = false;
                                 document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
@@ -1444,6 +1443,8 @@
             show(e.stack + "-an error");
         }
     }
+
+
 
     function handleCachedTransEvent(event) {
         if (!event || !event.target.id) return;
