@@ -868,7 +868,7 @@
     }
     catch (e) { }
 
-    if (typeof setGlobal === "function") { /* in tasker*/
+    if (typeof createScene === "function") { /* in tasker*/
 
     } else {
         function setGlobal(variableName = "", value = "") {
@@ -979,7 +979,7 @@
     }
     function goto(location) {
         /* if in tasker*/
-        if (typeof tasker !== "undefined") {
+        if (typeof createScene !== 'undefined') {
             window.location.href = location;
         } else {
             console.log("goto: " + location);
@@ -1356,8 +1356,8 @@
             params.append('payload', values);
             const geturl = posturl + "?" + params;
             var options = {};
-            if (typeof tasker == 'undefined') /*if not in tasker*/ {
-
+            if (typeof createScene == 'undefined') {
+         /* not in tasker*/
                 var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                 options = {
                     method: 'POST',
@@ -1378,7 +1378,7 @@
                         Origin: '*'
                     }
                 };
-                show("Sending Report...");
+                show("Server is sending Report...");
             }
 
             fetch(finalurl, options)
