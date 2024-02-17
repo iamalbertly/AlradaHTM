@@ -71,6 +71,11 @@
         width: -webkit-fill-available;
     }
 
+    ul {
+        padding-left: 0;
+        align-items: baseline;
+    }
+
     body {
         height: 100%;
         margin: 0;
@@ -437,10 +442,7 @@
         width: 100%
     }
 
-    div#result_display>ul {
-        padding-left: 0;
-        align-items: baseline;
-    }
+
 
     div#result_display>ul>li.total {
         position: sticky;
@@ -592,25 +594,22 @@
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        left: 50%;
-        padding: 20px;
+        left: 49%;
+        padding: 15px;
         position: fixed;
-        top: 50%;
+        top: 30%;
         transform: translate(-50%, -50%);
-        width: fit-content;
+        WIDTH: 60%;
         z-index: 90;
-    }
-
-    .mypopupdialog>* {
-        display: flex;
-        flex-direction: column;
-        padding: 5px;
-        padding-top: 10px;
     }
 
     .mypopupdialog>*>li>a {
         border: none;
         text-decoration: none;
+    }
+
+    #choose-mode>ul>li {
+        font-size: larger;
     }
 
     .mypopupdialog>.buttonholder {
@@ -863,16 +862,8 @@
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 
 <script>
-    try {
-        show("staff: " + staffName);
-    }
-    catch (e) { }
-
-    if (typeof createScene === "function") { /* in tasker*/
-
-    } else {
+    if (typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
-
             const existingValue = localStorage.getItem(variableName);
             if (existingValue !== null) {
                 if (existingValue !== value) {
@@ -1313,14 +1304,6 @@
             document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
             document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
 
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-                status = global(`ALDSNDSTATUS${transactionType}`);
-                if (status == "sending") {
-                    show("Bado Repoti ya Mwisho Haijakamilika kwenda");
-                    return;
-                }
-            }
-
             var transactionType = appStates[currentAppStateIndex];
             if (cachedTransactionQueries[transactionType] == 0) return;
             hideLoadingScreen();
@@ -1334,9 +1317,7 @@
             const timestampMilliseconds = (new Date()).getTime();
             const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
             const values = JSON.stringify({ usr: staffName, data: data, time: timestampMilliseconds, cmd: "add_transaction" });
-            if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-                setGlobal(`ALDSNDSTATUS${transactionType}`, 'sending');
-            }
+
             const clipboard = document.querySelector("#clipboard");
             try {
                 clipboard.value = values;
@@ -1357,7 +1338,7 @@
             const geturl = posturl + "?" + params;
             var options = {};
             if (typeof createScene == 'undefined') {
-         /* not in tasker*/
+                /* not in tasker*/
                 var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                 options = {
                     method: 'POST',
@@ -1378,7 +1359,7 @@
                         Origin: '*'
                     }
                 };
-                show("Server is sending Report...");
+                show("Tasker's is sending Report...");
             }
 
             fetch(finalurl, options)
@@ -1405,7 +1386,7 @@
                         document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                     } catch (e) { }
-                    setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]); setGlobal(`ALDSNDSTATUS${transactionType}`, 'ready');
+                    setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                     try {
                         responseClone.text()
                             .then(bodyText => {
@@ -1419,13 +1400,9 @@
                     show("Repoti Imetumwa...");
                     goto("command||beep");
                     createProductsView();
-
                 })
                 .catch((error) => {
                     if (error.message.includes('Failed to fetch')) {
-                        if (window.location.href.indexOf("http://127.0.0.1:3000/") == -1) {
-                            setGlobal(`ALDSNDSTATUS${transactionType}`, 'sending_failed');
-                        }
                         show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
                     } else {
                         responseClone.text()
@@ -1434,10 +1411,8 @@
                             });
                     }
                 });
-
             setTimeout(function () {
                 hideLoadingScreen();
-
             }, 4000);
         }
         catch (e) {
