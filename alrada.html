@@ -535,7 +535,7 @@
         overflow-x: clip;
         overflow-y: auto;
         position: sticky;
-        max-height: 325px;
+        max-height: 367px;
     }
 
     #results li {
@@ -1336,9 +1336,22 @@
 
             params.append('payload', values);
             const geturl = posturl + "?" + params;
-            var options = {};
-            if (typeof createScene == 'undefined') {
-                /* not in tasker*/
+            var options = {}; var islocal = window.location;
+            if (window.location.hostname == "127.0.0.1") {
+                var finalurl = geturl;
+                options = {
+                    mode: 'no-cors',
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        Origin: '*'
+                    }
+                };
+                show("Localhost is sending Report...");
+            }
+
+            else if (typeof createScene == 'undefined') {
+                /* not in tasker and not localhost*/
                 var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                 options = {
                     method: 'POST',
@@ -1366,9 +1379,21 @@
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
+                        var retHeaders = response.headers();
                         return response.text().then(text => {
-                            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                            if (text == "") {
+                                clearvalues();
+                                cachedTransObjectString[transactionType] = "";
+                                cachedTransactionQueries[transactionType] = "";
+                                cachedTransCount[transactionType] = 0;
+                                cachedTransCashTotal[transactionType] = 0;
+
+                                document.querySelector("#btnSend2Cache").classList.remove("disabled");
+                                document.querySelector("#btnSend2Cache").disabled = false;
+                                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+
+                            }else
                             throw new Error('ErrServer response: ' + text, false, true);
                         });
                     }
