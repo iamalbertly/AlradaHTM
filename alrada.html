@@ -23,7 +23,7 @@
 
     li#confirmCachedEntry>div,
     li#confirmTransactionEntry>div {
-        width: 90%;
+        width: 100%;
         justify-content: space-between;
     }
 
@@ -32,7 +32,7 @@
     }
 
     li#confirmCachedEntry>div>div>button {
-        position: absolute;
+
         right: 0px;
         height: 20px;
         width: 30px;
@@ -42,6 +42,7 @@
     #loading-text>code>ul>li {
         overflow-x: auto;
         margin-right: 20px;
+        width: 100%;
     }
 
     li#confirmCachedEntry>div>div>div>a,
@@ -610,6 +611,8 @@
 
     #choose-mode>ul>li {
         font-size: larger;
+        place-content: center;
+        border: 1px solid black;
     }
 
     .mypopupdialog>.buttonholder {
@@ -685,9 +688,9 @@
         padding: 10px;
         position: fixed;
         text-align: center;
-        top: 50%;
+        top: 45%;
         transform: translate(-50%, -50%);
-        width: 65%
+        width: 75%
     }
 
     #loading-text>code>ul {
@@ -860,6 +863,12 @@
 <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
         type="text" style="width:100%" /></div>
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
+<div id="processmsg-dialog-customers" class="hidden mypopupdialog">
+    <div>
+        <input id="customername" placeholder="hq" value="hq" />
+    </div>
+    <ul></ul>
+</div>
 
 <script>
     if (typeof createScene !== "function") { /* not in tasker*/
@@ -1192,14 +1201,14 @@
                     }
 
                     if (a.category_breakdown < b.category_breakdown) return 1;
-                    if (a.category_breakdown > b.category_breakdown) return -1;
+                    //  if (a.category_breakdown > b.category_breakdown) return -1;
 
                     if (b.laststocktakedate - a.laststocktakedate) {
                         return b.laststocktakedate - a.laststocktakedate;
                     }
 
-                    if (b.theysaylaststocktakeamt - a.theysaylaststocktakeamt) {
-                        return b.theysaylaststocktakeamt - a.theysaylaststocktakeamt;
+                    if (b.thysaylaststocktakeamt - a.thysaylaststocktakeamt) {
+                        return b.thysaylaststocktakeamt - a.thysaylaststocktakeamt;
                     }
 
                     return 0;
@@ -1392,8 +1401,8 @@
                                 document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
                                 document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
 
-                            }else
-                            throw new Error('ErrServer response: ' + text, false, true);
+                            } else
+                                throw new Error('ErrServer response: ' + text, false, true);
                         });
                     }
                     return response.json();
@@ -2309,16 +2318,21 @@
                                         if (whole_multiplier)
                                             unitprice = item.w_purchase_a,
                                                 priceTotal += item.w_purchase_a * whole_multiplier;
-                                        if (retail_multiplier)
-                                            unitprice = Math.round((((unitprice == "") ? (item.w_purchase_a + item.p_purchasemarkup_a) : unitprice) / item.carton) * 100) / 100,
-                                                priceTotal += unitprice * retail_multiplier;
+                                        if (retail_multiplier) {
+
+                                            if (retail_multiplier = (item.carton / 2))
+                                                unitprice = (item.w_purchase_a / 2)/retail_multiplier;
+                                            else
+                                                unitprice = Math.round((((unitprice == "") ? (item.w_purchase_a + item.p_purchasemarkup_a) : unitprice) / item.carton) * 100) / 100;
+
+                                            priceTotal += unitprice * retail_multiplier;
+                                        }
 
                                     }
                                     else {
                                         if (whole_multiplier || whole_multiplier == 0)
                                             unitprice = item.w_price_a,
                                                 priceTotal += item.w_price_a * whole_multiplier;
-
                                         if (retail_multiplier)
                                             unitprice = ((unitprice == "") ? item.w_price_a : unitprice) / item.carton,
                                                 priceTotal += unitprice * retail_multiplier;
