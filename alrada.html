@@ -1349,7 +1349,7 @@
             if (window.location.hostname == "127.0.0.1") {
                 var finalurl = geturl;
                 options = {
-                      mode: 'no-cors',
+                    mode: 'no-cors',
                     method: 'GET',
                     headers: {
                         'content-type': 'application/json',
@@ -2253,12 +2253,12 @@
         if (typeof query !== "string") { query = new String(query); }
         var howmanyitems = query.split(new RegExp("(\\s\\&\\s)|,\\s|,|\\sn\\s")).filter((n) => n);
 
-        let response="",itemcount = 1, total = 0,  projectedProfitTotal = 0, remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
+        let response = "", itemcount = 1, total = 0, projectedProfitTotal = 0, remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
         howmanyitems.some(function (product, n) {
             var priceTotal = 0, netpriceTotal = 0, transType = "",
                 unitprice = (/\@\d+/.test(product)) ? eval(product.match(/\@\d+\.{0,1}\d{0,}/)[0].replace("@", "")) : "",
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
-                appStateMark = /.*(\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/.test(product)? /.*(|ӿ|\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/g.exec(product)[0]: "",
+                appStateMark = /.*(\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/.test(product) ? /.*(|ӿ|\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/g.exec(product)[0] : "",
                 myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                 whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
                 retail_multiplier = 0, transCarton = "";
@@ -2278,7 +2278,7 @@
 
             if (!/\$\d+$/.test(product)) {
                 if (transType == "" || transType == undefined)
-                    transType = (/\#\d+/g.test(product.trim()))? "stocktake": (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
+                    transType = (/\#\d+/g.test(product.trim())) ? "stocktake" : (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
                         ? "retail"
                         : "wholesale";
                 try {
