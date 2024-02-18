@@ -1086,9 +1086,9 @@
                         queryLog = cachedTransactionQueries[appStates[TransType]];
 
                         cachedTransObjectString[appStates[TransType]] = GetProductDetails(queryLog);
-                        cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(cachedTransObjectString[appStates[TransType]]);
+                        cachedTransObjectJson[appStates[TransType]] = JSON.parse(cachedTransObjectString[appStates[TransType]]);
 
-                        var total = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseMsg);
+                        var total = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(cachedTransObjectJson[appStates[TransType]].finalResponseMsg);
 
                         if (total != null) cachedTransCashTotal[appStates[TransType]] = eval((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
                     } else {
@@ -1349,7 +1349,7 @@
             if (window.location.hostname == "127.0.0.1") {
                 var finalurl = geturl;
                 options = {
-                    /*  mode: 'no-cors',*/
+                      mode: 'no-cors',
                     method: 'GET',
                     headers: {
                         'content-type': 'application/json',
@@ -1527,8 +1527,6 @@
 
 
             setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-
-
             reCreateCacheCleanupForm();
         };
 
