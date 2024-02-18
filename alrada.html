@@ -863,7 +863,7 @@
 <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
         type="text" style="width:100%" /></div>
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
-<div id="processmsg-dialog-customers" class="hidden mypopupdialog">
+<div id="filter-dialog-customers" class="mypopupdialog">
     <div>
         <input id="customername" placeholder="hq" value="hq" />
     </div>
@@ -1349,7 +1349,7 @@
             if (window.location.hostname == "127.0.0.1") {
                 var finalurl = geturl;
                 options = {
-                    mode: 'no-cors',
+                  /*  mode: 'no-cors',*/
                     method: 'GET',
                     headers: {
                         'content-type': 'application/json',
@@ -2184,7 +2184,6 @@
 
         const matchingProducts = [];
         if (filterType.startsWith("category")) {
-
             const category = filterType.split("_")[1];
             for (const product of products) {
 
@@ -2321,13 +2320,12 @@
                                         if (retail_multiplier) {
 
                                             if (retail_multiplier = (item.carton / 2))
-                                                unitprice = (item.w_purchase_a / 2)/retail_multiplier;
+                                                unitprice = (item.w_purchase_a / 2) / retail_multiplier;
                                             else
                                                 unitprice = Math.round((((unitprice == "") ? (item.w_purchase_a + item.p_purchasemarkup_a) : unitprice) / item.carton) * 100) / 100;
 
                                             priceTotal += unitprice * retail_multiplier;
                                         }
-
                                     }
                                     else {
                                         if (whole_multiplier || whole_multiplier == 0)
