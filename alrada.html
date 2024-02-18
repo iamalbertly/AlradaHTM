@@ -2258,7 +2258,7 @@
             var priceTotal = 0, netpriceTotal = 0, transType = "",
                 unitprice = (/\@\d+/.test(product)) ? eval(product.match(/\@\d+\.{0,1}\d{0,}/)[0].replace("@", "")) : "",
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
-                appStateMark = /.*(\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/.test(product) ? /.*(|ӿ|\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/g.exec(product)[0] : "",
+                appStateMark = /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/.test(product) ? /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/g.exec(product)[1] : "",
                 myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                 whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
                 retail_multiplier = 0, transCarton = "";
