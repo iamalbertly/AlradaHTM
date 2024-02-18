@@ -1201,7 +1201,7 @@
                     }
 
                     if (a.category_breakdown < b.category_breakdown) return 1;
-                    //  if (a.category_breakdown > b.category_breakdown) return -1;
+                    /*  if (a.category_breakdown > b.category_breakdown) return -1; */
 
                     if (b.laststocktakedate - a.laststocktakedate) {
                         return b.laststocktakedate - a.laststocktakedate;
@@ -1304,7 +1304,7 @@
     };
 
     function sendCachedTrans(event) {
-        var status = "";
+        var sndClient = "";
         try {
             cachedTransCount[transactionType] = "Tunatuma Repoti";
             cachedTransCashTotal[transactionType] = "Subiri ..";
@@ -1349,14 +1349,14 @@
             if (window.location.hostname == "127.0.0.1") {
                 var finalurl = geturl;
                 options = {
-                  /*  mode: 'no-cors',*/
+                    /*  mode: 'no-cors',*/
                     method: 'GET',
                     headers: {
                         'content-type': 'application/json',
                         Origin: '*'
                     }
                 };
-                show("Localhost is sending Report...");
+                sndClient = "Localhost";
             }
 
             else if (typeof createScene == 'undefined') {
@@ -1371,6 +1371,7 @@
                     },
                     body: new URLSearchParams({ 'my-url': geturl })
                 };
+                sndClient = "Web-Proxy";
             }
             else { /* inside Tasker*/
                 var finalurl = geturl;
@@ -1381,7 +1382,7 @@
                         Origin: '*'
                     }
                 };
-                show("Tasker's is sending Report...");
+                sndClient = "Tasker";
             }
 
             fetch(finalurl, options)
@@ -1430,7 +1431,7 @@
                         document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
                         show(e.stack + "-there was an error");
                     }
-                    show("Repoti Imetumwa...");
+                    show(client + ": Repoti Imetumwa...");
                     goto("command||beep");
                     createProductsView();
                 })
@@ -2228,8 +2229,8 @@
         });
     }
 
-    function GetProductDetails(query = "(hq)Uhai 600ml @400+1", exactdtail = "") {
-        var response = "", itemcount = 1, projectedProfitTotal = 0;
+    function GetProductDetails(query = "(hq)Uhai 600ml @400+1", appState = "", exactdtail = "") {
+        var response = "";
         query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
 
         if (typeof returntype == 'undefined') var returntype = "single";
@@ -2241,8 +2242,6 @@
         var data = JSON.parse(settingsObj.settings.alradaitemnames);
         var headerRow = Object.keys(data[0]);
         var body = data.map(row => Object.values(row));
-
-
         var dataHeadings = [], dataBody = [];
         headerRow.forEach(function (title) {
             dataHeadings.push(title);
@@ -2257,10 +2256,8 @@
         if (typeof query !== "string") { query = new String(query); }
         var howmanyitems = query.split(new RegExp("(\\s\\&\\s)|,\\s|,|\\sn\\s")).filter((n) => n);
 
-        let total = 0, remain = "", wholesale_remain = "", retail_remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
-
+        let itemcount = 1, total = 0,  projectedProfitTotal = 0, remain = "", wholesale_remain = "", retail_remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
         howmanyitems.some(function (product, n) {
-
             var priceTotal = 0, netpriceTotal = 0, pricetype = "",
                 unitprice = (/\@\d+/.test(product)) ? eval(product.match(/\@\d+\.{0,1}\d{0,}/)[0].replace("@", "")) : "",
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
@@ -2283,7 +2280,7 @@
 
             if (!/\$\d+$/.test(product)) {
                 if (pricetype == "" || pricetype == undefined)
-                    pricetype = (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
+                    pricetype = (/\#\d+/g.test(product.trim()))? "stocktake": (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
                         ? "retail"
                         : "wholesale";
                 try {
@@ -2307,7 +2304,7 @@
                                 retail_multiplier = (getendvalue.indexOf("p") == -1) ? 0 : eval(getendvalue.match(/[r,p]\d+/)[0].replace("p", ""));
                                 multiplier = whole_multiplier + (retail_multiplier / item.carton);
 
-                                if ((appStates[currentAppStateIndex] == "wholesale_purchase_delivered") || (appStates[currentAppStateIndex] == "stocktake")) {
+                                if ((pricetype == "purchase") || (pricetype == "stocktake")) {
                                     var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
                                     var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)));
                                     projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
