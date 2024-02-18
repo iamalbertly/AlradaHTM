@@ -2230,7 +2230,6 @@
     }
 
     function GetProductDetails(query = "(hq)Uhai 600ml @400+1", appState = "", exactdtail = "") {
-        var response = "";
         query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
 
         if (typeof returntype == 'undefined') var returntype = "single";
@@ -2256,11 +2255,12 @@
         if (typeof query !== "string") { query = new String(query); }
         var howmanyitems = query.split(new RegExp("(\\s\\&\\s)|,\\s|,|\\sn\\s")).filter((n) => n);
 
-        let itemcount = 1, total = 0,  projectedProfitTotal = 0, remain = "", wholesale_remain = "", retail_remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
+        let response="",itemcount = 1, total = 0,  projectedProfitTotal = 0, remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
         howmanyitems.some(function (product, n) {
-            var priceTotal = 0, netpriceTotal = 0, pricetype = "",
+            var priceTotal = 0, netpriceTotal = 0, transType = "",
                 unitprice = (/\@\d+/.test(product)) ? eval(product.match(/\@\d+\.{0,1}\d{0,}/)[0].replace("@", "")) : "",
                 getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
+                appStateMark = /.*(\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/.test(product)? /.*(|ӿ|\+\+|--|\+|\-|\#|\=)\d{0,}p{0,1}\d+$/g.exec(product)[0]: "",
                 myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                 whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
                 retail_multiplier = 0, transCarton = "";
@@ -2279,8 +2279,8 @@
             rawproductname = rawproductname.replace(/=\d+\.{0,1}\d{0,}|[r,p]\d+\.{0,1}\d{0,}$/, "").replace(/^\(.*\)/, "").replace(/\+$/, "").trim();
 
             if (!/\$\d+$/.test(product)) {
-                if (pricetype == "" || pricetype == undefined)
-                    pricetype = (/\#\d+/g.test(product.trim()))? "stocktake": (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
+                if (transType == "" || transType == undefined)
+                    transType = (/\#\d+/g.test(product.trim()))? "stocktake": (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
                         ? "retail"
                         : "wholesale";
                 try {
@@ -2304,13 +2304,13 @@
                                 retail_multiplier = (getendvalue.indexOf("p") == -1) ? 0 : eval(getendvalue.match(/[r,p]\d+/)[0].replace("p", ""));
                                 multiplier = whole_multiplier + (retail_multiplier / item.carton);
 
-                                if ((pricetype == "purchase") || (pricetype == "stocktake")) {
+                                if ((transType == "purchase") || (transType == "stocktake")) {
                                     var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
                                     var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)));
                                     projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
                                 }
                                 if (unitprice == "") {
-                                    if (pricetype == "purchase") {
+                                    if (transType == "purchase") {
                                         if (whole_multiplier)
                                             unitprice = item.w_purchase_a,
                                                 priceTotal += item.w_purchase_a * whole_multiplier;
@@ -2366,14 +2366,14 @@
                 transUnitPrice = unitprice,
                     transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
                     transStaffID = staffName.slice(0, 2),
-                    transType = (specialTransType == "") ? appStates[currentAppStateIndex] : specialTransType;
+                    transType = (specialTransType == "") ? appState : specialTransType;
                 getendvalue = (getendvalue) ? getendvalue : "";
 
 
                 response = `${response} <li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
                 response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}" onClick="handleTransEvent(event)" > ${rawproductname} </a>`;
                 response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> @${unitprice}</a>`;
-                response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMarks[currentAppStateIndex]}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${appStateMarks[currentAppStateIndex]}${displaymultiplier} = ${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
+                response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${appStateMark}${displaymultiplier} = ${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
                 response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
                 response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
@@ -2385,9 +2385,9 @@
             if ((responseArr.length == 0) || (/\$\d+$/.test(product))) {
                 remain = (/\#\d+/.test(product)) ? parseFloat(product.match(/\#\d+/)[0].replace("#", "")) : 0;
                 unitprice = 1;
-                var rx = new RegExp("\\" + appStateMarks[currentAppStateIndex] + "\\d+");
+                var rx = new RegExp("\\" + appStateMark + "\\d+");
 
-                multiplier = (rx.test(product)) ? parseFloat(product.match(rx)[0].replace(appStateMarks[currentAppStateIndex], "")) : 1;
+                multiplier = (rx.test(product)) ? parseFloat(product.match(rx)[0].replace(appStateMark, "")) : 1;
                 priceTotal = (/\=\d+/.test(product)) ? parseFloat(product.match(/\=\d+/)[0].replace("=", "")) * -1 : multiplier * unitprice;
                 netpriceTotal = 0;
 
