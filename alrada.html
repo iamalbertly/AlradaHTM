@@ -858,14 +858,16 @@
         <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span>STOCK &nbsp;</a></li>
         <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span>MANUNUZI &nbsp;</a></li>
     </ul>
+    <a id="updateStr" href="#" onClick="fetchProductUpdate()">Update:<span> </span> </a>
 </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder="" title="clipboard" />
 <div id="filter-dialog" class="hidden mypopupdialog"></div>
 <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
         type="text" style="width:100%" /></div>
 <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
 <div id="filter-dialog-customers" class="mypopupdialog">
+    <h3>Enter Jina La Customer</h3>
     <div>
-        <input id="customername" placeholder="hq" value="hq" />
+        <input id="customername" placeholder="hq"/>
     </div>
     <ul></ul>
 </div>
@@ -1020,10 +1022,8 @@
         cachedTransactionQueries = [],
         results = document.getElementById('results');
     function getwarehouseName() {
-        warehouseName = prompt("Ingiza Jina la shop", "HQ");
-        if (warehouseName != null) {
-            document.getElementById("warehouseName").innerHTML = warehouseName;
-        } else warehouseName = "HQ";
+        document.getElementById('filter-dialog-customers').classList.remove('hidden');
+        document.querySelector('#filter-dialog-customers>div>input').focus();
     }
     function getShopDate() {
         mydate = prompt("Ingiza Tarehe MFANO: 31/1/2025", document.getElementById("date").innerHTML.replaceAll("&nbsp;", ""));
@@ -1161,15 +1161,23 @@
                 });
             });
 
-            document.querySelectorAll(".product > input").forEach(input => {
+            document.querySelectorAll(".product > input,#customername").forEach(input => {
                 input.classList.remove("pressed");
                 input.addEventListener('keyup', function (e) {
                     var thekey = e.key.toString();
                     var clickedvalue = e.srcElement.getAttribute("name");
+                    var target = e.target.id;
                     if (e.key === 'Enter') {
 
+                        if(target=="customername"){
+                            var val = (e.target.value=="")? "HQ": e.target.value;
+         
+                            document.getElementById("warehouseName").innerHTML = val;
+                            document.getElementById("filter-dialog-customers").classList.add("hidden");
+                        }else {
                         document.getElementById("submitbutton").click();
                         document.getElementById("warehouseName").focus();
+                        }
                     }
                 });
             });
@@ -1302,7 +1310,108 @@
             show(e.stack + "-- error trying to load");
         }
     };
+    function  fetchProductUpdate(){
+        var sndClient ="";
+        const timestampMilliseconds = (new Date()).getTime();
+            
+            const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
+            const params = new URLSearchParams(new URL(posturl).search);
 
+            params.append('version', settingsObj.date );
+            const geturl = posturl + "?" + params;
+            var options = {}; 
+            if (typeof createScene == 'undefined') {
+                /* not in tasker and not localhost*/
+                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+                options = {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded',
+                        'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
+                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
+                    },
+                    body: new URLSearchParams({ 'my-url': geturl })
+                };
+                sndClient = "Web-Proxy";
+            }
+            else { /* inside Tasker*/
+                var finalurl = geturl;
+                options = {
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        Origin: '*'
+                    }
+                };
+                sndClient = "Tasker";
+            }
+
+            fetch(finalurl, options)
+                .then(response => {
+                    responseClone = response.clone();
+                    if (!response.ok) {
+                        var retHeaders = response.headers();
+                        return response.text().then(text => {
+                            if (text == "") {
+                                clearvalues();
+                                cachedTransObjectString[transactionType] = "";
+                                cachedTransactionQueries[transactionType] = "";
+                                cachedTransCount[transactionType] = 0;
+                                cachedTransCashTotal[transactionType] = 0;
+                                document.querySelector("#btnSend2Cache").classList.remove("disabled");
+                                document.querySelector("#btnSend2Cache").disabled = false;
+                                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+
+                            } else
+                                throw new Error('ErrServer response: ' + text, false, true);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    clearvalues();
+                    cachedTransObjectString[transactionType] = "";
+                    cachedTransactionQueries[transactionType] = "";
+                    cachedTransCount[transactionType] = 0;
+                    cachedTransCashTotal[transactionType] = 0;
+                    try {
+                        document.querySelector("#btnSend2Cache").classList.remove("disabled");
+                        document.querySelector("#btnSend2Cache").disabled = false;
+                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                    } catch (e) { }
+                    setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
+                    try {
+                        responseClone.text()
+                            .then(bodyText => {
+                                show('txtServer responded: ' + bodyText, false, true, false);
+                            });
+                    } catch (e) {
+                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
+                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                        show(e.stack + "-there was an error");
+                    }
+                    show(client + ": Repoti Imetumwa...");
+                    goto("command||beep");
+                    createProductsView();
+                })
+                .catch((error) => {
+                    if (error.message.includes('Failed to fetch')) {
+                        show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
+                    } else {
+                        responseClone.text()
+                            .then(bodyText => {
+                                show('Server responded: ' + bodyText, false, true, false);
+                            });
+                    }
+                });
+            setTimeout(function () {
+                hideLoadingScreen();
+            }, 4000);
+
+    
+}
     function sendCachedTrans(event) {
         var sndClient = "";
         try {
@@ -1340,7 +1449,7 @@
                     showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
                 });
             }
-            const posturl = "https://script.google.com/macros/s/AKfycbwSjP9ufSbzleeYo14tM7tG_7so9MNie71F36J4MSJCzK2vT07efTeP_kKSSlE_56gX/exec";
+            const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
             const params = new URLSearchParams(new URL(posturl).search);
 
             params.append('payload', values);
@@ -1774,8 +1883,9 @@
 
             document.querySelector("#querydialog>input").focus();
 
-        }); document.querySelector("#querydialog>input").addEventListener('keyup', function (e) {
+        }); document.querySelector("#querydialog>input,#filter-dialog-customers>div>input").addEventListener('keyup', function (e) {
             var thekey = e.key.toString();
+            target = e.target;
             if (e.key === 'Enter') {
 
                 var query = document.querySelector("#query").value;
