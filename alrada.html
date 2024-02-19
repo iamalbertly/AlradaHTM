@@ -12,6 +12,7 @@
     }
 
     small,
+    .small,
     #cachedTrans>span {
         font-size: xx-small;
         align-self: center;
@@ -858,7 +859,9 @@
         <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span>STOCK &nbsp;</a></li>
         <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span>MANUNUZI &nbsp;</a></li>
     </ul>
-    <a id="updateStr" href="#" onClick="fetchProductUpdate()">Update:<span> </span> </a>
+    <a id="updateStr" href="#" class="small"
+        style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
+        onClick="fetchProductUpdate()">update<span> </span> </a>
 </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder="" title="clipboard" />
 <div id="filter-dialog" class="hidden mypopupdialog"></div>
 <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
@@ -867,11 +870,10 @@
 <div id="filter-dialog-customers" class="mypopupdialog">
     <h3>Enter Jina La Customer</h3>
     <div>
-        <input id="customername" placeholder="hq"/>
+        <input id="customername" placeholder="hq" />
     </div>
     <ul></ul>
 </div>
-
 <script>
     if (typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
@@ -884,16 +886,13 @@
                 localStorage.setItem(variableName, value);
             }
         }
-
         function global(variableName = "", par2 = "") {
             var storedValue = localStorage.getItem(variableName);
             return (storedValue != null) ? storedValue : null;
         }
         function setClip(par1 = "", par2 = "") { }
         function flashLong(par1 = "", par2 = "") { }
-
     }
-
 
     function changeMode(index = "") {
         var oldstate = appStates[currentAppStateIndex];
@@ -1169,14 +1168,14 @@
                     var target = e.target.id;
                     if (e.key === 'Enter') {
 
-                        if(target=="customername"){
-                            var val = (e.target.value=="")? "HQ": e.target.value;
-         
+                        if (target == "customername") {
+                            var val = (e.target.value == "") ? "HQ" : e.target.value;
+
                             document.getElementById("warehouseName").innerHTML = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
-                        }else {
-                        document.getElementById("submitbutton").click();
-                        document.getElementById("warehouseName").focus();
+                        } else {
+                            document.getElementById("submitbutton").click();
+                            document.getElementById("warehouseName").focus();
                         }
                     }
                 });
@@ -1310,108 +1309,94 @@
             show(e.stack + "-- error trying to load");
         }
     };
-    function  fetchProductUpdate(){
-        var sndClient ="";
+
+    function fetchHTMUpdate() {
+        var sndClient = "";
         const timestampMilliseconds = (new Date()).getTime();
-            
-            const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
-            const params = new URLSearchParams(new URL(posturl).search);
+        const posturl = "https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alrada-min.html";
 
-            params.append('version', settingsObj.date );
-            const geturl = posturl + "?" + params;
-            var options = {}; 
-            if (typeof createScene == 'undefined') {
-                /* not in tasker and not localhost*/
-                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
-                options = {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded',
-                        'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
-                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
-                    },
-                    body: new URLSearchParams({ 'my-url': geturl })
-                };
-                sndClient = "Web-Proxy";
-            }
-            else { /* inside Tasker*/
-                var finalurl = geturl;
-                options = {
-                    method: 'GET',
-                    headers: {
-                        'content-type': 'application/json',
-                        Origin: '*'
-                    }
-                };
-                sndClient = "Tasker";
-            }
+        fetch(posturl)
+            .then(response => response.text())
+            .then(data => {
+                setGlobal("ALDHTM", data);
+                show("Update Successful!")
+            })
+            .catch(error => console.error('Error:', error));
+        show("wasn't able to update htm");
+    }
 
-            fetch(finalurl, options)
-                .then(response => {
-                    responseClone = response.clone();
-                    if (!response.ok) {
-                        var retHeaders = response.headers();
-                        return response.text().then(text => {
-                            if (text == "") {
-                                clearvalues();
-                                cachedTransObjectString[transactionType] = "";
-                                cachedTransactionQueries[transactionType] = "";
-                                cachedTransCount[transactionType] = 0;
-                                cachedTransCashTotal[transactionType] = 0;
-                                document.querySelector("#btnSend2Cache").classList.remove("disabled");
-                                document.querySelector("#btnSend2Cache").disabled = false;
-                                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+    function fetchProductUpdate() {
+        var sndClient = "";
+        const timestampMilliseconds = (new Date()).getTime();
 
-                            } else
-                                throw new Error('ErrServer response: ' + text, false, true);
+        const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
+        const params = new URLSearchParams(new URL(posturl).search);
+
+        params.append('version', settingsObj.date);
+        const geturl = posturl + "?" + params;
+        var options = {};
+        if (typeof createScene == 'undefined') {
+            /* not in tasker and not localhost*/
+            var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+            options = {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
+                    'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
+                },
+                body: new URLSearchParams({ 'my-url': geturl })
+            };
+            sndClient = "Web-Proxy";
+        }
+        else { /* inside Tasker*/
+            var finalurl = geturl;
+            options = {
+                method: 'GET',
+                headers: {
+                    'content-type': 'application/json',
+                    Origin: '*'
+                }
+            };
+            sndClient = "Tasker";
+        }
+
+        fetch(finalurl, options)
+            .then(response => {
+                responseClone = response.clone();
+                if (!response.ok) {
+                    var retHeaders = response.headers();
+                    return response.text().then(text => {
+                        throw new Error('ErrServer response: ' + text, false, true);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                settingsObj = data;
+                setGlobal('ALDSETTING', JSON.stringify(settingsObj));
+                loadCachedTrans();
+                createProductsView();
+                show(client + ": Has been updated products...");
+                fetchHTMUpdate();
+                goto("command||beep");
+            })
+            .catch((error) => {
+                if (error.message.includes('Failed to fetch')) {
+                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
+                } else {
+                    responseClone.text()
+                        .then(bodyText => {
+                            show('Server responded: ' + bodyText, false, true, false);
                         });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    clearvalues();
-                    cachedTransObjectString[transactionType] = "";
-                    cachedTransactionQueries[transactionType] = "";
-                    cachedTransCount[transactionType] = 0;
-                    cachedTransCashTotal[transactionType] = 0;
-                    try {
-                        document.querySelector("#btnSend2Cache").classList.remove("disabled");
-                        document.querySelector("#btnSend2Cache").disabled = false;
-                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
-                    } catch (e) { }
-                    setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
-                    try {
-                        responseClone.text()
-                            .then(bodyText => {
-                                show('txtServer responded: ' + bodyText, false, true, false);
-                            });
-                    } catch (e) {
-                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
-                        show(e.stack + "-there was an error");
-                    }
-                    show(client + ": Repoti Imetumwa...");
-                    goto("command||beep");
-                    createProductsView();
-                })
-                .catch((error) => {
-                    if (error.message.includes('Failed to fetch')) {
-                        show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
-                    } else {
-                        responseClone.text()
-                            .then(bodyText => {
-                                show('Server responded: ' + bodyText, false, true, false);
-                            });
-                    }
-                });
-            setTimeout(function () {
-                hideLoadingScreen();
-            }, 4000);
+                }
+            });
+        setTimeout(function () {
+            hideLoadingScreen();
+        }, 4000);
 
-    
-}
+
+    }
     function sendCachedTrans(event) {
         var sndClient = "";
         try {
@@ -1785,9 +1770,9 @@
                             throw new Error('Lazima Uingize Aina Ya Malipo ');
                         }
                         else { currentFocusedProduct = `${currentFocusedProduct}::${extraTransDetails.trim()}`; }
-                        var query = currentFocusedProduct + "=" + document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;
+                        var query = currentFocusedProduct + "=" + document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
                     } else
-                        var query = currentFocusedProduct.replaceAll("_", " ") + appStateMarks[currentAppStateIndex] + document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value;
+                        var query = currentFocusedProduct.replaceAll("_", " ") + appStateMarks[currentAppStateIndex] + document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value.replace(/^0/, ".");
 
 
                     if (!/\d+$/.test(query)) {
