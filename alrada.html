@@ -790,10 +790,11 @@
         display: none;
     }
 </style>
+
 <head>
-  <title>Alrada</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="#">
+    <title>Alrada</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="#">
 </head>
 
 <div id="mywebview" class="wholesale_sale" style="min-height:100%;display:block;">
@@ -993,7 +994,7 @@
 
     const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
         appStateMarks = ['ӿ', '$', '++', '#'],
-        AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbzPYDj-uIheOqlHFnhspMY4yBUkhzm9-B0zVRTvylAX3OsKARuQ-5zV43bDQUN0PX9VYw/exec";
+        AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec";
     let specialTransType = "", extraTransDetails = "",
         BreakException = {},
         isMultTextArray = {},
@@ -1541,7 +1542,7 @@
                     } else {
                         responseClone.text()
                             .then(bodyText => {
-                                if (bodyText == '') show(sndClient + " Not sure if it worked becayse if Cors.")
+                                if (bodyText == '') show(sndClient + " sent but NotSure if Successful or not. #Cors.")
                                 show('Server responded: ' + bodyText, false, true, false);
                             });
                     }
@@ -1766,15 +1767,15 @@
 
             if (currentFocusedProduct)
                 try {
-
+                    var originalFocusedProduct = currentFocusedProduct;
                     if (currentFocusedProduct == "MATUMIZI_MENGINE") {
-                        var originalFocusedProduct = currentFocusedProduct;
+
                         extraTransDetails = prompt("Elezeya Malipo::", "");
                         if (extraTransDetails == null || extraTransDetails == "") {
                             throw new Error('Lazima Uingize Aina Ya Malipo ');
                         }
                         else { currentFocusedProduct = `${currentFocusedProduct}::${extraTransDetails.trim()}`; }
-                        var query = currentFocusedProduct + "=" + document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
+                        var query = currentFocusedProduct + "=" + document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;
                     } else
                         var query = currentFocusedProduct.replaceAll("_", " ") + appStateMarks[currentAppStateIndex] + document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value.replace(/^0/, ".");
 
