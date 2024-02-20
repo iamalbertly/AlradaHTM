@@ -1773,7 +1773,7 @@
                     
                     if (/MATUMIZI_MENGINE|Transport/g.test(currentFocusedProduct)) {
 
-                        extraTransDetails = prompt("Elezeya Malipo::", "");
+                        extraTransDetails = prompt("Elezeya Malipo ya "+currentFocusedProduct, "");
                         if (extraTransDetails == null || extraTransDetails == "") {
                             throw new Error('Lazima Uingize Aina Ya Malipo ');
                         }
