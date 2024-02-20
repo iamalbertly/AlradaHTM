@@ -1328,7 +1328,7 @@
             .then(response => response.text())
             .then(data => {
                 setGlobal("ALDHTM", data);
-                show("View-Update Successful!")
+                show("View-Update Successful!");
             })
             .catch(error => console.error('Error:', error));
 
@@ -1422,13 +1422,12 @@
                 show("Hujafadhi chochote...");
                 return 0;
             };
-            show("Tunatuma repoti...")
+            show("Tunatuma repoti...");
             var json_response = JSON.parse(cachedTransObjectString[transactionType]).json_response;
 
             const timestampMilliseconds = (new Date()).getTime();
             const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
             const values = JSON.stringify({ usr: staffName, data: data, time: timestampMilliseconds, cmd: "add_transaction" });
-
 
             try {
                 const clipboard = document.querySelector("#clipboard");
@@ -1849,7 +1848,7 @@
             document.querySelector("#choose-mode").classList.remove("hidden");
 
             document.querySelectorAll("button").forEach(btn => {
-                btn.classList.remove("pressed")
+                btn.classList.remove("pressed");
             });
 
             return false;
@@ -1909,7 +1908,7 @@
                 document.querySelectorAll(".disabled").forEach(el => {
                     el.disabled = false;
                     el.classList.remove("disabled");
-                    el.classList.add("enabled")
+                    el.classList.add("enabled");
                 });
                 document.querySelector("#submitbuttonholder").classList.remove("hyper");
                 document.querySelector("#myinputbar").classList.remove("hyper");
@@ -1991,7 +1990,7 @@
 
         for (const TransType in cachedTransactionQueries) {
             var transaction = cachedTransactionQueries[TransType];
-            setGlobal(`ALDCACHE${TransType}`, transaction)
+            setGlobal(`ALDCACHE${TransType}`, transaction);
         }
 
 
@@ -2228,7 +2227,7 @@
                     document.querySelectorAll(".disabled").forEach(el => {
                         el.disabled = false;
                         el.classList.remove("disabled");
-                        el.classList.add("enabled")
+                        el.classList.add("enabled");
                     });
                     document.querySelector("#submitbuttonholder").classList.remove("hyper");
                     document.querySelector("#myinputbar").classList.remove("hyper");
