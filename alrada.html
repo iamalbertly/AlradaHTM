@@ -1323,13 +1323,13 @@
                 show("View-Update Successful!")
             })
             .catch(error => console.error('Error:', error));
-        show("wasn't able to update htm");
+    
     }
 
     function fetchProductUpdate() {
         var sndClient = "";
         show("Fetching updates...");
-        const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
+        const posturl = "https://script.google.com/macros/s/AKfycbyHKxQ6hwJHQs2-b4VDwOprp8SUdCkoWetmttvDWdBNoyap8iMSDEwSBy5oLAq8wOBd/exec";
         const params = new URLSearchParams(new URL(posturl).search);
 
         params.append('version', settingsObj.date);
@@ -1377,8 +1377,9 @@
                 setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                 loadCachedTrans();
                 createProductsView();
-                show(client + ": Has been updated products...");
+                
                 fetchHTMUpdate();
+                show(client + ": Has been updated products...");
                 goto("command||beep");
             })
             .catch((error) => {
@@ -1434,7 +1435,7 @@
                     showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
                 });
             }
-            const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
+            const posturl = "https://script.google.com/macros/s/AKfycbyHKxQ6hwJHQs2-b4VDwOprp8SUdCkoWetmttvDWdBNoyap8iMSDEwSBy5oLAq8wOBd/exec";
             const params = new URLSearchParams(new URL(posturl).search);
 
             params.append('payload', values);
