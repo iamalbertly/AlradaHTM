@@ -1770,7 +1770,8 @@
             if (currentFocusedProduct)
                 try {
                     var originalFocusedProduct = currentFocusedProduct;
-                    if (currentFocusedProduct == "MATUMIZI_MENGINE") {
+                    
+                    if (/MATUMIZI_MENGINE|Transport/g.test(currentFocusedProduct)) {
 
                         extraTransDetails = prompt("Elezeya Malipo::", "");
                         if (extraTransDetails == null || extraTransDetails == "") {
