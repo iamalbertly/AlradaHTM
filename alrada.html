@@ -1172,6 +1172,7 @@
                             var val = (e.target.value == "") ? "HQ" : e.target.value;
 
                             document.getElementById("warehouseName").innerHTML = val;
+                            warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
                         } else {
                             document.getElementById("submitbutton").click();
@@ -1319,7 +1320,7 @@
             .then(response => response.text())
             .then(data => {
                 setGlobal("ALDHTM", data);
-                show("Update Successful!")
+                show("View-Update Successful!")
             })
             .catch(error => console.error('Error:', error));
         show("wasn't able to update htm");
@@ -1750,11 +1751,8 @@
                 show("Huja fadhi chochote...");
                 return 0;
             }
-
             reCreateCacheCleanupForm();
-
         });
-
 
         document.querySelector("a.submitbutton").addEventListener("click", e => {
             e.preventDefault();
