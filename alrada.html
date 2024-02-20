@@ -94,7 +94,7 @@
     h2 {
         margin-block-start: 19px;
         margin-top: 0;
-        margin-bottom:0px;
+        margin-bottom: 0px;
     }
 
     #filter-dialog>div>li {
@@ -989,8 +989,9 @@
         }
     }
 
-    const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'];
-    const appStateMarks = ['ӿ', '$', '++', '#'];
+    const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
+        appStateMarks = ['ӿ', '$', '++', '#'],
+        AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbzPYDj-uIheOqlHFnhspMY4yBUkhzm9-B0zVRTvylAX3OsKARuQ-5zV43bDQUN0PX9VYw/exec";
     let specialTransType = "", extraTransDetails = "",
         BreakException = {},
         isMultTextArray = {},
@@ -1230,7 +1231,7 @@
                     const categoryArr = product.category_breakdown.split("_");
                     const cat = categoryArr.join(" ");
                     const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",","-").replaceAll("(","[").replaceAll(")","]"), cat, price, categorySign, localAppState);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState);
                 });
                 break;
             }
@@ -1239,7 +1240,7 @@
                 names = suppliers_jsonString.map(supplier => {
                     const name = supplier.officialname;
                     const contactName = supplier.contactname;
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",","").replaceAll("(","[").replaceAll(")","]"), "", "", "", localAppState, contactName);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "", "", "", localAppState, contactName);
                 });
                 break;
             }
@@ -1316,26 +1317,25 @@
     function fetchHTMUpdate() {
         var sndClient = "";
         const timestampMilliseconds = (new Date()).getTime();
-        const posturl = "https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alrada-min.html";
+        const AppScriptPostUrl = "https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alrada-min.html";
 
-        fetch(posturl)
+        fetch(AppScriptPostUrl)
             .then(response => response.text())
             .then(data => {
                 setGlobal("ALDHTM", data);
                 show("View-Update Successful!")
             })
             .catch(error => console.error('Error:', error));
-    
+
     }
 
     function fetchProductUpdate() {
         var sndClient = "";
         show("Fetching updates...");
-        const posturl = "https://script.google.com/macros/s/AKfycbyHKxQ6hwJHQs2-b4VDwOprp8SUdCkoWetmttvDWdBNoyap8iMSDEwSBy5oLAq8wOBd/exec";
-        const params = new URLSearchParams(new URL(posturl).search);
+        const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
 
         params.append('version', settingsObj.date);
-        const geturl = posturl + "?" + params;
+        const geturl = AppScriptPostUrl + "?" + params;
         var options = {};
         if (typeof createScene == 'undefined') {
             /* not in tasker and not localhost*/
@@ -1379,7 +1379,7 @@
                 setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                 loadCachedTrans();
                 createProductsView();
-                
+
                 fetchHTMUpdate();
                 show(client + ": Has been updated products...");
                 goto("command||beep");
@@ -1417,15 +1417,16 @@
                 show("Hujafadhi chochote...");
                 return 0;
             };
-
+            show("Tunatuma repoti...")
             var json_response = JSON.parse(cachedTransObjectString[transactionType]).json_response;
 
             const timestampMilliseconds = (new Date()).getTime();
             const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
             const values = JSON.stringify({ usr: staffName, data: data, time: timestampMilliseconds, cmd: "add_transaction" });
 
-            const clipboard = document.querySelector("#clipboard");
+
             try {
+                const clipboard = document.querySelector("#clipboard");
                 clipboard.value = values;
                 clipboard.focus();
                 navigator.clipboard.writeText(clipboard.value).then(function (x) {
@@ -1437,11 +1438,11 @@
                     showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
                 });
             }
-            const posturl = "https://script.google.com/macros/s/AKfycbyHKxQ6hwJHQs2-b4VDwOprp8SUdCkoWetmttvDWdBNoyap8iMSDEwSBy5oLAq8wOBd/exec";
-            const params = new URLSearchParams(new URL(posturl).search);
+
+            const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
 
             params.append('payload', values);
-            const geturl = posturl + "?" + params;
+            const geturl = AppScriptPostUrl + "?" + params;
             var options = {}; var islocal = window.location;
             if (window.location.hostname == "127.0.0.1") {
                 var finalurl = geturl;
@@ -1538,6 +1539,7 @@
                     } else {
                         responseClone.text()
                             .then(bodyText => {
+                                if (bodyText == '') show(sndClient + " Not sure if it worked becayse if Cors.")
                                 show('Server responded: ' + bodyText, false, true, false);
                             });
                     }
