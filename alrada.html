@@ -1228,7 +1228,7 @@
                     const categoryArr = product.category_breakdown.split("_");
                     const cat = categoryArr.join(" ");
                     const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", ''), cat, price, categorySign, localAppState);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",","-").replaceAll("(","[").replaceAll(")","]"), cat, price, categorySign, localAppState);
                 });
                 break;
             }
@@ -1237,7 +1237,7 @@
                 names = suppliers_jsonString.map(supplier => {
                     const name = supplier.officialname;
                     const contactName = supplier.contactname;
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", ''), "", "", "", localAppState, contactName);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",","").replaceAll("(","[").replaceAll(")","]"), "", "", "", localAppState, contactName);
                 });
                 break;
             }
