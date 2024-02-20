@@ -1328,8 +1328,7 @@
 
     function fetchProductUpdate() {
         var sndClient = "";
-        const timestampMilliseconds = (new Date()).getTime();
-
+        show("Fetching updates...");
         const posturl = "https://script.google.com/macros/s/AKfycbwY5E8eP-UlDQEcRpFkw8IkQOyHwexDDxUaXJzcaelyLuwq8i0CBjeqJcK0AIFNoAj5/exec";
         const params = new URLSearchParams(new URL(posturl).search);
 
