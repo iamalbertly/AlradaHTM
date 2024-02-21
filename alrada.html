@@ -11,6 +11,9 @@
         width: 99.708%;
         overflow: hidden;
     }
+    h4,small{
+        margin-bottom:4px;
+    }
 
     small,
     .small,
@@ -588,7 +591,14 @@
             flex-basis: calc(20% - 10px)
         }
     }
-
+.mypopupdailog>div>input{
+    text-align-last: center;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-width: thin;
+    background-color: beige;
+}
     #filter-dialog,
     #processmsg-dialog,
     .mypopupdialog {
@@ -599,19 +609,19 @@
         flex-direction: column;
         justify-content: space-around;
         left: 49%;
-        padding: 15px;
-        position: fixed;
-        top: 30%;
+        top: 95px;
+        position: absolute;
         transform: translate(-50%, -50%);
         WIDTH: 60%;
         z-index: 90;
+        align-items: center;
     }
 
     .mypopupdialog>*>li>a {
         border: none;
         text-decoration: none;
         width: 100%;
-    justify-content: center;
+        justify-content: center;
     }
 
     #choose-mode>ul>li {
@@ -802,11 +812,9 @@
 <div id="mywebview" class="wholesale_sale" style="min-height:100%;display:block;">
     <div id="news_display"
         style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px">
-        <button
-            style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
-            <div id="date" onclick="getShopDate()"></span>
-                <script>var date = new Date(); var mydate = date.getDate() + "/" + eval(date.getMonth() + 1) + "/" + eval(date.getFullYear()); document.getElementById("date").innerHTML = mydate; </script>
-            </div>
+        <button id="showTransDate" onclick="getShopDate()" style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
+            <p>
+            </p>
         </button>
         <div id="appStates" class="flex-column" style="width: 100%;"><button id="appState"
                 class="highlight-border"><span>💰</span>MAUZO &nbsp; </button></div><button
@@ -849,7 +857,7 @@
 </div>
 <div id="loading-screen" class="hidden">
     <div class="loading-content">
-        <H2 id="loading-title" class="sr-only">Tafadhali Subiri</H2>
+        <h2 id="loading-title" class="sr-only">Tafadhali Subiri</h2>
         <div class="spinner-border" role="status"><small id="loading-subtitle"></small></div>
         <div id="loading-text" class="loading-text"
             style="border-bottom: 1px solid whitesmoke;overflow-y: auto;height: min-content;max-height: 185px;">...
@@ -873,13 +881,23 @@
 <div id="filter-dialog" class="hidden mypopupdialog"></div>
 <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
         type="text" style="width:100%" /></div>
-<div id="processmsg-dialog" class="hidden mypopupdialog"></div>
+<div id="processmsg-diaslog" class="hidden mypopupdialog"></div>
 <div id="filter-dialog-customers" class="mypopupdialog">
-    <h3>Enter Jina La Customer</h3>
+    <h4>INGIZA JINA LA MTEJA</h4>
+    <small>KWA Mfano  <i>MAMA ALAN @Majengo</i> </small>
     <div>
-        <input id="customername" placeholder="hq" />
+        <input id="editCustomerName" placeholder="hq" />
     </div>
     <ul></ul>
+</div>
+<div id="filter-dialog-transDate" class="mypopupdialog">
+    <h4>INGIZA TAREHE</h4>
+    <small>KWA Mfano  <i>31/1/2025</i> </small>
+    <div>
+        <input id="editTransDate"  />
+    </div>
+    <ul></ul>
+
 </div>
 <script>
     if (typeof createScene !== "function") { /* not in tasker*/
@@ -911,7 +929,6 @@
         appStates_btn.classList.remove(`btn-color-${oldstate}}`);
 
         document.querySelector("#productsview").className = "";
-
         var local_appstate = appStates[currentAppStateIndex];
         switch (local_appstate) {
             case "wholesale_sale":
@@ -946,11 +963,12 @@
         createProductsView();
         closeFilterDialog();
     }
-
-    const month = date.getMonth(),
-        day = date.getDate(),
-        hour = (date.getUTCHours() + 3),
-        minute = date.getMinutes();
+    var transDate = new Date();
+    
+    const month = transDate.getMonth(),
+        day = transDate.getDate(),
+        hour = (transDate.getUTCHours() + 3),
+        minute = transDate.getMinutes();
 
     let partOfDay;
 
@@ -964,6 +982,9 @@
         partOfDay = "Saa za Kufunga";
     }
 
+    var transDateStr = transDate.getDate() + "/" + eval(transDate.getMonth() + 1) + "/" + eval(transDate.getFullYear());
+    document.querySelector("#showTransDate>p").innerHTML = transDateStr;
+    document.querySelector("#editTransDate").value = transDateStr;
     if (!String.prototype.replaceAll) {
         String.prototype.replaceAll = function (search, replacement) {
             return this.replace(new RegExp(search, 'g'), replacement);
@@ -1033,11 +1054,10 @@
         document.querySelector('#filter-dialog-customers>div>input').focus();
     }
     function getShopDate() {
-        mydate = prompt("Ingiza Tarehe MFANO: 31/1/2025", document.getElementById("date").innerHTML.replaceAll("&nbsp;", ""));
-        if (mydate != null) {
-            document.getElementById("date").innerHTML = mydate;
-        } else mydate = document.getElementById("date").innerHTML;
+        document.getElementById('filter-dialog-transDate').classList.remove('hidden');
+        document.querySelector('#filter-dialog-transDate>div>input').focus();
     }
+
     try {
         if (settingsObj != undefined) {
             loadCachedTrans();
@@ -1168,15 +1188,25 @@
                 });
             });
 
-            document.querySelectorAll(".product > input,#customername").forEach(input => {
+            document.querySelectorAll(".product > input,#editCustomerName,#editTransDate").forEach(input => {
                 input.classList.remove("pressed");
                 input.addEventListener('keyup', function (e) {
                     var thekey = e.key.toString();
                     var clickedvalue = e.srcElement.getAttribute("name");
                     var target = e.target.id;
                     if (e.key === 'Enter') {
+                        if (target == "editTransDate") {
+                            /*test if valid date*/
 
-                        if (target == "customername") {
+                            if(/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
+                                transDateStr = (e.target.value == "") ? transDateStr: e.target.value;
+                            document.querySelector("#showTransDate>p").innerHTML = transDateStr;
+                            } else show("Not a Valid Date",true);
+                            
+                            document.getElementById("filter-dialog-transDate").classList.add("hidden");
+                        }
+
+                        if (target == "editCustomerName") {
                             var val = (e.target.value == "") ? "HQ" : e.target.value;
 
                             document.getElementById("warehouseName").innerHTML = val;
@@ -1769,10 +1799,10 @@
             if (currentFocusedProduct)
                 try {
                     var originalFocusedProduct = currentFocusedProduct;
-                    
+
                     if (/MATUMIZI_MENGINE|Transport/g.test(currentFocusedProduct)) {
 
-                        extraTransDetails = prompt("Elezeya Malipo ya "+currentFocusedProduct, "");
+                        extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
                         if (extraTransDetails == null || extraTransDetails == "") {
                             throw new Error('Lazima Uingize Aina Ya Malipo ');
                         }
@@ -1805,7 +1835,7 @@
                     query = `(${warehouseName.toLowerCase()})${query}`;
                     date = new Date();
 
-                    query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
+                    query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                         queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                     } else {
@@ -1895,7 +1925,7 @@
                 query = `(${warehouseName.toLowerCase()})${query}`;
                 date = new Date();
 
-                query = (mydate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
+                query = (transDate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                     queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
 
                 } else {
@@ -1939,9 +1969,9 @@
 
         if (appStates[currentAppStateIndex] == "stocktake") {
 
-            var isclosing = prompt(`Bonyeza ' OKAY ' KAMA NI StockTake yakuFUNGA (CLOSE) MAHESABU ya\n${mydate}\nBonyeza ' CANCEL ' kama ni yakuFUNGUA (OPEN) MAHESABU ${mydate}!`, mydate);
+            var isclosing = prompt(`Bonyeza ' OKAY ' KAMA NI StockTake yakuFUNGA (CLOSE) MAHESABU ya\n${editCustomerName}\nBonyeza ' CANCEL ' kama ni yakuFUNGUA (OPEN) MAHESABU ${editCustomerName}!`, editCustomerName);
             if (isclosing == null) {
-                var newdatetext = mydate.trim();
+                var newdatetext = editCustomerName.trim();
                 currentQuery = currentQuery.replaceAll(/(\d+\/\d+[\/\d+]{0,5})/gm, `${newdatetext}`);
             }
             else if (isclosing.trim().toLocaleLowerCase().match(/\d{1,2}\/\d{1,2}\/.*/gm)) {
