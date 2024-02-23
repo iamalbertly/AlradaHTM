@@ -80,6 +80,7 @@
     ul {
         padding-left: 0;
         align-items: baseline;
+        width:100%;
     }
 
     body {
@@ -100,6 +101,28 @@
         margin-top: 0;
         margin-bottom: 0px;
     }
+
+    #mywebview {
+min-height:100%;display:block;
+
+}
+#news_display {
+
+display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px;
+}
+
+#showTransDate{
+display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;
+}
+
+#appStates {
+width: 100%;
+}
+
+#warehouseName{
+display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;background: center;align-items: center;margin-top: .9px;
+}
+
 
     #filter-dialog>div>li {
         border-bottom: 1px solid #a7a7a7;
@@ -809,16 +832,14 @@
     <link rel="shortcut icon" href="#">
 </head>
 
-<div id="mywebview" class="wholesale_sale" style="min-height:100%;display:block;">
-    <div id="news_display"
-        style="display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px">
-        <button id="showTransDate" onclick="getShopDate()" style="display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;">📆&nbsp;
+<div id="mywebview" class="wholesale_sale" >
+    <div id="news_display">
+        <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
             <p>
             </p>
         </button>
-        <div id="appStates" class="flex-column" style="width: 100%;"><button id="appState"
+        <div id="appStates" class="flex-column" ><button id="appState"
                 class="highlight-border"><span>💰</span>MAUZO &nbsp; </button></div><button
-            style="display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;background: center;align-items: center;margin-top: .9px;"
             onclick="getwarehouseName()" id="warehouseName"></button>
     </div>
     <div id="mywebview2" class="flex-column">
@@ -834,7 +855,7 @@
                 onClick="chooseToAddTransactionToCache(event)" class="functionpad disabled">➡️</button><button
                 id="cachedTrans" class="flex-row notbutton">
                 <div style="margin-top:-40px;min-width: 100px;">
-                    <p class="hiddenpreview" STYLE="color: yellow;background-color: black!important;">BADO REPOTI <sub
+                    <p class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
                             style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></p><span
                         class="part2 highlight-border"
                         style="border:none;background: none;font-size: revert;">-</span><span
@@ -847,9 +868,7 @@
         <div class="flex-column">
             <div id="mysubmitbar" class="flex-row hidden">
                 <div id="numberpadfunctions"><button id="istax" class="functionpad">T</button></div>
-                <div id="submitbuttonholder"><a id="submitbutton" href='/#+'
-                        style="flex-direction: column-reverse;justify-content: space-around;text-underline-position: under;"
-                        class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
+                <div id="submitbuttonholder"><a id="submitbutton" href="/#+" class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
                             &nbsp;</label><label>Peleka</label></a></div>
             </div>
         </div>
@@ -1123,7 +1142,6 @@
                         cachedTransCashTotal[appStates[TransType]] = 0;
                     }
                 }
-
                 document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[0]];
                 document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
                 document.querySelectorAll(".hiddenpreview").forEach(el => {
@@ -1197,7 +1215,6 @@
                     if (e.key === 'Enter') {
                         if (target == "editTransDate") {
                             /*test if valid date*/
-
                             if(/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
                                 transDateStr = (e.target.value == "") ? transDateStr: e.target.value;
                             document.querySelector("#showTransDate>p").innerHTML = transDateStr;
@@ -1235,19 +1252,24 @@
                 products_jsonString = JSON.parse(settingsObj.settings.alradaitemnames).slice(1);
 
                 products_jsonString.sort((a, b) => {
-                    /* If b is "Pesa", put a before b */
+                   
+                    if((/Kick/g.test(a.OfficialName)) && (/Konyag|Kvant/g.test(b.OfficialName)))
+                    {                        return 1;                    }
+
                     if (/Pesa/g.test(b.OfficialName)) return -1;
+                    
 
                     /* If a is "Pesa", put b before a */
-                    if (/Crate Peke|Fungu la Chupa|Pesa/g.test(a.OfficialName)) return 1;
+                    if (/Crate Peke|Fungu la Chupa/g.test(a.OfficialName)) return 1;
+
+                    if (a.category_breakdown < b.category_breakdown) return 1;
 
                     /* Group closely matching OfficialNames together */
-                    if (a.OfficialName.includes(b.OfficialName) || b.OfficialName.includes(a.OfficialName)) {
+                    if (a.OfficialName.includes(b.OfficialName.slice(0,4)) || b.OfficialName.includes(a.OfficialName.slice(0,4))) {
                         return 0;
                     }
 
-                    if (a.category_breakdown < b.category_breakdown) return 1;
-                    /*  if (a.category_breakdown > b.category_breakdown) return -1; */
+                   
 
                     if (b.laststocktakedate - a.laststocktakedate) {
                         return b.laststocktakedate - a.laststocktakedate;
@@ -1719,7 +1741,7 @@
             el.addEventListener("click", () => {
                 var selectedproductname = el.name.replace("_", " ");
                 document.querySelector("#edit_drinkname").innerHTML = selectedproductname;
-                document.querySelector("#filter-dialog").classList.add("hidden");
+                document.querySelector(".mypopupdialog").classList.add("hidden");
             });
         });
 
@@ -1778,8 +1800,8 @@
                 if ((document.querySelector("#result_display").innerHTML != "") && (document.querySelector("#filter-dialog").classList.contains("hidden") == false)) { }
                 if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
-
                 hideLoadingScreen();
+                document.querySelector(".mypopupdialog").classList.add("hidden");
                 document.querySelector("#myinputbar").classList.remove("hyper");
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
         });
