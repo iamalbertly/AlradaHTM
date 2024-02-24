@@ -11,8 +11,10 @@
         width: 99.708%;
         overflow: hidden;
     }
-    h4,small{
-        margin-bottom:4px;
+
+    h4,
+    small {
+        margin-bottom: 4px;
     }
 
     small,
@@ -22,7 +24,7 @@
         align-self: center;
     }
 
-    
+
     .tunatumaMsg>*>*>.buttonholder {
         display: none;
     }
@@ -81,7 +83,7 @@
     ul {
         padding-left: 0;
         align-items: baseline;
-        width:100%;
+        width: 100%;
     }
 
     body {
@@ -104,25 +106,42 @@
     }
 
     #mywebview {
-min-height:100%;display:block;
+        min-height: 100%;
+        display: block;
 
-}
-#news_display {
+    }
 
-display: flex; flex-direction: row; text-wrap: nowrap; justify-content: space-between;height:40px;
-}
+    #news_display {
 
-#showTransDate{
-display: -webkit-inline-box;-webkit-box-align: center;width: fit-content;display: flex;background: center;align-items: center;
-}
+        display: flex;
+        flex-direction: row;
+        text-wrap: nowrap;
+        justify-content: space-between;
+        height: 40px;
+    }
 
-#appStates {
-width: 100%;
-}
+    #showTransDate {
+        display: -webkit-inline-box;
+        -webkit-box-align: center;
+        width: fit-content;
+        display: flex;
+        background: center;
+        align-items: center;
+    }
 
-#warehouseName{
-display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;background: center;align-items: center;margin-top: .9px;
-}
+    #appStates {
+        width: 100%;
+    }
+
+    #warehouseName {
+        display: -webkit-inline-box;
+        -webkit-box-align: center;
+        width: 65px;
+        display: flex;
+        background: center;
+        align-items: center;
+        margin-top: .9px;
+    }
 
 
     #filter-dialog>div>li {
@@ -464,7 +483,8 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
     .left {
         text-align: left;
     }
-    .right{
+
+    .right {
         text-align: right;
     }
 
@@ -517,8 +537,10 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
         width: 100%
     }
 
-    .loading-content {
-        z-index: 90;
+    .loading-content,
+    #loading-screen {
+        position: absolute;
+        z-index: 100;
     }
 
     #productsview {
@@ -531,7 +553,8 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
     }
 
     #mysubmitbar,
-    li.product>span,  .mypopupdialog>div>div {
+    li.product>span,
+    .mypopupdialog>div>div {
         display: flex;
         place-content: space-between
     }
@@ -618,14 +641,16 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
             flex-basis: calc(20% - 10px)
         }
     }
-.mypopupdailog>div>input{
-    text-align-last: center;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    border-width: thin;
-    background-color: beige;
-}
+
+    .mypopupdailog>div>input {
+        text-align-last: center;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-width: thin;
+        background-color: beige;
+    }
+
     #filter-dialog,
     #processmsg-dialog,
     .mypopupdialog {
@@ -663,12 +688,13 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
         margin-top: 10px
     }
 
-    #filter-dialog-transDate > div > div>button{
+    #filter-dialog-transDate>div>div>button {
         font-size: large;
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: unset;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin: unset;
     }
+
     .mypopupdialog>button {
         margin: 3px;
         position: absolute;
@@ -842,15 +868,14 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
     <link rel="shortcut icon" href="#">
 </head>
 
-<div id="mywebview" class="wholesale_sale" >
+<div id="mywebview" class="wholesale_sale">
     <div id="news_display">
         <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
             <p>
             </p>
         </button>
-        <div id="appStates" class="flex-column" ><button id="appState"
-                class="highlight-border"><span>💰</span>MAUZO &nbsp; </button></div><button
-            onclick="getwarehouseName()" id="warehouseName"></button>
+        <div id="appStates" class="flex-column"><button id="appState" class="highlight-border"><span>💰</span>MAUZO
+                &nbsp; </button></div><button onclick="getwarehouseName()" id="warehouseName"></button>
     </div>
     <div id="mywebview2" class="flex-column">
         <div id="resultpad" class="flex-column">
@@ -861,7 +886,8 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
         <div id="myinputbar" class="flex-row"><input class="" type="text" id="search"
                 placeholder="🔍 Tafuta Kinwaji" /><input disabled class="disabled highlight-border" type="number"
                 id="inputnumber_change" placeholder="Lipa" value="" /><button id="filter" onclick="showFilterDialog()"
-                class="functionpad">🎚️</button><button disabled id="btnSend2Cache" onClick="chooseToAddTransactionToCache(event)" class="functionpad disabled">➡️</button><button
+                class="functionpad">🎚️</button><button disabled id="btnSend2Cache"
+                onClick="chooseToAddTransactionToCache(event)" class="functionpad disabled">➡️</button><button
                 id="cachedTrans" class="flex-row notbutton">
                 <div style="margin-top:-40px;min-width: 100px;">
                     <p class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
@@ -877,7 +903,8 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
         <div class="flex-column">
             <div id="mysubmitbar" class="flex-row hidden">
                 <div id="numberpadfunctions"><button id="istax" class="functionpad">T</button></div>
-                <div id="submitbuttonholder"><a id="submitbutton" href="/#+" class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
+                <div id="submitbuttonholder"><a id="submitbutton" href="/#+"
+                        class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
                             &nbsp;</label><label>Peleka</label></a></div>
             </div>
         </div>
@@ -912,7 +939,7 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
 <div id="processmsg-diaslog" class="hidden mypopupdialog"></div>
 <div id="filter-dialog-customers" class="mypopupdialog">
     <h4>INGIZA JINA LA MTEJA</h4>
-    <small>KWA Mfano  <i>MAMA ALAN @Majengo</i> </small>
+    <small>KWA Mfano <i>MAMA ALAN @Majengo</i> </small>
     <div>
         <input id="editCustomerName" placeholder="hq" />
     </div>
@@ -920,10 +947,11 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
 </div>
 <div id="filter-dialog-transDate" class="mypopupdialog">
     <h4>INGIZA TAREHE</h4>
-    <small>KWA Mfano  <i>31/1/2025</i> </small>
+    <small>KWA Mfano <i>31/1/2025</i> </small>
     <div>
-        <input id="editTransDate"  />
-        <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button></div>
+        <input id="editTransDate" />
+        <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
+        </div>
 
     </div>
     <ul></ul>
@@ -995,7 +1023,7 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
     }
     var transDate = new Date();
     var todayDate = transDate;
-    
+
     const month = transDate.getMonth(),
         day = transDate.getDate(),
         hour = (transDate.getUTCHours() + 3),
@@ -1228,11 +1256,11 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
                     if (e.key === 'Enter') {
                         if (target == "editTransDate") {
                             /*test if valid date*/
-                            if(/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
-                                transDateStr = (e.target.value == "") ? transDateStr: e.target.value;
-                            document.querySelector("#showTransDate>p").innerHTML = transDateStr;
-                            } else show("Not a Valid Date",true);
-                            
+                            if (/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
+                                transDateStr = (e.target.value == "") ? transDateStr : e.target.value;
+                                document.querySelector("#showTransDate>p").innerHTML = transDateStr;
+                            } else show("Not a Valid Date", true);
+
                             document.getElementById("filter-dialog-transDate").classList.add("hidden");
                         }
 
@@ -1265,12 +1293,11 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
                 products_jsonString = JSON.parse(settingsObj.settings.alradaitemnames).slice(1);
 
                 products_jsonString.sort((a, b) => {
-                   
-                    if((/Kick/g.test(a.OfficialName)) && (/Konyag|Kvant/g.test(b.OfficialName)))
-                    {                        return 1;                    }
+
+                    if ((/Kick/g.test(a.OfficialName)) && (/Konyag|Kvant/g.test(b.OfficialName))) { return 1; }
 
                     if (/Pesa/g.test(b.OfficialName)) return -1;
-                    
+
 
                     /* If a is "Pesa", put b before a */
                     if (/Crate Peke|Fungu la Chupa/g.test(a.OfficialName)) return 1;
@@ -1278,11 +1305,11 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
                     if (a.category_breakdown < b.category_breakdown) return 1;
 
                     /* Group closely matching OfficialNames together */
-                    if (a.OfficialName.includes(b.OfficialName.slice(0,4)) || b.OfficialName.includes(a.OfficialName.slice(0,4))) {
+                    if (a.OfficialName.includes(b.OfficialName.slice(0, 4)) || b.OfficialName.includes(a.OfficialName.slice(0, 4))) {
                         return 0;
                     }
 
-                   
+
 
                     if (b.laststocktakedate - a.laststocktakedate) {
                         return b.laststocktakedate - a.laststocktakedate;
@@ -1401,7 +1428,7 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
 
     function fetchProductUpdate() {
         var sndClient = "";
-        
+
         const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
 
         params.append('version', settingsObj.date);
@@ -1432,8 +1459,8 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
             };
             sndClient = "Tasker";
         }
-        showLoadingScreen("Fetching updates...","Tafadhali Subiri.");
-       
+        showLoadingScreen("Fetching updates...", "Tafadhali Subiri.");
+
         fetch(finalurl, options)
             .then(response => {
                 responseClone = response.clone();
@@ -1467,7 +1494,7 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
                 }
             });
         setTimeout(function () {
-           hideLoadingScreen();
+            hideLoadingScreen();
             clearvalues();
         }, 4000);
 
@@ -1490,7 +1517,7 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
                 show("Hujafadhi chochote...");
                 return 0;
             };
-            
+
             var json_response = JSON.parse(cachedTransObjectString[transactionType]).json_response;
 
             const timestampMilliseconds = (new Date()).getTime();
@@ -1763,12 +1790,12 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
 
     }
 
-    function showLoadingScreen(loadingTitle, loadingSubTitle, loadingMsg) {
+    function showLoadingScreen(loadingTitle = "", loadingSubTitle = "", loadingMsg = "") {
         hideLoadingScreen();
+
         document.getElementById("news_display").style.pointerEvents = "none"; document.getElementById("mywebview2").style.pointerEvents = "none";
 
         document.getElementById("loading-title").innerHTML = loadingTitle; document.getElementById("loading-subtitle").innerHTML = loadingSubTitle; document.getElementById("loading-text").innerHTML = loadingMsg;
-
         document.getElementById("loading-screen").classList.remove("hidden");
     }
     function hideLoadingScreen() {
@@ -1812,20 +1839,20 @@ display: -webkit-inline-box;-webkit-box-align: center;width: 65px;display: flex;
 
     function initializeListeners() {
 
-        document.getElementById('editTransDateleft').addEventListener('click', function() {
-    var dateElement = document.getElementById('editTransDate');
-    var date = new Date(dateElement.value.split('/').reverse().join('-'));
-    date.setDate(date.getDate() - 1);
-    var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-    dateElement.value = newDate;
-});
-document.getElementById('editTransDateRight').addEventListener('click', function() {
-    var dateElement = document.getElementById('editTransDate');
-    var date = new Date(dateElement.value.split('/').reverse().join('-'));
-    date.setDate(date.getDate() + 1);
-    var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-    dateElement.value = newDate;
-});
+        document.getElementById('editTransDateleft').addEventListener('click', function () {
+            var dateElement = document.getElementById('editTransDate');
+            var date = new Date(dateElement.value.split('/').reverse().join('-'));
+            date.setDate(date.getDate() - 1);
+            var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
+            dateElement.value = newDate;
+        });
+        document.getElementById('editTransDateRight').addEventListener('click', function () {
+            var dateElement = document.getElementById('editTransDate');
+            var date = new Date(dateElement.value.split('/').reverse().join('-'));
+            date.setDate(date.getDate() + 1);
+            var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
+            dateElement.value = newDate;
+        });
 
 
         document.getElementById("resultpad").addEventListener("click", (e) => {
@@ -2625,7 +2652,7 @@ document.getElementById('editTransDateRight').addEventListener('click', function
         productdetails_string = "",
             productdetails_json = [],
             query = "", queryLog = "",
-          
+
             sign_mult = "",
             sign_wholesale_remain = "",
             sign_retail_remain = "",
