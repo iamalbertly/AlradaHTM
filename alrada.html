@@ -951,14 +951,14 @@
     <div>
         <input id="editTransDate" />
         <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
+        <button id="editTransDateSubmit" onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
         </div>
-
     </div>
     <ul></ul>
 
 </div>
 <script>
-    if (typeof createScene !== "function") { /* not in tasker*/
+    if(typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
             const existingValue = localStorage.getItem(variableName);
             if (existingValue !== null) {
@@ -1079,6 +1079,14 @@
         appStateMarks = ['ӿ', '$', '++', '#'],
         AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec";
     let specialTransType = "", extraTransDetails = "",
+     eventEnter = new KeyboardEvent('keyup', {
+    key: 'Enter',
+    code: 'Enter',
+    keyCode: 13,
+    which: 13,
+    bubbles: true,
+    cancelable: true
+}),
         BreakException = {},
         isMultTextArray = {},
         products_jsonString = {},
@@ -1784,7 +1792,7 @@
             el.addEventListener("click", () => {
                 var selectedproductname = el.name.replace("_", " ");
                 document.getElementById("edit_drinkname").innerHTML = selectedproductname;
-                document.querySelector(".mypopupdialog").classList.add("hidden");
+                document.querySelectorAll(".mypopupdialog").forEach(el=>{ el.classList.add("hidden")});
             });
         });
 
@@ -1861,7 +1869,7 @@
                 if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
                 hideLoadingScreen();
-                document.querySelector(".mypopupdialog").classList.add("hidden");
+                document.querySelectorAll(".mypopupdialog").forEach(el=>{ el.classList.add("hidden")});
                 document.getElementById("myinputbar").classList.remove("hyper");
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
         });
