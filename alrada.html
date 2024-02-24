@@ -1477,12 +1477,7 @@
                         throw new Error('ErrServer response: ' + text, false, true);
                     });
                 }
-                try{
-                var jsonresponse = response.json();
-                }catch(e){
-                    var jsonresponse = response.body.json();
-                }
-                return jsonresponse;
+                return response.json();
             })
             .then(data => {
                 settingsObj = data;
