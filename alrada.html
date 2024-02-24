@@ -83,7 +83,7 @@
     ul {
         padding-left: 0;
         align-items: baseline;
-        width: 100%;
+        width: 99%;
     }
 
     body {
@@ -951,14 +951,15 @@
     <div>
         <input id="editTransDate" />
         <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
-        <button id="editTransDateSubmit" onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
+            <button id="editTransDateSubmit"
+                onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
         </div>
     </div>
     <ul></ul>
 
 </div>
 <script>
-    if(typeof createScene !== "function") { /* not in tasker*/
+    if (typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
             const existingValue = localStorage.getItem(variableName);
             if (existingValue !== null) {
@@ -1079,14 +1080,14 @@
         appStateMarks = ['ӿ', '$', '++', '#'],
         AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec";
     let specialTransType = "", extraTransDetails = "",
-     eventEnter = new KeyboardEvent('keyup', {
-    key: 'Enter',
-    code: 'Enter',
-    keyCode: 13,
-    which: 13,
-    bubbles: true,
-    cancelable: true
-}),
+        eventEnter = new KeyboardEvent('keyup', {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+            which: 13,
+            bubbles: true,
+            cancelable: true
+        }),
         BreakException = {},
         isMultTextArray = {},
         products_jsonString = {},
@@ -1430,7 +1431,6 @@
                 show("View-Update Successful!");
             })
             .catch(error => console.error('Error:', error));
-
     }
 
     function fetchProductUpdate() {
@@ -1489,11 +1489,11 @@
                 show(client + ": Has been updated products...");
                 goto("command||beep");
                 hideLoadingScreen();
-            clearvalues();
+                clearvalues();
             })
             .catch((error) => {
                 if (error.message.includes('Failed to fetch')) {
-                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack,true);
+                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack, true);
                 } else {
                     responseClone.text()
                         .then(bodyText => {
@@ -1502,7 +1502,7 @@
                 }
                 show("Update Failed!");
                 hideLoadingScreen();
-            clearvalues();
+                clearvalues();
             });
 
     }
@@ -1790,7 +1790,7 @@
             el.addEventListener("click", () => {
                 var selectedproductname = el.name.replace("_", " ");
                 document.getElementById("edit_drinkname").innerHTML = selectedproductname;
-                document.querySelectorAll(".mypopupdialog").forEach(el=>{ el.classList.add("hidden")});
+                document.querySelectorAll(".mypopupdialog").forEach(el => { el.classList.add("hidden") });
             });
         });
 
@@ -1867,7 +1867,7 @@
                 if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
                 hideLoadingScreen();
-                document.querySelectorAll(".mypopupdialog").forEach(el=>{ el.classList.add("hidden")});
+                document.querySelectorAll(".mypopupdialog").forEach(el => { el.classList.add("hidden") });
                 document.getElementById("myinputbar").classList.remove("hyper");
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
         });
@@ -2054,28 +2054,6 @@
     function addTransactionToCache(event) {
         if (cachedTransCashTotal[appStates[currentAppStateIndex]] == "Subiri ..") return;
         let target = event.target, currentQuery = productdetails_json.finalQuery;
-
-        if (appStates[currentAppStateIndex] == "stocktake") {
-
-            var isclosing = prompt(`Bonyeza ' OKAY ' KAMA NI StockTake yakuFUNGA (CLOSE) MAHESABU ya\n${editCustomerName}\nBonyeza ' CANCEL ' kama ni yakuFUNGUA (OPEN) MAHESABU ${editCustomerName}!`, editCustomerName);
-            if (isclosing == null) {
-                var newdatetext = editCustomerName.trim();
-                currentQuery = currentQuery.replaceAll(/(\d+\/\d+[\/\d+]{0,5})/gm, `${newdatetext}`);
-            }
-            else if (isclosing.trim().toLocaleLowerCase().match(/\d{1,2}\/\d{1,2}\/.*/gm)) {
-                var newdatetext = isclosing;
-                currentQuery = currentQuery.replaceAll(/(\d+\/\d+[\/\d+]{0,5})/gm, `${newdatetext}`)
-
-            }
-            else if (isclosing.toLowerCase() == "ndio") {
-                if (/(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery))
-                    var datetext = /(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(currentQuery)[0].trim();
-
-                var dd = eval(/(\d+)\/\d+[(\/\d+)]{0,5}/gm.exec(datetext)[1]) + 1;
-                currentQuery = currentQuery.replaceAll(/\d+(\/\d+[(\/\d+)]{0,5})/gm, `${dd}$1`);
-
-            }
-        }
 
         if (cachedTransactionQueries[appStates[currentAppStateIndex]] == undefined) {
 
