@@ -1271,8 +1271,7 @@
 
                             document.getElementById("filter-dialog-transDate").classList.add("hidden");
                         }
-
-                        if (target == "editCustomerName") {
+                        else if (target == "editCustomerName") {
                             var val = (e.target.value == "") ? "HQ" : e.target.value;
 
                             document.getElementById("warehouseName").innerHTML = val;
@@ -1478,7 +1477,12 @@
                         throw new Error('ErrServer response: ' + text, false, true);
                     });
                 }
-                return response.json();
+                try{
+                var jsonresponse = response.json();
+                }catch(e){
+                    var jsonresponse = response.body.json();
+                }
+                return jsonresponse;
             })
             .then(data => {
                 settingsObj = data;
@@ -1490,22 +1494,21 @@
                 show(client + ": Has been updated products...");
                 goto("command||beep");
                 hideLoadingScreen();
+            clearvalues();
             })
             .catch((error) => {
                 if (error.message.includes('Failed to fetch')) {
-                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack);
+                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack,true);
                 } else {
                     responseClone.text()
                         .then(bodyText => {
                             show('Server responded: ' + bodyText, false, true, false);
                         });
                 }
-            });
-        setTimeout(function () {
-            hideLoadingScreen();
+                show("Update Failed!");
+                hideLoadingScreen();
             clearvalues();
-        }, 4000);
-
+            });
 
     }
     function sendCachedTrans(event) {
@@ -1995,7 +1998,7 @@
 
             document.querySelector("#querydialog>input").focus();
 
-        }); document.querySelector("#querydialog>input,#filter-dialog-customers>div>input").addEventListener('keyup', function (e) {
+        }); document.querySelector("#querydialog>input").addEventListener('keyup', function (e) {
             var thekey = e.key.toString();
             target = e.target;
             if (e.key === 'Enter') {
