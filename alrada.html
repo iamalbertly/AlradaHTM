@@ -1589,7 +1589,6 @@
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
-                        var retHeaders = response.headers();
                         return response.text().then(text => {
                             if (text == "") {
                                 clearvalues();
@@ -1601,7 +1600,6 @@
                                 document.getElementById("btnSend2Cache").disabled = false;
                                 document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
                                 document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
-
                             } else
                                 throw new Error('ErrServer response: ' + text, false, true);
                         });
