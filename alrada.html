@@ -277,7 +277,6 @@
         display: none
     }
 
-    #productsview>* li>a:hover>input,
     #productsview>* li>a:active>input,
     #productsview>* li>a.pressed>input {
         display: flex
@@ -331,7 +330,7 @@
     }
 
     .btn:active:after {
-        opacity: 0
+        opacity: 0;
     }
 
     .btn:hover {
@@ -2297,7 +2296,6 @@
                             el.classList.add("enabled");
                         });
                         closeFilterDialog();
-
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
                         queryLog = newjson_transactions.finalQuery;
