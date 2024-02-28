@@ -1281,58 +1281,7 @@
                     });
                 });
 
-            } else {
-                document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
-                    var parentName = el.parentNode.parentNode.parentNode.name;
-                    el.addEventListener("click", (event) => {
-                        var selectedproductname = el.name.replace("_", " ");
-                        document.getElementsByName("TransactionEditDrinkName_0").innerHTML = selectedproductname;
-                        var newval = el.name.replaceAll("_", " "),
-                            newediting = editing.replace(oldval, newval).replace(/@\d+\.{0,1}\d{0,}/, ""),
-                            newquery = oldquery.replace(editing, newediting),
-                            newjson_transactions = JSON.parse(GetProductDetails(newquery));
-                        if (family == "confirmCachedEntry") {
-                            cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
-                            cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
-                            cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
-
-                            if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
-                                if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
-                                    document.querySelectorAll(".disabled").forEach(el => {
-                                        el.disabled = false;
-                                        el.classList.remove("disabled");
-                                        el.classList.add("enabled");
-                                    });
-                            if (cachedTransactionQueries[appStates[currentAppStateIndex]])
-                                if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
-                                    document.querySelectorAll(".hiddenpreview").forEach(el => {
-                                        el.classList.remove("hiddenpreview");
-                                        el.classList.add("shownpreview");
-                                    });
-
-                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
-                            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-                            reCreateCacheCleanupForm();
-                        }
-                        else if (family == "confirmTransactionEntry") {
-                            productdetails_json = newjson_transactions;
-                            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
-                            document.querySelectorAll(".disabled").forEach(el => {
-                                el.disabled = false;
-                                el.classList.remove("disabled");
-                                el.classList.add("enabled");
-                            });
-
-                            document.getElementById("submitbuttonholder").classList.remove("hyper");
-                            document.getElementById("myinputbar").classList.remove("hyper");
-                            queryLog = productdetails_json.finalQuery;
-                        }
-                        closeFilterDialog();
-                    });
-                });
-
-            }
+            } 
        
             document.querySelectorAll(".product > input,#editCustomerName,#editTransDate").forEach(input => {
                 input.classList.remove("pressed");
@@ -2286,7 +2235,60 @@
         switch (action) {
             case "TransactionEditDrinkName":
                 document.getElementById("filter-dialog-products").classList.remove("hidden");
-                document.getElementById("filter-dialog-products").name = target.name;
+                document.getElementById("filter-dialog-products").name = target.name+"__"+editing;
+                document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
+                    el.removeEventListener("click",(e)={});
+                    var parentName = el.parentNode.parentNode.name.split("__");
+                    parentName = parentName[0],
+                    editing = parentName[1];
+                    
+                    el.addEventListener("click", (event) => {
+                        var selectedproductname = el.name.replace("_", " ");
+                        document.getElementsByName("TransactionEditDrinkName_0").innerHTML = selectedproductname;
+                        var newval = el.name.replaceAll("_", " "),
+                            newediting = editing.replace(oldval, newval).replace(/@\d+\.{0,1}\d{0,}/, ""),
+                            newquery = oldquery.replace(editing, newediting),
+                            newjson_transactions = JSON.parse(GetProductDetails(newquery));
+                        if (family == "confirmCachedEntry") {
+                            cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                            cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                            cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
+
+                            if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
+                                if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
+                                    document.querySelectorAll(".disabled").forEach(el => {
+                                        el.disabled = false;
+                                        el.classList.remove("disabled");
+                                        el.classList.add("enabled");
+                                    });
+                            if (cachedTransactionQueries[appStates[currentAppStateIndex]])
+                                if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
+                                    document.querySelectorAll(".hiddenpreview").forEach(el => {
+                                        el.classList.remove("hiddenpreview");
+                                        el.classList.add("shownpreview");
+                                    });
+
+                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+                            reCreateCacheCleanupForm();
+                        }
+                        else if (family == "confirmTransactionEntry") {
+                            productdetails_json = newjson_transactions;
+                            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                            document.querySelectorAll(".disabled").forEach(el => {
+                                el.disabled = false;
+                                el.classList.remove("disabled");
+                                el.classList.add("enabled");
+                            });
+
+                            document.getElementById("submitbuttonholder").classList.remove("hyper");
+                            document.getElementById("myinputbar").classList.remove("hyper");
+                            queryLog = productdetails_json.finalQuery;
+                        }
+                        closeFilterDialog();
+                    });
+                });
                 break;
             case "TransactionEditMultiplier":
             case "TransactionEditUnitPrice":
