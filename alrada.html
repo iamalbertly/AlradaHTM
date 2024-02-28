@@ -586,7 +586,7 @@
         max-height: 300px;
     }
 
-    #results li {
+    .products>li {
         border: .2px solid #ccc;
         display: flex;
         flex: 1 0 auto;
@@ -597,7 +597,7 @@
     }
 
     @media (min-width: 100px) {
-        #results li {
+        .products>li {
             flex-basis: calc(50% - 10px)
         }
 
@@ -612,7 +612,7 @@
     }
 
     @media (min-width: 500px) {
-        #results li {
+        .products>li {
             flex-basis: calc(33.33% - 10px)
         }
 
@@ -622,13 +622,13 @@
     }
 
     @media (min-width: 700px) {
-        #results li {
+        .products>li {
             flex-basis: calc(25% - 10px)
         }
     }
 
     @media (min-width: 900px) {
-        #results li {
+        .products>li {
             flex-basis: calc(20% - 10px)
         }
     }
@@ -901,7 +901,7 @@
         </button>
     </div>
     <div id="productsview" class="wholesale_sale">
-        <ul id="results"></ul>
+        <ul id="results" class="products"></ul>
     </div>
     <div class="flex-column">
         <div id="mysubmitbar" class="flex-row hidden">
@@ -1243,6 +1243,9 @@
                 document.querySelectorAll("a.product").forEach(el => {
                     el.addEventListener("focus", (e) => {
                         var nm = e.srcElement.getAttribute("name");
+                        var target = e.target;
+
+                        if(target.parentNode.parentNode.id== "results"){
                         if (nm != oldFocusedProduct && document.querySelector(`li.product[name='${oldFocusedProduct}']`)) {
                             document.querySelector(`li.product[name='${oldFocusedProduct}']`).classList.remove("hovering");
                         }
@@ -1273,15 +1276,17 @@
                         document.getElementById("submitbutton").innerHTML = newlink;
                         document.getElementById("submitbutton").href = "/" + newlink;
                         try { input.focus(); } catch (e) { }
+                    }
 
                     });
                 });
 
             } else {
                 document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
+                    var parentName = el.parentNode.parentNode.parentNode.name;
                     el.addEventListener("click", (event) => {
                         var selectedproductname = el.name.replace("_", " ");
-                        document.getElementById("edit_drinkname").innerHTML = selectedproductname;
+                        document.getElementsByName("TransactionEditDrinkName_0").innerHTML = selectedproductname;
                         var newval = el.name.replaceAll("_", " "),
                             newediting = editing.replace(oldval, newval).replace(/@\d+\.{0,1}\d{0,}/, ""),
                             newquery = oldquery.replace(editing, newediting),
@@ -2281,6 +2286,7 @@
         switch (action) {
             case "TransactionEditDrinkName":
                 document.getElementById("filter-dialog-products").classList.remove("hidden");
+                document.getElementById("filter-dialog-products").name = target.name;
                 break;
             case "TransactionEditMultiplier":
             case "TransactionEditUnitPrice":
