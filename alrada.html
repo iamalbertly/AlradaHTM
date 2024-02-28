@@ -126,6 +126,7 @@
         display: flex;
         background: center;
         align-items: center;
+        max-width: 100px;
     }
 
     #appStates {
@@ -789,7 +790,7 @@
         margin-left: 10px;
         padding-left: 4px;
         padding-right: 4px;
-        width: max-content
+        width: max-content;
     }
 
     #myModal {
@@ -868,75 +869,6 @@
         <div id="appStates" class="flex-column"><button id="appState" class="highlight-border"><span>💰</span>MAUZO
                 &nbsp; </button></div><button onclick="getwarehouseName()" id="warehouseName"></button>
     </div>
-    <div id="myforms">
-        <div id="loading-screen" class="hidden">
-            <div class="loading-content">
-                <h2 id="loading-title" class="sr-only">Tafadhali Subiri</h2>
-                <div class="spinner-border" role="status"><small id="loading-subtitle"></small></div>
-                <div id="loading-text" class="loading-text"
-                    style="border-bottom: 1px solid whitesmoke;overflow-y: auto;height: min-content;max-height: 185px;">
-                    ...
-                </div>
-                <div class="buttonholder" style="display:flex;flex-direction:row;margin-top:15px"></div>
-            </div>
-        </div>
-        <div id="choose-mode" class="hidden mypopupdialog">
-            <h2 id="selectmode">Select Mode</h2>
-            <ul>
-                <li><a href="#" onclick="changeMode('0')"><span>💰</span>MAUZO &nbsp;</a></li>
-                <li><a href="#" onclick="changeMode('2')"><span>➕</span>UPOKEZI &nbsp;</a></li>
-                <li><a href="#" onclick="changeMode('1')"><span>🤌🏽</span>MALIPO &nbsp;</a></li>
-                <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span>STOCK &nbsp;</a></li>
-                <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span>MANUNUZI &nbsp;</a></li>
-            </ul>
-            <a id="updateStr" href="#" class="small"
-                style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
-                onClick="fetchProductUpdate()">update<span> </span> </a>
-        </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder=""
-            title="clipboard" />
-        <div id="filter-dialog" class="hidden mypopupdialog"></div>
-        <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query"
-                placeholder="" type="text" style="width:100%" /></div>
-        <div id="processmsg-diaslog" class="hidden mypopupdialog"></div>
-        <div id="filter-dialog-products" class="mypopupdialog">
-            <h4>CHAGUA PRODUCT</h4>
-            <small>KWA Mfano <i>'Uhai 1.6</i> </small>
-            <div>
-                <input id="editProductName" title="Edit Product Name" placeholder="Chagua Product" />
-            </div>
-            <ul class="products selectproduct"></ul>
-        </div>
-        <div id="filter-dialog-products2" class="mypopupdialog">
-            <h4>CHUJA AINA PRODUCTS</h4>
-            <ul id="filterCategories"></ul>
-            <div>
-                <label>Vipaombele NPS </label>
-                <input type="range" min="0" max="10" id="financial_nps" value="0">
-                <label>Kasi ya Kutembeya</label>
-                <input type="range" id="speed" min="0" max="5">
-            </div>
-        </div>
-    </div>
-    <div id="filter-dialog-customers" class="mypopupdialog">
-        <h4>INGIZA JINA LA MTEJA</h4>
-        <small>KWA Mfano <i>MAMA ALAN @Majengo</i> </small>
-        <div>
-            <input id="editCustomerName" placeholder="hq" />
-        </div>
-        <ul class="selectproduct"></ul>
-    </div>
-    <div id="filter-dialog-transDate" class="mypopupdialog">
-        <h4>INGIZA TAREHE</h4>
-        <small>KWA Mfano <i>31/1/2025</i> </small>
-        <div>
-            <input id="editTransDate" />
-            <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
-                <button id="editTransDateSubmit"
-                    onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
-            </div>
-        </div>
-        <ul></ul>
-    </div>
 </div>
 <div id="mywebview2" class="flex-column">
     <div id="resultpad" class="flex-column">
@@ -968,6 +900,76 @@
                     class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
                         &nbsp;</label><label>Peleka</label></a></div>
         </div>
+    </div>
+</div>
+<div id="myforms">
+    <div id="loading-screen" class="hidden">
+        <div class="loading-content">
+            <h2 id="loading-title" class="sr-only">Tafadhali Subiri</h2>
+            <div class="spinner-border" role="status"><small id="loading-subtitle"></small></div>
+            <div id="loading-text" class="loading-text"
+                style="border-bottom: 1px solid whitesmoke;overflow-y: auto;height: min-content;max-height: 185px;">
+                ...
+            </div>
+            <div class="buttonholder" style="display:flex;flex-direction:row;margin-top:15px"></div>
+        </div>
+    </div>
+    <div id="choose-mode" class="hidden mypopupdialog">
+        <h2 id="selectmode">Select Mode</h2>
+        <ul>
+            <li><a href="#" onclick="changeMode('0')"><span>💰</span>MAUZO &nbsp;</a></li>
+            <li><a href="#" onclick="changeMode('2')"><span>➕</span>UPOKEZI &nbsp;</a></li>
+            <li><a href="#" onclick="changeMode('1')"><span>🤌🏽</span>MALIPO &nbsp;</a></li>
+            <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span>STOCK &nbsp;</a></li>
+            <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span>MANUNUZI &nbsp;</a></li>
+        </ul>
+        <a id="updateStr" href="#" class="small"
+            style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
+            onClick="fetchProductUpdate()">update<span> </span> </a>
+    </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder=""
+        title="clipboard" />
+    <div id="filter-dialog" class="hidden mypopupdialog"></div>
+    <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query"
+            placeholder="" type="text" style="width:100%" /></div>
+    <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
+    <div id="filter-dialog-products" class="hidden mypopupdialog">
+        <h4>CHAGUA PRODUCT</h4>
+        <small>KWA Mfano <i>'Uhai 1.6</i> </small>
+        <div>
+            <input id="editProductName" title="Edit Product Name" placeholder="Chagua Product" />
+        </div>
+        <ul class="products selectproduct"></ul>
+    </div>
+    <div id="filter-dialog-products2" class="hidden mypopupdialog">
+        <h4>CHUJA AINA PRODUCTS</h4>
+        <ul id="filterCategories"></ul>
+        <div>
+            <label>Vipaombele NPS </label>
+            <input type="range" min="0" max="10" id="financial_nps" value="0">
+            <label>Kasi ya Kutembeya</label>
+            <input type="range" id="speed" min="0" max="5">
+        </div>
+    </div>
+    <div id="filter-dialog-customers" class="hidden mypopupdialog">
+        <h4>INGIZA JINA LA MTEJA</h4>
+        <small>KWA Mfano <i>MAMA ALAN @Majengo</i> </small>
+        <div>
+            <input id="editCustomerName" placeholder="hq" />
+        </div>
+        <ul class="selectproduct"></ul>
+    </div>
+    <div id="filter-dialog-transDate" class="hidden mypopupdialog">
+        <h4>INGIZA TAREHE</h4>
+        <small>KWA Mfano <i>31/1/2025</i> </small>
+        <div>
+            <input id="editTransDate" />
+            <div><button id="editTransDateleft" class="flex-row">⬅️</button><button
+                    id="editTransDateRight">➡️</button>
+                <button id="editTransDateSubmit"
+                    onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
+            </div>
+        </div>
+        <ul></ul>
     </div>
 </div>
 <script>
