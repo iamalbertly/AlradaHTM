@@ -1149,13 +1149,11 @@
     try {
         if (settingsObj != undefined) {
             loadCachedTrans();
-            createProductsView();
         }
         else {
             if (global('ALDSETTING')) {
                 var settingsObj = JSON.parse(global('ALDSETTING'));
                 loadCachedTrans();
-                createProductsView();
             }
             else
                 fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
@@ -1558,7 +1556,7 @@
     function createProductLi(name, formattedname, category, price, categorySign, localAppState, contactName = "", hasinput = true) {
         const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
         const inputTag = localAppState === "sent2_bank" ? contactName : price + " tsh";
-        const inputId = `${inputType}_${localAppState}_${formattedname}`;
+        const inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`;
         hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onClick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
         return `<li class="product active ${category}" data-category="${category}" name="${formattedname}">
             <a class="product ${category}" href="#" name="${formattedname}">
