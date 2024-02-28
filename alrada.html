@@ -192,7 +192,7 @@
         display: flex;
         justify-content: center;
         position: absolute;
-    top: 0px;
+        top: 0px;
     }
 
     #appStates {
@@ -449,13 +449,8 @@
 
     #myinputbar * span {
         background: #f0f8ff;
-        border: 1px solid #000;
-        border-color: #deb887;
-        font-size: 3VW;
-        max-width: 20%;
-        padding-left: 2px;
-        padding-right: 2px;
-        white-space: nowrap;
+    border-color: #deb887;
+    white-space: nowrap;
     }
 
     #search {
@@ -669,12 +664,24 @@
         justify-content: center;
     }
 
+    #filterCategories {
+        overflow-y: auto;
+        max-height: 184px;
+        border: 1px solid black;
+        display: ruby;
+    }
+
+    #filterCategories>li,
     #choose-mode>ul>li {
         font-size: larger;
         place-content: center;
-        border: 1px solid black;
+        border: .5px solid #b4b0b0;
         padding-top: 20px;
         padding-bottom: 20px;
+        margin-left: 4px;
+        margin-right: 4px;
+        padding-left: 3px;
+        padding-right: 2px;
     }
 
     .mypopupdialog>.buttonholder {
@@ -730,9 +737,9 @@
 
     #cachedTrans {
         align-items: center;
-        flex-basis: max-content;
+        flex-flow: column;
         max-height: 20px;
-        margin-top: -15px;
+        margin-top: -35px;
     }
 
     #cachedTrans>span {
@@ -781,7 +788,7 @@
         min-height: unset;
     }
 
-    #cachedTrans>div>span.part1 {
+    #cachedTrans>span>span.part1 {
         background: none;
         border-bottom: none;
         border-left: 1px solid #000;
@@ -865,8 +872,7 @@
 <div id="mywebview" class="wholesale_sale">
     <div id="news_display">
         <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
-            <p>
-            </p>
+            <p> </p>
         </button>
         <div id="appStates" class="flex-column"><button id="appState" class="highlight-border"><span>💰</span>MAUZO
                 &nbsp; </button></div><button onclick="getwarehouseName()" id="warehouseName"></button>
@@ -880,18 +886,20 @@
     </div>
     <div id="myinputbar" class="flex-row"><input class="" type="text" id="search"
             placeholder="🔍 Tafuta Kinwaji" /><input disabled class="disabled highlight-border" type="number"
-            id="inputnumber_change" placeholder="Lipa" value="" /><button id="filter"
-            onclick="document.getElementById('filter-dialog-products2').classList.remove('hidden');"
-            class="functionpad">🎚️</button><button disabled id="btnSend2Cache"
-            onClick="chooseToAddTransactionToCache(event)" class="functionpad disabled">➡️</button><button
-            id="cachedTrans" class="flex-row notbutton">
-            <div>
-                <p class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
-                        style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></p><span
-                    class="part2 highlight-border" style="border:none;background: none;font-size: revert;">-</span><span
-                    class="part1 highlight-border">-</span>
-            </div>
-        </button></div>
+            id="inputnumber_change" placeholder="Lipa" value="" />
+        <button id="filter" class="functionpad">🎚️</button>
+        <button disabled id="btnSend2Cache" onClick="chooseToAddTransactionToCache(event)"
+            class="functionpad disabled">➡️</button>
+        <button id="cachedTrans" class="flex-row notbutton">
+
+            <p class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
+                    style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></p>
+            <span>
+                <span class="part2 highlight-border" style="border:none;background: none;font-size: revert;">-</span>
+                <span class="part1 highlight-border">-</span>
+            </span>
+        </button>
+    </div>
     <div id="productsview" class="wholesale_sale">
         <ul id="results"></ul>
     </div>
@@ -928,11 +936,10 @@
         <a id="updateStr" href="#" class="small"
             style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
             onClick="fetchProductUpdate()">update<span> </span> </a>
-    </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder=""
-        title="clipboard" />
+    </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder="" title="clipboard" />
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
-    <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query"
-            placeholder="" type="text" style="width:100%" /></div>
+    <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="query" title="query" placeholder=""
+            type="text" style="width:100%" /></div>
     <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
     <div id="filter-dialog-products" class="hidden mypopupdialog">
         <h4>CHAGUA PRODUCT</h4>
@@ -965,8 +972,7 @@
         <small>KWA Mfano <i>31/1/2025</i> </small>
         <div>
             <input id="editTransDate" />
-            <div><button id="editTransDateleft" class="flex-row">⬅️</button><button
-                    id="editTransDateRight">➡️</button>
+            <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
                 <button id="editTransDateSubmit"
                     onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
             </div>
@@ -1141,8 +1147,8 @@
 
         document.getElementById("submitbutton").innerHTML = status_display + "<label>Peleka</label>";
 
-        document.querySelector("#cachedTrans>div>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
-        document.querySelector("#cachedTrans>div>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
+        document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
+        document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
         clearvalues();
         createProductsView();
         closeFilterDialog();
@@ -1213,8 +1219,8 @@
                         cachedTransCashTotal[appStates[TransType]] = 0;
                     }
                 }
-                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[0]];
-                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
+                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[0]];
+                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
                 document.querySelectorAll(".hiddenpreview").forEach(el => {
                     el.classList.remove("hiddenpreview");
                     el.classList.add("shownpreview");
@@ -1299,8 +1305,8 @@
                                         el.classList.add("shownpreview");
                                     });
 
-                            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
                             setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
                             reCreateCacheCleanupForm();
                         }
@@ -1322,9 +1328,11 @@
                 });
 
             }
-
+       
             document.querySelectorAll(".product > input,#editCustomerName,#editTransDate").forEach(input => {
                 input.classList.remove("pressed");
+                input.removeEventListener('keyup', function (e){});
+
                 input.addEventListener('keyup', function (e) {
                     var thekey = e.key.toString();
                     var clickedvalue = e.srcElement.getAttribute("name");
@@ -1345,7 +1353,7 @@
                             warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
                         }
-                        else if (e.target.parentNode.id == "results") { /* click 1 of the products in the results product view*/
+                        else if (e.target.parentNode.parentNode.id == "results") { /* click 1 of the products in the results product view*/
 
                             e.preventDefault();
                             try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
@@ -1527,11 +1535,11 @@
         document.querySelector("#filter-dialog-products2>#filterCategories").innerHTML = filterDialogProducts2CategoriesStr;
 
         hideExistingInputs();
-        
-        createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
-            createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
 
-            addInputEventListeners();
+        createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
+        createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
+
+        addInputEventListeners();
 
     }
 
@@ -1693,8 +1701,8 @@
             cachedTransCashTotal[transactionType] = "Subiri ..";
             document.getElementById("btnSend2Cache").classList.add("disabled");
             document.getElementById("btnSend2Cache").disabled = true;
-            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
 
             var transactionType = appStates[currentAppStateIndex];
             if (cachedTransactionQueries[transactionType] == 0) return;
@@ -1789,8 +1797,8 @@
                                 cachedTransCashTotal[transactionType] = 0;
                                 document.getElementById("btnSend2Cache").classList.remove("disabled");
                                 document.getElementById("btnSend2Cache").disabled = false;
-                                document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                                document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
                             } else
                                 throw new Error('ErrServer response: ' + text, false, true);
                         });
@@ -1806,8 +1814,8 @@
                     try {
                         document.getElementById("btnSend2Cache").classList.remove("disabled");
                         document.getElementById("btnSend2Cache").disabled = false;
-                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
                     } catch (e) { }
                     setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                     try {
@@ -1816,8 +1824,8 @@
                                 show('txtServer responded: ' + bodyText, false, true, false);
                             });
                     } catch (e) {
-                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[transactionType];
-                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
                         show(e.stack + "-there was an error");
                     }
                     show(client + ": Repoti Imetumwa...");
@@ -1912,8 +1920,8 @@
                         el.classList.add("shownpreview");
                     });
 
-            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
 
             setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
@@ -1954,8 +1962,8 @@
                         el.classList.add("shownpreview");
                     });
 
-            document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-            document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
 
             setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
@@ -2012,6 +2020,10 @@
     }
 
     function initializeListeners() { /*load events*/
+
+        document.getElementById('filter').addEventListener('click', function () {
+            document.getElementById('filter-dialog-products2').classList.remove('hidden');
+        })
 
         document.getElementById('editTransDateleft').addEventListener('click', function () {
             var dateElement = document.getElementById('editTransDate');
@@ -2091,7 +2103,6 @@
             var thekey = e.key.toString();
             target = e.target;
             if (e.key === 'Enter') {
-
                 var query = document.getElementById("query").value;
                 if (query == "") return 0;
                 if (appStates[currentAppStateIndex] != "stocktake") {
@@ -2154,8 +2165,8 @@
                                 el.classList.add("shownpreview");
                             });
 
-                    document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                    document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                    document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                    document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
                     setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
 
                     reCreateCacheCleanupForm();
@@ -2217,8 +2228,8 @@
             if (total != null) cachedTransCashTotal[appStates[currentAppStateIndex]] = ((total.length > 0) ? eval(total[1].replaceAll(",", "")) : 0);
         }
 
-        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
+        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
 
 
         for (const TransType in cachedTransactionQueries) {
@@ -2301,8 +2312,8 @@
                                     el.classList.remove("hiddenpreview");
                                     el.classList.add("shownpreview");
                                 });
-                        document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                        document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
                         setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
 
                         closeFilterDialog();
@@ -2360,8 +2371,8 @@
                                 el.classList.add("shownpreview");
                             });
 
-                    document.querySelector("#cachedTrans>div>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                    document.querySelector("#cachedTrans>div>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                    document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                    document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
 
                     setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
                     reCreateCacheCleanupForm();
