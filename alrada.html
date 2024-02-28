@@ -123,7 +123,6 @@
     #showTransDate {
         display: -webkit-inline-box;
         -webkit-box-align: center;
-        width: fit-content;
         display: flex;
         background: center;
         align-items: center;
@@ -903,9 +902,9 @@
             <h4>CHAGUA PRODUCT</h4>
             <small>KWA Mfano <i>'Uhai 1.6</i> </small>
             <div>
-                <input id="editProductName" />
+                <input id="editProductName" title="Edit Product Name" placeholder="Chagua Product" />
             </div>
-            <ul id="results" class="products selectproduct"></ul>
+            <ul class="products selectproduct"></ul>
         </div>
         <div id="filter-dialog-products2" class="mypopupdialog">
             <h4>CHUJA AINA PRODUCTS</h4>
@@ -1163,7 +1162,7 @@
                         if (!response.ok) {
                             responseClone.text()
                                 .then(function (bodyText) {
-                                    show("recieved the following: " + bodyText)
+                                    show("recieved the following: " + bodyText);
                                 });
                             return response.text().then(text => {
                                 throw new Error('Server response: ' + text, true, true);
@@ -1234,9 +1233,6 @@
 
             if (holderElement.id == "results") {
                 document.querySelectorAll("a.product").forEach(el => {
-                    /* el.addEventListener("click", (e) => {
-                         document.getElementById("myinputbar").classList.remove("hyper");
-                     });*/
                     el.addEventListener("focus", (e) => {
                         var nm = e.srcElement.getAttribute("name");
                         if (nm != oldFocusedProduct && document.querySelector(`li.product[name='${oldFocusedProduct}']`)) {
@@ -1404,7 +1400,7 @@
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
                                 el.classList.remove("disabled");
-                                el.classList.add("enabled")
+                                el.classList.add("enabled");
                             });
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
@@ -1413,8 +1409,6 @@
                                 var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
                                 document.querySelector(el).classList.add("hidden");
                             }
-                            document.getElementById("warehouseName").focus();
-
                             document.getElementById("warehouseName").focus();
                         }
                     }
@@ -1677,7 +1671,7 @@
             })
             .catch((error) => {
                 if (error.message.includes('Failed to fetch')) {
-                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack, true);
+                    show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack, true, true);
                 } else {
                     responseClone.text()
                         .then(bodyText => {
