@@ -1346,18 +1346,15 @@
                         }
                         else if (target == "editCustomerName") {
                             var val = (e.target.value == "") ? "HQ" : e.target.value;
-
                             document.getElementById("warehouseName").innerHTML = val;
                             warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
-                        } if (e.target.offsetParent.id == "results") { /* click 1 of the products in the results product view*/
-
+                        }
+                        else if (e.target.offsetParent.id == "results") { /* click 1 of the products in the results product view*/
 
                             e.preventDefault();
                             try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
-
-                          
-                                var originalFocusedProduct = currentFocusedProduct;
+                            var originalFocusedProduct = currentFocusedProduct;
                             var selector = `#results>*>a[name='${currentFocusedProduct}']>input`;
                             if (/MATUMIZI_MENGINE|Transport/g.test(currentFocusedProduct)) {
 
@@ -1687,7 +1684,7 @@
                             show('Server responded: ' + bodyText, true, true, false);
                         });
                 }
-                
+
                 hideLoadingScreen();
                 clearvalues();
                 show("DB update failed!");
