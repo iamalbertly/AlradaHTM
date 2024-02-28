@@ -971,7 +971,6 @@
         </div>
     </div>
 </div>
-</div>
 <script>
     if (typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
@@ -1600,7 +1599,7 @@
         try {
             initializeListeners();
             createProductsView();
-            createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"))
+            createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
             createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
         } catch (e) {
             show(e.stack + "-- error trying to load");
@@ -1685,12 +1684,13 @@
                 } else {
                     responseClone.text()
                         .then(bodyText => {
-                            show('Server responded: ' + bodyText, false, true, false);
+                            show('Server responded: ' + bodyText, true, true, false);
                         });
                 }
-                show("Update Failed!");
+                
                 hideLoadingScreen();
                 clearvalues();
+                show("DB update failed!");
             });
 
     }
