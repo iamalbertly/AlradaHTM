@@ -586,7 +586,7 @@
         overflow-x: clip;
         overflow-y: auto;
         position: sticky;
-        max-height: 330px;
+        max-height: 300px;
     }
 
     #results li {
@@ -1319,10 +1319,7 @@
                     });
                 });
 
-
             }
-
-
 
             document.querySelectorAll(".product > input,#editCustomerName,#editTransDate").forEach(input => {
                 input.classList.remove("pressed");
@@ -1346,7 +1343,7 @@
                             warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
                         }
-                        else if (e.target.offsetParent.id == "results") { /* click 1 of the products in the results product view*/
+                        else if (e.target.parentNode.id == "results") { /* click 1 of the products in the results product view*/
 
                             e.preventDefault();
                             try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
@@ -1528,8 +1525,12 @@
         document.querySelector("#filter-dialog-products2>#filterCategories").innerHTML = filterDialogProducts2CategoriesStr;
 
         hideExistingInputs();
+        
+        createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
+            createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
 
-        addInputEventListeners();
+            addInputEventListeners();
+
     }
 
     function getCategorySign(categoryBreakdown) {
@@ -1590,8 +1591,6 @@
         try {
             initializeListeners();
             createProductsView();
-            createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
-            createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
         } catch (e) {
             show(e.stack + "-- error trying to load");
         }
