@@ -1353,7 +1353,7 @@
                             warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
                         }
-                        else if (e.target.parentNode.parentNode.id == "results") { /* click 1 of the products in the results product view*/
+                        else if (e.target.parentNode.parentNode.parentNode.id == "results") { /* click 1 of the products in the results product view*/
 
                             e.preventDefault();
                             try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
