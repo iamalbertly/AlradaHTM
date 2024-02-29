@@ -744,12 +744,13 @@
             align-items: center;
             flex-flow: column;
             max-height: 20px;
-            margin-top: -35px;
+            margin-top: -20px;
         }
     
         #cachedTrans>span {
             border-bottom: 1px solid #000;
-            width: 100%
+            width: 100%;
+            text-wrap: pretty;
         }
     
         .notbutton,
@@ -1002,8 +1003,7 @@
         function flashLong(par1 = "", par2 = "") { }
     }
 
-
-
+    show("stop1");
 
     var transDate = new Date();
     var todayDate = transDate;
@@ -1045,7 +1045,7 @@
     function show(msg, timer = false, clip = true, flash = true) {
         try {
             /* log errors */
-            setGlobal("log:", global("errorlog:")+ "<<<>>>\n" + msg);
+            setGlobal("log:", global("log:") + "\n<<<>>>\n" + msg);
             if (clip) setClip("show():" + msg, false);
             if (flash) flashLong(msg);
         } catch (e) { }
@@ -1110,6 +1110,8 @@
         document.getElementById('filter-dialog-customers').classList.remove('hidden');
         document.querySelector('#filter-dialog-customers>div>input').focus();
     }
+    show("stop2");
+
     function getShopDate() {
         document.getElementById('filter-dialog-transDate').classList.remove('hidden');
         document.querySelector('#filter-dialog-transDate>div>input').focus();
@@ -1383,6 +1385,8 @@
         }
     }
 
+    show("stop3");
+
     function createProductsView() {
         const localAppState = appStates[currentAppStateIndex];
         if (!settingsObj) return;
@@ -1512,6 +1516,7 @@
         }
         return categorySign;
     }
+    show("stop4");
 
     function formatPrice(saleprice, purchaseprice) {
         if (appStates[currentAppStateIndex] == "wholesale_sale" || appStates[currentAppStateIndex] == "stocktake")
