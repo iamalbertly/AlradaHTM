@@ -1044,6 +1044,8 @@
 
     function show(msg, timer = false, clip = true, flash = true) {
         try {
+            /* log errors */
+            setGlobal("log:", global("errorlog:")+ "<<<>>>\n" + msg);
             if (clip) setClip("show():" + msg, false);
             if (flash) flashLong(msg);
         } catch (e) { }
@@ -1557,7 +1559,7 @@
             initializeListeners();
             createProductsView();
         } catch (e) {
-            show(e.stack + "-- error trying to load");
+            show(e.stack + "-- error trying to load",true,true);
         }
     };
 
