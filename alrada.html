@@ -868,7 +868,6 @@
         }
     </style>
 </head>
-<div>whats its height</div>
 <div id="mywebview" class="wholesale_sale">
     <div id="news_display">
         <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
@@ -1263,7 +1262,6 @@
                                     if (document.querySelector("li.product.hovering")) document.querySelector("li.product.hovering").classList.remove("hovering");
                                     document.getElementById("myinputbar").classList.remove("hyper");
                                     closeFilterDialog();
-                                    currentFocusedProduct.classList.add("hovering");
                                     document.querySelector("li.product[name='" + nm + "']>a>input").select();
                                 }
                                 currentFocusedProduct = nm;
@@ -1497,11 +1495,8 @@
             document.querySelector("#filter-dialog-products2>#filterCategories").innerHTML = filterDialogProducts2CategoriesStr;
 
             hideExistingInputs();
-            show("just1");
             createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
-            show("just2");
             createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
-            show("just3");
             addInputEventListeners();
         }
 
@@ -1563,11 +1558,8 @@
 
         window.onload = function () {
             try {
-                show("stop14", true);
                 initializeListeners();
-                show("stop15", true);
                 createProductsView();
-                show("stop16", true);
             } catch (e) {
                 show(e.stack + "-- error trying to load", true, true);
             }
