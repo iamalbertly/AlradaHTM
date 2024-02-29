@@ -2281,9 +2281,8 @@
                     document.getElementById("myinputbar").classList.remove("hyper");
                     queryLog = productdetails_json.finalQuery;
                 }
-
                 closeFilterDialog();
-        }
+        };
 
         document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
             el.removeEventListener("click", (e) = {});
