@@ -1299,7 +1299,7 @@
                         if (e.key === 'Enter') {
                             if (target == "editTransDate") {
                                 /*test if valid date*/
-                                if (/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
+                                if (/^(0{0,1}[1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
                                     transDateStr = (e.target.value == "") ? transDateStr : e.target.value;
                                     document.querySelector("#showTransDate>span").innerHTML = transDateStr;
                                 } else show("Not a Valid Date", true);
