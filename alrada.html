@@ -982,6 +982,7 @@
     </div>
 </div>
 <script>
+    try{
     if (typeof createScene !== "function") { /* not in tasker*/
         function setGlobal(variableName = "", value = "") {
             const existingValue = localStorage.getItem(variableName);
@@ -2465,7 +2466,6 @@
         query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
 
         if (typeof returntype == 'undefined') var returntype = "single";
-       
 
         if (settingsObj.settings.alradaitemnames == undefined) throw new Error("settingsObj.settings.alradaitemnames is undefined");
         settingsObj.settings.alradaitemnames = settingsObj.settings.alradaitemnames.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
@@ -2693,4 +2693,8 @@
     try {
         var ALRADADATE = day + " / " + month;
     } catch (e) { }
+}
+catch(e){
+    show("error: " + e.stack, true,true);
+}
 </script>
