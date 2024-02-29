@@ -975,8 +975,7 @@
         <div>
             <input id="editTransDate" />
             <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
-                <button id="editTransDateSubmit"
-                    onClick="document.getElementById('editTransDate').dispatchEvent(eventEnter)">Ok</button>
+                <button id="editTransDateSubmit">Ok</button>
             </div>
         </div>
         <ul></ul>
@@ -984,6 +983,54 @@
 </div>
 <script>
     try {
+        const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
+            appStateMarks = ['ӿ', '$', '++', '#'],
+            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec";
+        let specialTransType = "", extraTransDetails = "",
+            eventEnter = new KeyboardEvent('keyup', {
+                key: 'Enter',
+                code: 'Enter',
+                keyCode: 13,
+                which: 13,
+                bubbles: true,
+                cancelable: true
+            }),
+            BreakException = {},
+            isMultTextArray = {},
+            products_jsonString = {},
+            suppliers_jsonString = {},
+            productsJsonString = undefined;
+        currentAppStateIndex = 0,
+            ProductNamesLiWithInput = [],
+            ProductNamesLiWithOutInput = [],
+            categories = {},
+            npsValues = {},
+            runningSpeedRanges = {},
+            ald_lstreply = "",
+            writtenInSearch = "",
+            editingquery = "",
+            warehouseName = 'HQ',
+            staffName = (typeof staffName == "undefined") ? "Al" : staffName;
+        queryLog = "",
+            responseClone = "",
+            confirmAddReportToCache = function () { },
+            confirmSendReportRightAway = function () { },
+            confirmFormYes = function () { },
+            confirmFormNo = function () { },
+            confirmFormEdit = function () { },
+            confirmFormPick = function () { },
+            finalResponseMsg = "",
+            newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "";
+        var currentFocusedProduct = "", oldFocusedProduct = "",
+            cachedTransObjectString = [],
+            cachedTransObjectJson = [],
+            cachedTransCount = [],
+            cachedTransCashTotal = [],
+            cachedTempTrans2Process = [],
+            cachedTransactionQueries = [],
+            results = document.getElementById('results');
+
+
         if (typeof createScene !== "function") { /* not in tasker*/
             function setGlobal(variableName = "", value = "") {
                 const existingValue = localStorage.getItem(variableName);
@@ -1059,52 +1106,7 @@
                 console.log("goto: " + location);
             }
         }
-        const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
-            appStateMarks = ['ӿ', '$', '++', '#'],
-            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec";
-        let specialTransType = "", extraTransDetails = "",
-            eventEnter = new KeyboardEvent('keyup', {
-                key: 'Enter',
-                code: 'Enter',
-                keyCode: 13,
-                which: 13,
-                bubbles: true,
-                cancelable: true
-            }),
-            BreakException = {},
-            isMultTextArray = {},
-            products_jsonString = {},
-            suppliers_jsonString = {},
-            productsJsonString = undefined;
-        currentAppStateIndex = 0,
-            ProductNamesLiWithInput = [],
-            ProductNamesLiWithOutInput = [],
-            categories = {},
-            npsValues = {},
-            runningSpeedRanges = {},
-            ald_lstreply = "",
-            writtenInSearch = "",
-            editingquery = "",
-            warehouseName = 'HQ',
-            staffName = (typeof staffName == "undefined") ? "Al" : staffName;
-        queryLog = "",
-            responseClone = "",
-            confirmAddReportToCache = function () { },
-            confirmSendReportRightAway = function () { },
-            confirmFormYes = function () { },
-            confirmFormNo = function () { },
-            confirmFormEdit = function () { },
-            confirmFormPick = function () { },
-            finalResponseMsg = "",
-            newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "";
-        var currentFocusedProduct = "", oldFocusedProduct = "",
-            cachedTransObjectString = [],
-            cachedTransObjectJson = [],
-            cachedTransCount = [],
-            cachedTransCashTotal = [],
-            cachedTempTrans2Process = [],
-            cachedTransactionQueries = [],
-            results = document.getElementById('results');
+        
         function getwarehouseName() {
             document.getElementById('filter-dialog-customers').classList.remove('hidden');
             document.querySelector('#filter-dialog-customers>div>input').focus();
@@ -1983,6 +1985,10 @@
                 document.getElementById('filter-dialog-products2').classList.remove('hidden');
             });
 
+            document.getElementById('editTransDateSubmit').addEventListener('click', function (){
+                document.getElementById('editTransDate').dispatchEvent(eventEnter);
+            })
+
             document.getElementById('editTransDateleft').addEventListener('click', function () {
                 var dateElement = document.getElementById('editTransDate');
                 var date = new Date(dateElement.value.split('/').reverse().join('-'));
@@ -2693,6 +2699,7 @@
         try {
             var ALRADADATE = day + " / " + month;
         } catch (e) { }
+        
     }
     catch (e) {
         show("error: " + e.stack, true, true);
