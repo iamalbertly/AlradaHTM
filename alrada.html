@@ -1280,7 +1280,6 @@
 
                     });
                 });
-
             } 
        
             document.querySelectorAll(".product > input,#editCustomerName,#editTransDate").forEach(input => {
@@ -1522,9 +1521,10 @@
         const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
         const inputTag = localAppState === "sent2_bank" ? contactName : price + " tsh";
         const inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`;
+        const onClickEvent = (!hasinput)? `onClick="handleTransEvent(event)"`:``;
         hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onClick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
         return `<li class="product active ${category}" data-category="${category}" name="${formattedname}">
-            <a class="product ${category}" href="#" name="${formattedname}">
+            <a class="product ${category}" href="#" name="${formattedname}" ${onClickEvent}>
               ${productNameWithContact(name, contactName)}
               <span>${inputTag}<span class="classification">${categorySign}</span></span>
               ${hasinput}         
@@ -1977,7 +1977,7 @@
 
         document.getElementById('filter').addEventListener('click', function () {
             document.getElementById('filter-dialog-products2').classList.remove('hidden');
-        })
+        });
 
         document.getElementById('editTransDateleft').addEventListener('click', function () {
             var dateElement = document.getElementById('editTransDate');
@@ -2238,9 +2238,7 @@
                 document.getElementById("filter-dialog-products").name = target.name+"__"+editing;
                 document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
                     el.removeEventListener("click",(e)={});
-                    var parentName = el.parentNode.parentNode.name.split("__");
-                    parentName = parentName[0],
-                    editing = parentName[1];
+          
                     
                     el.addEventListener("click", (event) => {
                         var selectedproductname = el.name.replace("_", " ");
