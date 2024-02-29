@@ -1,878 +1,879 @@
 <!DOCTYPE html>
-<style>
-    * {
-        vertical-align: baseline;
-    }
-
-    body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        width: 99.708%;
-        overflow: hidden;
-    }
-
-    h4,
-    small {
-        margin-bottom: 4px;
-    }
-
-    small,
-    .small,
-    #cachedTrans>span {
-        font-size: xx-small;
-        align-self: center;
-    }
-
-
-    .tunatumaMsg>*>*>.buttonholder {
-        display: none;
-    }
-
-    li#confirmCachedEntry>div,
-    li#confirmTransactionEntry>div {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    li#confirmCachedEntry>div>div {
-        justify-content: space-between;
-    }
-
-    li#confirmCachedEntry>div>div>button {
-
-        right: 0px;
-        height: 20px;
-        width: 30px;
-        min-height: unset;
-    }
-
-    #loading-text>code>ul>li {
-        overflow-x: auto;
-        margin-right: 20px;
-        width: 100%;
-    }
-
-    li#confirmCachedEntry>div>div>div>a,
-    li#confirmTransactionEntry>span>a {
-        text-wrap: nowrap;
-        text-decoration: none;
-        padding-right: 5px;
-        width: 100%;
-        background: none;
-    }
-
-    li#confirmCachedEntry>div>div>div>a {
-        color: white;
-    }
-
-    span {
-        font-weight: bolder;
-    }
-
-    li {
-        margin-bottom: 1px
-    }
-
-    button {
-        font-size: 11px;
-        min-height: 100%;
-        width: -webkit-fill-available;
-    }
-
-    ul {
-        padding-left: 0;
-        align-items: baseline;
-        width: 99%;
-    }
-
-    body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        width: 99.708%
-    }
-
-    sub {
-        font-weight: 100;
-        letter-spacing: 1px;
-        text-decoration-line: none;
-    }
-
-    h2 {
-        margin-block-start: 19px;
-        margin-top: 0;
-        margin-bottom: 0px;
-    }
-
-    #mywebview {
-        min-height: 100%;
-        display: block;
-
-    }
-
-    #news_display {
-
-        display: flex;
-        flex-direction: row;
-        text-wrap: nowrap;
-        justify-content: space-between;
-        height: 40px;
-    }
-
-    #showTransDate {
-        display: -webkit-inline-box;
-        -webkit-box-align: center;
-        display: flex;
-        background: center;
-        align-items: center;
-        max-width: 100px;
-    }
-
-    #appStates {
-        width: 100%;
-    }
-
-    #warehouseName {
-        display: -webkit-inline-box;
-        -webkit-box-align: center;
-        width: 65px;
-        display: flex;
-        background: center;
-        align-items: center;
-        margin-top: .9px;
-    }
-
-
-    #filter-dialog>div>li {
-        border-bottom: 1px solid #a7a7a7;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 100%;
-        padding-top: 4px;
-        padding-bottom: 4px;
-        margin: 0;
-    }
-
-    .flex-row,
-    li {
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 5px
-    }
-
-    .half-row {
-        display: flex;
-        flex: 0 0 50% !important
-    }
-
-    .flex-column {
-        display: flex;
-        flex-direction: column
-    }
-
-    #results>li>a {
-        font-size: 3vw;
-        justify-content: center;
-        margin: 0;
-        width: 100%
-    }
-
-    a {
-        text-decoration: none;
-        border: none;
-        display: flex;
-        padding: 2px;
-        color: inherit;
-    }
-
-    #myforms {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        position: absolute;
-        top: 0px;
-    }
-
-    #appStates {
-        border-top: 1px solid #000
-    }
-
-    #mywebview.wholesale_sale>* button>span,
-    #productsview.wholesale_sale>* li>a>span {
-        background-color: #00c853
-    }
-
-    #mywebview.wholesale_sale>#news_display>* .highlight-border {
-        border-color: #00c853 !important
-    }
-
-    #mywebview.wholesale_purchase_delivered>* button>span,
-    #productsview.wholesale_purchase_delivered>* li>a>span {
-        background-color: #a200ff;
-        color: #fff
-    }
-
-    #mywebview.wholesale_purchase_delivered>#news_display>* .highlight-border {
-        border-color: #a200ff !important
-    }
-
-    #mywebview.wholesale_purchase>* button>span,
-    #productsview.wholesale_purchase>* li>a>span {
-        background-color: #ffc400;
-        color: #000
-    }
-
-    #mywebview.wholesale_purchase>#news_display>* .highlight-border {
-        border-color: #ffc400 !important
-    }
-
-    #mywebview.sent2_bank>div>* button>span,
-    #productsview.sent2_bank>* li>a>span {
-        background-color: #d50000
-    }
-
-    #mywebview.sent2_bank>#news_display>* .highlight-border {
-        border-color: #d50000 !important
-    }
-
-    #mywebview.stocktake>div>* button>span,
-    #productsview.stocktake>* li>a>span {
-        background-color: #e1e1e1;
-        color: #000
-    }
-
-    #mywebview.stocktake>#news_display>* .highlight-border {
-        border-color: #e1e1e1 !important
-    }
-
-    #results>li>a {
-        flex-flow: column;
-        padding: 0 1%;
-        place-content: space-between;
-        text-decoration: none;
-        white-space: nowrap
-    }
-
-    #results>li>a>span {
-        align-self: stretch;
-        background-color: #483d8b;
-        color: #fffff0;
-        font-size: small;
-        margin-bottom: 0;
-        pointer-events: none
-    }
-
-    #myinputbar input:focus,
-    #results>li>a:hover,
-    #results>li>a.pressed,
-    #results>li>a:active,
-    .processed,
-    #filter-dialog>div>li.selected {
-        background-color: #FAF9CB;
-        border: 2px solid #a4a4a4;
-        border-color: #000;
-        opacity: 1 !important;
-        padding-top: 0
-    }
-
-    #productsview>* li>a>input {
-        display: none
-    }
-
-    #productsview>* li>a:active>input,
-    #productsview>* li>a.pressed>input {
-        display: flex
-    }
-
-    li.product.hovering {
-        margin: 0;
-        order: -1;
-        position: sticky;
-        min-width: 60%;
-        opacity: 1;
-        top: 0px;
-        z-index: 90;
-    }
-
-    li.product.alcohol {
-        border: 2px solid red
-    }
-
-    .btn {
-        align-items: center;
-        background-color: var(--background-color);
-        border: 1px solid var(--border-color);
-        box-shadow: 0 .2rem .4rem #0006 0 -.3rem .6rem #0003 inset;
-        color: var(--color);
-        font-family: inherit;
-        font-weight: 900;
-        justify-content: center;
-        padding: .6rem;
-        position: relative;
-        transition: box-shadow 64ms ease-out;
-        --background-color: #d8d8d8;
-        --border-color: #c7c7c7;
-        --color: #000
-    }
-
-    .btn:after {
-        background-color: #fff;
-        content: "";
-        filter: blur(0.15rem);
-        height: 12.5%;
-        left: 12.5%;
-        position: absolute;
-        top: .15rem;
-        transition: opacity 64ms ease-out;
-        width: 75%
-    }
-
-    .btn:active {
-        box-shadow: 0 0 0 #0006 0 .4rem 1rem #0000004d inset
-    }
-
-    .btn:active:after {
-        opacity: 0;
-    }
-
-    .btn:hover {
-        border: 1px solid #000;
-    }
-
-    .btn-color-wholesale_sale {
-        --background-color: #00c853;
-        --border-color: #00a243;
-        --color: #fff
-    }
-
-    .btn-color-wholesale_sale:active {
-        --color: #ececec
-    }
-
-    .btn-color-wholesale_purchase {
-        --background-color: #ffc400;
-        --border-color: #d9a700;
-        --color: #3e2723
-    }
-
-    .btn-color-wholesale_purchase:active {
-        --color: #261815
-    }
-
-    .btn-color-sent2_bank {
-        --background-color: #d50000;
-        --border-color: #af0000;
-        --color: #fff
-    }
-
-    .btn-color-sent2_bank:active {
-        --color: #ececec
-    }
-
-    .btn-color-wholesale_purchase_delivered {
-        --background-color: #483d8b;
-        --border-color: #544b89;
-        --color: #fff
-    }
-
-    .btn-color-wholesale_purchase_delivered:active {
-        --color: #ececec
-    }
-
-    .pressed,
-    button:active {
-        border-color: #817;
-        box-shadow: inset 0 0 5px #a9a;
-        color: #817;
-        text-decoration: overline
-    }
-
-    #numberpadfunctions {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 60px
-    }
-
-    #istax {
-        color: #8b0000;
-        display: none;
-        font-weight: bolder
-    }
-
-    #submitbuttonholder>a {
-        height: 61px
-    }
-
-    #submitbuttonholder>div {
-        display: flex;
-        flex-flow: row
-    }
-
-    #myinputbar {
-        background: #fffaf0;
-        justify-content: space-between;
-        padding: 0 2px 0;
-        position: sticky;
-        top: 0;
-        min-height: 35px;
-    }
-
-    #myinputbar>div {
-        display: contents
-    }
-
-    #myinputbar>div>div {
-        display: inline-flex;
-        justify-content: flex-end
-    }
-
-    #myinputbar input {
-        -moz-box-shadow: 0 -1px .1px 3px #0000003d inset;
-        -webkit-box-shadow: 0 -1px .1px 3px #0000003d inset;
-        border-left: none;
-        border-right: none;
-        border-top: none;
-        box-shadow: 0 -1px .1px 3px #0000003d inset;
-        font-weight: bolder;
-        text-align: center;
-        width: 100%
-    }
-
-    #myinputbar>div>input:active {
-        background: bottom;
-        border: 2px solid #000;
-        border-color: #8b4513
-    }
-
-    #myinputbar * span {
-        background: #f0f8ff;
-        border-color: #deb887;
-        white-space: nowrap;
-    }
-
-    #search {
-        width: 280% !important
-    }
-
-    #feedbackpack>button {
-        height: 100%
-    }
-
-    .hidden,
-    .disabled,
-    .hiddenpreview,
-    #feedbackpad {
-        display: none !important;
-        visibility: hidden !important;
-        max-height: 0px !important;
-        max-width: 0px !important;
-    }
-
-    #resultpad {
-        background: #f5f5f5;
-        display: block;
-        min-height: 120px;
-        margin: 0;
-        margin-top: 3px;
-        overflow-x: clip;
-        overflow-y: auto;
-        padding: 2px;
-        position: relative;
-    }
-
-    .left {
-        text-align: left;
-    }
-
-    .right {
-        text-align: right;
-    }
-
-    #result_display {
-        font-family: monospace;
-        height: 100%;
-        padding-left: 3px;
-        text-align: left;
-        width: 100%;
-        font-size: small;
-    }
-
-
-
-    div#result_display>ul>li.total {
-        position: sticky;
-        bottom: 0;
-        border-top: 1px solid #efefef;
-        background-color: whitesmoke;
-        width: 70%;
-        font-weight: bold;
-    }
-
-    div#result_display>ul>li>span {
-        min-width: 245px;
-        align-items: baseline;
-        font-weight: 100;
-    }
-
-    div#result_display>ul>li>div>button {
-        border: none;
-        background-color: transparent;
-        margin-left: 10px;
-    }
-
-    div#result_display>ul>li>span>a {
-        border-bottom: 1px solid burlywood;
-        margin: 3px;
-        border-top: 0px;
-        background-color: transparent;
-        text-decoration: solid;
-        padding-top: none;
-        font-weight: 100;
-    }
-
-    #mywebview2 {
-        height: 97%;
-        margin: 0;
-        padding: 0;
-        width: 100%
-    }
-
-    .loading-content,
-    #loading-screen {
-        position: absolute;
-        z-index: 100;
-    }
-
-    #productsview {
-        border: 1px solid #000;
-        overflow-x: HIDDEN;
-        overflow-y: auto;
-        height: -webkit-fill-available;
-        position: relative;
-    }
-
-    #mysubmitbar,
-    li.product>span,
-    .mypopupdialog>div>div {
-        display: flex;
-        place-content: space-between
-    }
-
-    #myinputbar.hyper {
-        max-height: 21px;
-        min-width: 100%;
-        position: relative;
-    }
-
-    #mywebview3>div>.righthalf>a.btn {
-        height: 40%;
-        padding: 1%
-    }
-
-    #results {
-        display: flex;
-        flex-wrap: wrap;
-        top: 0;
-        left: 0;
-        padding: 0;
-        margin: 0;
-        list-style-type: none;
-        overflow-x: clip;
-        overflow-y: auto;
-        position: sticky;
-        max-height: 300px;
-    }
-
-    .products>li {
-        border: .2px solid #ccc;
-        display: flex;
-        flex: 1 0 auto;
-        flex-basis: auto;
-        flex-grow: 1;
-        margin: 3px;
-        margin-bottom: 6px;
-    }
-
-    @media (min-width: 100px) {
-        .products>li {
-            flex-basis: calc(50% - 10px)
-        }
-
-        #results>li>a {
-            font-size: 5vw;
-            letter-spacing: 2px
-        }
-
-        #results>li>a>span {
-            margin-top: 2px
-        }
-    }
-
-    @media (min-width: 500px) {
-        .products>li {
-            flex-basis: calc(33.33% - 10px)
-        }
-
-        #results>li>a {
-            font-size: 3vw
-        }
-    }
-
-    @media (min-width: 700px) {
-        .products>li {
-            flex-basis: calc(25% - 10px)
-        }
-    }
-
-    @media (min-width: 900px) {
-        .products>li {
-            flex-basis: calc(20% - 10px)
-        }
-    }
-
-    .mypopupdailog>div>input {
-        text-align-last: center;
-        border-left: none;
-        border-right: none;
-        border-top: none;
-        border-width: thin;
-        background-color: beige;
-    }
-
-    #filter-dialog,
-    #processmsg-dialog,
-    .mypopupdialog {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        box-shadow: 0 2px 5px #0003;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        position: absolute;
-        min-width: 60%;
-        z-index: 90;
-        align-items: center;
-    }
-
-    .mypopupdialog>*>li>a {
-        border: none;
-        text-decoration: none;
-        width: 100%;
-        justify-content: center;
-    }
-
-    #filterCategories {
-        overflow-y: auto;
-        max-height: 184px;
-        border: 1px solid black;
-        display: ruby;
-    }
-
-    #filterCategories>li,
-    #choose-mode>ul>li {
-        font-size: larger;
-        place-content: center;
-        border: .5px solid #b4b0b0;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        margin-left: 4px;
-        margin-right: 4px;
-        padding-left: 3px;
-        padding-right: 2px;
-    }
-
-    .mypopupdialog>.buttonholder {
-        display: flex;
-        margin-top: 10px
-    }
-
-    #filter-dialog-transDate>div>div>button {
-        font-size: large;
-        padding-left: 0px;
-        padding-right: 0px;
-        margin: unset;
-    }
-
-    .mypopupdialog>button {
-        margin: 3px;
-        position: absolute;
-        right: 10px;
-        top: 10px
-    }
-
-    #filter-categories {
-        list-style: none;
-        padding: 0
-    }
-
-    #filter-categories li {
-        margin-bottom: 5px
-    }
-
-    #filter-categories input[type="checkbox"] {
-        margin-left: 5px
-    }
-
-    li.product {
-        display: none !important;
-        width: fit-content;
-        opacity: .55;
-    }
-
-    li.product.active {
-        display: block !important
-    }
-
-    #mywebview3 {
-        border: 2px solid #000;
-        bottom: 0;
-        display: flex;
-        height: 22px;
-        position: fixed;
-        width: 99.4%;
-    }
-
-    #cachedTrans {
-        align-items: center;
-        flex-flow: column;
-        max-height: 20px;
-        margin-top: -35px;
-    }
-
-    #cachedTrans>span {
-        border-bottom: 1px solid #000;
-        width: 100%
-    }
-
-    .notbutton,
-    .notbutton>* {
-        background-color: transparent !important;
-        border: none
-    }
-
-    .loading-content {
-        background-color: #000c;
-        border-radius: 10px;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        height: 60%;
-        justify-content: space-around;
-        left: 50%;
-        padding: 10px;
-        position: fixed;
-        text-align: center;
-        top: 45%;
-        transform: translate(-50%, -50%);
-        width: 75%
-    }
-
-    #loading-text>code>ul {
-        margin-left: 0;
-        margin-top: 0;
-        padding-left: 0;
-        text-align: left;
-    }
-
-    #btnClose,
-    #close-dialog {
-        height: 20px;
-        position: fixed;
-        right: 1px;
-        top: 1px;
-        width: 20px;
-        max-height: 25px;
-        min-height: unset;
-    }
-
-    #cachedTrans>span>span.part1 {
-        background: none;
-        border-bottom: none;
-        border-left: 1px solid #000;
-        border-radius: 4px;
-        border-right: 1px solid #000;
-        border-top: none;
-        font-size: revert;
-        margin-left: 10px;
-        padding-left: 4px;
-        padding-right: 4px;
-        width: max-content;
-    }
-
-    #myModal {
-        margin: auto;
-        padding: 0;
-        width: 80%;
-    }
-
-    #myModal>.editvalues {
-        flex-direction: row;
-        display: flex;
-        position: relative;
-        max-height: 25px;
-        flex-wrap: wrap;
-        padding-bottom: 20px;
-        text-align: -webkit-left;
-        justify-content: space-between;
-    }
-
-    #myModal>.editvalues>* {
-        text-wrap: nowrap;
-        margin: -3px;
-        margin-left: 5px;
-        margin-right: 5px;
-        margin-top: 3px;
-        text-align: center;
-        background-color: white;
-        color: black;
-        width: max-content;
-        padding-left: 4px;
-        padding-right: 4px;
-        font-stretch: ultra-condensed;
-    }
-
-    #myModal>.editvalues>.notyet {
-        background-color: transparent;
-        color: white;
-        border: none;
-    }
-
-    #edit_multiplier {
-        max-width: 60px;
-    }
-
-    #myModal>.editvalues>input.disabledfont {
-        color: white;
-    }
-
-    #myModal>.buttonholder {
-        margin-top: 10px;
-    }
-
-    .selectproduct {
-        border: 1px solid gray;
-        height: 200px;
-        overflow-y: auto;
-        flex-flow: wrap;
-    }
-
-    .selectproduct>li>a>input {
-        display: none;
-    }
-</style>
-
 <head>
     <title>Alrada</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <meta charset="UTF-8">
     <link rel="shortcut icon" href="#">
+    <style>
+        * {
+            vertical-align: baseline;
+        }
+    
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 99.708%;
+            overflow: hidden;
+        }
+    
+        h4,
+        small {
+            margin-bottom: 4px;
+        }
+    
+        small,
+        .small,
+        #cachedTrans>span {
+            font-size: xx-small;
+            align-self: center;
+        }
+    
+    
+        .tunatumaMsg>*>*>.buttonholder {
+            display: none;
+        }
+    
+        li#confirmCachedEntry>div,
+        li#confirmTransactionEntry>div {
+            width: 100%;
+            justify-content: space-between;
+        }
+    
+        li#confirmCachedEntry>div>div {
+            justify-content: space-between;
+        }
+    
+        li#confirmCachedEntry>div>div>button {
+    
+            right: 0px;
+            height: 20px;
+            width: 30px;
+            min-height: unset;
+        }
+    
+        #loading-text>code>ul>li {
+            overflow-x: auto;
+            margin-right: 20px;
+            width: 100%;
+        }
+    
+        li#confirmCachedEntry>div>div>div>a,
+        li#confirmTransactionEntry>span>a {
+            text-wrap: nowrap;
+            text-decoration: none;
+            padding-right: 5px;
+            width: 100%;
+            background: none;
+        }
+    
+        li#confirmCachedEntry>div>div>div>a {
+            color: white;
+        }
+    
+        span {
+            font-weight: bolder;
+        }
+    
+        li {
+            margin-bottom: 1px
+        }
+    
+        button {
+            font-size: 11px;
+            min-height: 100%;
+            width: -webkit-fill-available;
+        }
+    
+        ul {
+            padding-left: 0;
+            align-items: baseline;
+            width: 99%;
+        }
+    
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 99.708%
+        }
+    
+        sub {
+            font-weight: 100;
+            letter-spacing: 1px;
+            text-decoration-line: none;
+        }
+    
+        h2 {
+            margin-block-start: 19px;
+            margin-top: 0;
+            margin-bottom: 0px;
+        }
+    
+        #mywebview {
+            min-height: 100%;
+            display: block;
+    
+        }
+    
+        #news_display {
+    
+            display: flex;
+            flex-direction: row;
+            text-wrap: nowrap;
+            justify-content: space-between;
+            height: 40px;
+        }
+    
+        #showTransDate {
+            display: -webkit-inline-box;
+            -webkit-box-align: center;
+            display: flex;
+            background: center;
+            align-items: center;
+            max-width: 100px;
+        }
+    
+        #appStates {
+            width: 100%;
+        }
+    
+        #warehouseName {
+            display: -webkit-inline-box;
+            -webkit-box-align: center;
+            width: 65px;
+            display: flex;
+            background: center;
+            align-items: center;
+            margin-top: .9px;
+        }
+    
+    
+        #filter-dialog>div>li {
+            border-bottom: 1px solid #a7a7a7;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            margin: 0;
+        }
+    
+        .flex-row,
+        li {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 5px
+        }
+    
+        .half-row {
+            display: flex;
+            flex: 0 0 50% !important
+        }
+    
+        .flex-column {
+            display: flex;
+            flex-direction: column
+        }
+    
+        #results>li>a {
+            font-size: 3vw;
+            justify-content: center;
+            margin: 0;
+            width: 100%
+        }
+    
+        a {
+            text-decoration: none;
+            border: none;
+            display: flex;
+            padding: 2px;
+            color: inherit;
+        }
+    
+        #myforms {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            top: 0px;
+        }
+    
+        #appStates {
+            border-top: 1px solid #000
+        }
+    
+        #mywebview.wholesale_sale>* button>span,
+        #productsview.wholesale_sale>* li>a>span {
+            background-color: #00c853
+        }
+    
+        #mywebview.wholesale_sale>#news_display>* .highlight-border {
+            border-color: #00c853 !important
+        }
+    
+        #mywebview.wholesale_purchase_delivered>* button>span,
+        #productsview.wholesale_purchase_delivered>* li>a>span {
+            background-color: #a200ff;
+            color: #fff
+        }
+    
+        #mywebview.wholesale_purchase_delivered>#news_display>* .highlight-border {
+            border-color: #a200ff !important
+        }
+    
+        #mywebview.wholesale_purchase>* button>span,
+        #productsview.wholesale_purchase>* li>a>span {
+            background-color: #ffc400;
+            color: #000
+        }
+    
+        #mywebview.wholesale_purchase>#news_display>* .highlight-border {
+            border-color: #ffc400 !important
+        }
+    
+        #mywebview.sent2_bank>div>* button>span,
+        #productsview.sent2_bank>* li>a>span {
+            background-color: #d50000
+        }
+    
+        #mywebview.sent2_bank>#news_display>* .highlight-border {
+            border-color: #d50000 !important
+        }
+    
+        #mywebview.stocktake>div>* button>span,
+        #productsview.stocktake>* li>a>span {
+            background-color: #e1e1e1;
+            color: #000
+        }
+    
+        #mywebview.stocktake>#news_display>* .highlight-border {
+            border-color: #e1e1e1 !important
+        }
+    
+        #results>li>a {
+            flex-flow: column;
+            padding: 0 1%;
+            place-content: space-between;
+            text-decoration: none;
+            white-space: nowrap
+        }
+    
+        #results>li>a>span {
+            align-self: stretch;
+            background-color: #483d8b;
+            color: #fffff0;
+            font-size: small;
+            margin-bottom: 0;
+            pointer-events: none
+        }
+    
+        #myinputbar input:focus,
+        #results>li>a:hover,
+        #results>li>a.pressed,
+        #results>li>a:active,
+        .processed,
+        #filter-dialog>div>li.selected {
+            background-color: #FAF9CB;
+            border: 2px solid #a4a4a4;
+            border-color: #000;
+            opacity: 1 !important;
+            padding-top: 0
+        }
+    
+        #productsview>* li>a>input {
+            display: none
+        }
+    
+        #productsview>* li>a:active>input,
+        #productsview>* li>a.pressed>input {
+            display: flex
+        }
+    
+        li.product.hovering {
+            margin: 0;
+            order: -1;
+            position: sticky;
+            min-width: 60%;
+            opacity: 1;
+            top: 0px;
+            z-index: 90;
+        }
+    
+        li.product.alcohol {
+            border: 2px solid red
+        }
+    
+        .btn {
+            align-items: center;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 .2rem .4rem #0006 0 -.3rem .6rem #0003 inset;
+            color: var(--color);
+            font-family: inherit;
+            font-weight: 900;
+            justify-content: center;
+            padding: .6rem;
+            position: relative;
+            transition: box-shadow 64ms ease-out;
+            --background-color: #d8d8d8;
+            --border-color: #c7c7c7;
+            --color: #000
+        }
+    
+        .btn:after {
+            background-color: #fff;
+            content: "";
+            filter: blur(0.15rem);
+            height: 12.5%;
+            left: 12.5%;
+            position: absolute;
+            top: .15rem;
+            transition: opacity 64ms ease-out;
+            width: 75%
+        }
+    
+        .btn:active {
+            box-shadow: 0 0 0 #0006 0 .4rem 1rem #0000004d inset
+        }
+    
+        .btn:active:after {
+            opacity: 0;
+        }
+    
+        .btn:hover {
+            border: 1px solid #000;
+        }
+    
+        .btn-color-wholesale_sale {
+            --background-color: #00c853;
+            --border-color: #00a243;
+            --color: #fff
+        }
+    
+        .btn-color-wholesale_sale:active {
+            --color: #ececec
+        }
+    
+        .btn-color-wholesale_purchase {
+            --background-color: #ffc400;
+            --border-color: #d9a700;
+            --color: #3e2723
+        }
+    
+        .btn-color-wholesale_purchase:active {
+            --color: #261815
+        }
+    
+        .btn-color-sent2_bank {
+            --background-color: #d50000;
+            --border-color: #af0000;
+            --color: #fff
+        }
+    
+        .btn-color-sent2_bank:active {
+            --color: #ececec
+        }
+    
+        .btn-color-wholesale_purchase_delivered {
+            --background-color: #483d8b;
+            --border-color: #544b89;
+            --color: #fff
+        }
+    
+        .btn-color-wholesale_purchase_delivered:active {
+            --color: #ececec
+        }
+    
+        .pressed,
+        button:active {
+            border-color: #817;
+            box-shadow: inset 0 0 5px #a9a;
+            color: #817;
+            text-decoration: overline
+        }
+    
+        #numberpadfunctions {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 60px
+        }
+    
+        #istax {
+            color: #8b0000;
+            display: none;
+            font-weight: bolder
+        }
+    
+        #submitbuttonholder>a {
+            height: 61px
+        }
+    
+        #submitbuttonholder>div {
+            display: flex;
+            flex-flow: row
+        }
+    
+        #myinputbar {
+            background: #fffaf0;
+            justify-content: space-between;
+            padding: 0 2px 0;
+            position: sticky;
+            top: 0;
+            min-height: 35px;
+        }
+    
+        #myinputbar>div {
+            display: contents
+        }
+    
+        #myinputbar>div>div {
+            display: inline-flex;
+            justify-content: flex-end
+        }
+    
+        #myinputbar input {
+            -moz-box-shadow: 0 -1px .1px 3px #0000003d inset;
+            -webkit-box-shadow: 0 -1px .1px 3px #0000003d inset;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            box-shadow: 0 -1px .1px 3px #0000003d inset;
+            font-weight: bolder;
+            text-align: center;
+            width: 100%
+        }
+    
+        #myinputbar>div>input:active {
+            background: bottom;
+            border: 2px solid #000;
+            border-color: #8b4513
+        }
+    
+        #myinputbar * span {
+            background: #f0f8ff;
+            border-color: #deb887;
+            white-space: nowrap;
+        }
+    
+        #search {
+            width: 280% !important
+        }
+    
+        #feedbackpack>button {
+            height: 100%
+        }
+    
+        .hidden,
+        .disabled,
+        .hiddenpreview,
+        #feedbackpad {
+            display: none !important;
+            visibility: hidden !important;
+            max-height: 0px !important;
+            max-width: 0px !important;
+        }
+    
+        #resultpad {
+            background: #f5f5f5;
+            display: block;
+            min-height: 120px;
+            margin: 0;
+            margin-top: 3px;
+            overflow-x: clip;
+            overflow-y: auto;
+            padding: 2px;
+            position: relative;
+        }
+    
+        .left {
+            text-align: left;
+        }
+    
+        .right {
+            text-align: right;
+        }
+    
+        #result_display {
+            font-family: monospace;
+            height: 100%;
+            padding-left: 3px;
+            text-align: left;
+            width: 100%;
+            font-size: small;
+        }
+    
+    
+    
+        div#result_display>ul>li.total {
+            position: sticky;
+            bottom: 0;
+            border-top: 1px solid #efefef;
+            background-color: whitesmoke;
+            width: 70%;
+            font-weight: bold;
+        }
+    
+        div#result_display>ul>li>span {
+            min-width: 245px;
+            align-items: baseline;
+            font-weight: 100;
+        }
+    
+        div#result_display>ul>li>div>button {
+            border: none;
+            background-color: transparent;
+            margin-left: 10px;
+        }
+    
+        div#result_display>ul>li>span>a {
+            border-bottom: 1px solid burlywood;
+            margin: 3px;
+            border-top: 0px;
+            background-color: transparent;
+            text-decoration: solid;
+            padding-top: none;
+            font-weight: 100;
+        }
+    
+        #mywebview2 {
+            height: 97%;
+            margin: 0;
+            padding: 0;
+            width: 100%
+        }
+    
+        .loading-content,
+        #loading-screen {
+            position: absolute;
+            z-index: 100;
+        }
+    
+        #productsview {
+            border: 1px solid #000;
+            overflow-x: HIDDEN;
+            overflow-y: auto;
+            height: -webkit-fill-available;
+            position: relative;
+        }
+    
+        #mysubmitbar,
+        li.product>span,
+        .mypopupdialog>div>div {
+            display: flex;
+            place-content: space-between
+        }
+    
+        #myinputbar.hyper {
+            max-height: 21px;
+            min-width: 100%;
+            position: relative;
+        }
+    
+        #mywebview3>div>.righthalf>a.btn {
+            height: 40%;
+            padding: 1%
+        }
+    
+        #results {
+            display: flex;
+            flex-wrap: wrap;
+            top: 0;
+            left: 0;
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            overflow-x: clip;
+            overflow-y: auto;
+            position: sticky;
+            max-height: 300px;
+        }
+    
+        .products>li {
+            border: .2px solid #ccc;
+            display: flex;
+            flex: 1 0 auto;
+            flex-basis: auto;
+            flex-grow: 1;
+            margin: 3px;
+            margin-bottom: 6px;
+        }
+    
+        @media (min-width: 100px) {
+            .products>li {
+                flex-basis: calc(50% - 10px)
+            }
+    
+            #results>li>a {
+                font-size: 5vw;
+                letter-spacing: 2px
+            }
+    
+            #results>li>a>span {
+                margin-top: 2px
+            }
+        }
+    
+        @media (min-width: 500px) {
+            .products>li {
+                flex-basis: calc(33.33% - 10px)
+            }
+    
+            #results>li>a {
+                font-size: 3vw
+            }
+        }
+    
+        @media (min-width: 700px) {
+            .products>li {
+                flex-basis: calc(25% - 10px)
+            }
+        }
+    
+        @media (min-width: 900px) {
+            .products>li {
+                flex-basis: calc(20% - 10px)
+            }
+        }
+    
+        .mypopupdailog>div>input {
+            text-align-last: center;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            border-width: thin;
+            background-color: beige;
+        }
+    
+        #filter-dialog,
+        #processmsg-dialog,
+        .mypopupdialog {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px #0003;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            position: absolute;
+            min-width: 60%;
+            z-index: 90;
+            align-items: center;
+        }
+    
+        .mypopupdialog>*>li>a {
+            border: none;
+            text-decoration: none;
+            width: 100%;
+            justify-content: center;
+        }
+    
+        #filterCategories {
+            overflow-y: auto;
+            max-height: 184px;
+            border: 1px solid black;
+            display: ruby;
+        }
+    
+        #filterCategories>li,
+        #choose-mode>ul>li {
+            font-size: larger;
+            place-content: center;
+            border: .5px solid #b4b0b0;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-left: 4px;
+            margin-right: 4px;
+            padding-left: 3px;
+            padding-right: 2px;
+        }
+    
+        .mypopupdialog>.buttonholder {
+            display: flex;
+            margin-top: 10px
+        }
+    
+        #filter-dialog-transDate>div>div>button {
+            font-size: large;
+            padding-left: 0px;
+            padding-right: 0px;
+            margin: unset;
+        }
+    
+        .mypopupdialog>button {
+            margin: 3px;
+            position: absolute;
+            right: 10px;
+            top: 10px
+        }
+    
+        #filter-categories {
+            list-style: none;
+            padding: 0
+        }
+    
+        #filter-categories li {
+            margin-bottom: 5px
+        }
+    
+        #filter-categories input[type="checkbox"] {
+            margin-left: 5px
+        }
+    
+        li.product {
+            display: none !important;
+            width: fit-content;
+            opacity: .55;
+        }
+    
+        li.product.active {
+            display: block !important
+        }
+    
+        #mywebview3 {
+            border: 2px solid #000;
+            bottom: 0;
+            display: flex;
+            height: 22px;
+            position: fixed;
+            width: 99.4%;
+        }
+    
+        #cachedTrans {
+            align-items: center;
+            flex-flow: column;
+            max-height: 20px;
+            margin-top: -35px;
+        }
+    
+        #cachedTrans>span {
+            border-bottom: 1px solid #000;
+            width: 100%
+        }
+    
+        .notbutton,
+        .notbutton>* {
+            background-color: transparent !important;
+            border: none
+        }
+    
+        .loading-content {
+            background-color: #000c;
+            border-radius: 10px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 60%;
+            justify-content: space-around;
+            left: 50%;
+            padding: 10px;
+            position: fixed;
+            text-align: center;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            width: 75%
+        }
+    
+        #loading-text>code>ul {
+            margin-left: 0;
+            margin-top: 0;
+            padding-left: 0;
+            text-align: left;
+        }
+    
+        #btnClose,
+        #close-dialog {
+            height: 20px;
+            position: fixed;
+            right: 1px;
+            top: 1px;
+            width: 20px;
+            max-height: 25px;
+            min-height: unset;
+        }
+    
+        #cachedTrans>span>span.part1 {
+            background: none;
+            border-bottom: none;
+            border-left: 1px solid #000;
+            border-radius: 4px;
+            border-right: 1px solid #000;
+            border-top: none;
+            font-size: revert;
+            margin-left: 10px;
+            padding-left: 4px;
+            padding-right: 4px;
+            width: max-content;
+        }
+    
+        #myModal {
+            margin: auto;
+            padding: 0;
+            width: 80%;
+        }
+    
+        #myModal>.editvalues {
+            flex-direction: row;
+            display: flex;
+            position: relative;
+            max-height: 25px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+            text-align: -webkit-left;
+            justify-content: space-between;
+        }
+    
+        #myModal>.editvalues>* {
+            text-wrap: nowrap;
+            margin: -3px;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-top: 3px;
+            text-align: center;
+            background-color: white;
+            color: black;
+            width: max-content;
+            padding-left: 4px;
+            padding-right: 4px;
+            font-stretch: ultra-condensed;
+        }
+    
+        #myModal>.editvalues>.notyet {
+            background-color: transparent;
+            color: white;
+            border: none;
+        }
+    
+        #edit_multiplier {
+            max-width: 60px;
+        }
+    
+        #myModal>.editvalues>input.disabledfont {
+            color: white;
+        }
+    
+        #myModal>.buttonholder {
+            margin-top: 10px;
+        }
+    
+        .selectproduct {
+            border: 1px solid gray;
+            height: 200px;
+            overflow-y: auto;
+            flex-flow: wrap;
+        }
+    
+        .selectproduct>li>a>input {
+            display: none;
+        }
+    </style>
 </head>
+
 <div id="mywebview" class="wholesale_sale">
     <div id="news_display">
         <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
-            <p> </p>
+            <span> </span>
         </button>
         <div id="appStates" class="flex-column"><button id="appState" class="highlight-border"><span>💰</span>MAUZO
                 &nbsp; </button></div><button onclick="getwarehouseName()" id="warehouseName"></button>
@@ -892,8 +893,8 @@
             class="functionpad disabled">➡️</button>
         <button id="cachedTrans" class="flex-row notbutton">
 
-            <p class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
-                    style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></p>
+            <span class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
+                    style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></span>
             <span>
                 <span class="part2 highlight-border" style="border:none;background: none;font-size: revert;">-</span>
                 <span class="part1 highlight-border">-</span>
@@ -907,8 +908,8 @@
         <div id="mysubmitbar" class="flex-row hidden">
             <div id="numberpadfunctions"><button id="istax" class="functionpad">T</button></div>
             <div id="submitbuttonholder"><a id="submitbutton" href="/#+"
-                    class="submitbutton togglewholesale_sale btn"><label><span>💰</span>MAUZO
-                        &nbsp;</label><label>Peleka</label></a></div>
+                    class="submitbutton togglewholesale_sale btn"><span><span>💰</span>MAUZO
+                        &nbsp;</span><span>Peleka</span></a></div>
         </div>
     </div>
 </div>
@@ -1025,7 +1026,7 @@
 
     var transDateStr = transDate.getDate() + "/" + eval(transDate.getMonth() + 1) + "/" + eval(transDate.getFullYear());
     var todayDateStr = transDateStr;
-    document.querySelector("#showTransDate>p").innerHTML = transDateStr;
+    document.querySelector("#showTransDate>span").innerHTML = transDateStr;
     document.getElementById("editTransDate").value = transDateStr;
     if (!String.prototype.replaceAll) {
         String.prototype.replaceAll = function (search, replacement) {
@@ -1295,7 +1296,7 @@
                             /*test if valid date*/
                             if (/^([1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(e.target.value)) {
                                 transDateStr = (e.target.value == "") ? transDateStr : e.target.value;
-                                document.querySelector("#showTransDate>p").innerHTML = transDateStr;
+                                document.querySelector("#showTransDate>span").innerHTML = transDateStr;
                             } else show("Not a Valid Date", true);
 
                             document.getElementById("filter-dialog-transDate").classList.add("hidden");
@@ -1433,7 +1434,7 @@
                     const categoryArr = product.category_breakdown.split("_");
                     const cat = categoryArr.join(" ");
                     const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState,"", false);
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState, "", false);
                 });
                 break;
             }
@@ -2241,11 +2242,131 @@
                     var selectedproductname = el.name.replace("_", " ");
                     document.getElementsByName("TransactionEditDrinkName_0").innerHTML = selectedproductname;
                     var newval = el.name.replaceAll("_", " "),
-                    newediting = editing.replace(oldval, newval).replace(/@\d+\.{0,1}\d{0,}/, ""),
-                    newquery = oldquery.replace(editing, newediting),
-                    newjson_transactions = JSON.parse(GetProductDetails(newquery));
-                    if(family == "confirmCachedEntry") {
+                        newediting = editing.replace(oldval, newval).replace(/@\d+\.{0,1}\d{0,}/, ""),
+                        newquery = oldquery.replace(editing, newediting),
+                        newjson_transactions = JSON.parse(GetProductDetails(newquery));
+                    if (family == "confirmCachedEntry") {
+                        cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                        cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                        cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
+
+                        if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
+                            if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
+                                document.querySelectorAll(".disabled").forEach(el => {
+                                    el.disabled = false;
+                                    el.classList.remove("disabled");
+                                    el.classList.add("enabled");
+                                });
+                        if (cachedTransactionQueries[appStates[currentAppStateIndex]])
+                            if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
+                                document.querySelectorAll(".hiddenpreview").forEach(el => {
+                                    el.classList.remove("hiddenpreview");
+                                    el.classList.add("shownpreview");
+                                });
+
+                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                        setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+                        reCreateCacheCleanupForm();
+                    }
+                    else if (family == "confirmTransactionEntry") {
+                        productdetails_json = newjson_transactions;
+                        document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                        document.querySelectorAll(".disabled").forEach(el => {
+                            el.disabled = false;
+                            el.classList.remove("disabled");
+                            el.classList.add("enabled");
+                        });
+
+                        document.getElementById("submitbuttonholder").classList.remove("hyper");
+                        document.getElementById("myinputbar").classList.remove("hyper");
+                        queryLog = productdetails_json.finalQuery;
+                    }
+                    closeFilterDialog();
+                };
+
+                document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
+                    el.removeEventListener("click", (e) = {});
+
+                    el.addEventListener("click", (event) => {
+
+                    });
+                    event.stopPropagation();
+                });
+
+                break;
+            case "TransactionEditMultiplier":
+            case "TransactionEditUnitPrice":
+            case "TransactionEditWarehouse":
+                content = `<h3>Ingiza ${type} (${oldval}) </h3><div><input name="" placeholder="${oldval}" type="${(action == "TransactionEditWarehouse") ? `text` : `number`}  " onkeyup="confirmFormEdit(event)"/></div>`;
+                dialog.innerHTML = content;
+                confirmFormEdit = function (e) {
+                    if (e.key != "Enter") return;
+                    var newval = document.querySelector("#filter-dialog>div>input").value;
+                    var newediting = editing.replace(sign + oldval, sign + newval);
+                    var newquery = oldquery.replace(editing, newediting);
+                    var newjson_transactions = JSON.parse(GetProductDetails(newquery));
+                    if (family == "confirmCachedEntry") {
+                        cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
+                        cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                        cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                        cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
+
+                        if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
+                            if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
+                                document.querySelectorAll(".disabled").forEach(el => {
+                                    el.disabled = false;
+                                    el.classList.remove("disabled");
+                                    el.classList.add("enabled");
+                                });
+                        if (cachedTransactionQueries[appStates[currentAppStateIndex]])
+                            if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
+                                document.querySelectorAll(".hiddenpreview").forEach(el => {
+                                    el.classList.remove("hiddenpreview");
+                                    el.classList.add("shownpreview");
+                                });
+                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                        setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
+                        closeFilterDialog();
+
+                        reCreateCacheCleanupForm();
+                    } else {
+                        document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
+                        document.querySelectorAll(".disabled").forEach(el => {
+                            el.disabled = false;
+                            el.classList.remove("disabled");
+                            el.classList.add("enabled");
+                        });
+                        closeFilterDialog();
+                        document.getElementById("submitbuttonholder").classList.remove("hyper");
+                        document.getElementById("myinputbar").classList.remove("hyper");
+                        queryLog = newjson_transactions.finalQuery;
+                        productdetails_json = newjson_transactions;
+                    }
+                };
+                document.getElementById("filter-dialog").classList.remove("hidden");
+                break;
+            case "TransactionDelete":
+                var newquery = oldquery.replace(editing, "").replace(/,$/, "").replace(/^,/, "");
+                var newjson_transactions = JSON.parse(GetProductDetails(newquery));
+                productdetails_json = newjson_transactions;
+                if (family == "confirmTransactionEntry") {
+                    document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
+                    document.querySelectorAll(".disabled").forEach(el => {
+                        el.disabled = false;
+                        el.classList.remove("disabled");
+                        el.classList.add("enabled");
+                    });
+                    document.getElementById("submitbuttonholder").classList.remove("hyper");
+                    document.getElementById("myinputbar").classList.remove("hyper");
+                    queryLog = newjson_transactions.finalQuery;
+                    productdetails_json = newjson_transactions;
+                }
+                else if (family = "confirmCachedEntry") {
                     cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                    cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
                     cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                     cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
 
@@ -2265,141 +2386,21 @@
 
                     document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
                     document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+
                     setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
                     reCreateCacheCleanupForm();
                 }
-                        else if (family == "confirmTransactionEntry") {
-                    productdetails_json = newjson_transactions;
-                    document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
-                    document.querySelectorAll(".disabled").forEach(el => {
-                        el.disabled = false;
-                        el.classList.remove("disabled");
-                        el.classList.add("enabled");
-                    });
-
-                    document.getElementById("submitbuttonholder").classList.remove("hyper");
-                    document.getElementById("myinputbar").classList.remove("hyper");
-                    queryLog = productdetails_json.finalQuery;
-                }
-                closeFilterDialog();
-        };
-
-        document.querySelectorAll("#filter-dialog-products>.selectproduct>li>a").forEach(el => {
-            el.removeEventListener("click", (e) = {});
-
-            el.addEventListener("click", (event) => {
-
-            });
-            event.stopPropagation();
-        });
-
-        break;
-            case "TransactionEditMultiplier":
-            case "TransactionEditUnitPrice":
-            case "TransactionEditWarehouse":
-        content = `<h3>Ingiza ${type} (${oldval}) </h3><div><input name="" placeholder="${oldval}" type="${(action == "TransactionEditWarehouse") ? `text` : `number`}  " onkeyup="confirmFormEdit(event)"/></div>`;
-        dialog.innerHTML = content;
-        confirmFormEdit = function (e) {
-            if (e.key != "Enter") return;
-            var newval = document.querySelector("#filter-dialog>div>input").value;
-            var newediting = editing.replace(sign + oldval, sign + newval);
-            var newquery = oldquery.replace(editing, newediting);
-            var newjson_transactions = JSON.parse(GetProductDetails(newquery));
-            if (family == "confirmCachedEntry") {
-                cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
-                cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
-                cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
-                cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
-
-                if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
-                    if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
-                        document.querySelectorAll(".disabled").forEach(el => {
-                            el.disabled = false;
-                            el.classList.remove("disabled");
-                            el.classList.add("enabled");
-                        });
-                if (cachedTransactionQueries[appStates[currentAppStateIndex]])
-                    if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
-                        document.querySelectorAll(".hiddenpreview").forEach(el => {
-                            el.classList.remove("hiddenpreview");
-                            el.classList.add("shownpreview");
-                        });
-                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
-                setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-
-                closeFilterDialog();
-
-                reCreateCacheCleanupForm();
-            } else {
-                document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
-                document.querySelectorAll(".disabled").forEach(el => {
-                    el.disabled = false;
-                    el.classList.remove("disabled");
-                    el.classList.add("enabled");
-                });
-                closeFilterDialog();
-                document.getElementById("submitbuttonholder").classList.remove("hyper");
-                document.getElementById("myinputbar").classList.remove("hyper");
-                queryLog = newjson_transactions.finalQuery;
-                productdetails_json = newjson_transactions;
-            }
-        };
-        document.getElementById("filter-dialog").classList.remove("hidden");
-        break;
-            case "TransactionDelete":
-        var newquery = oldquery.replace(editing, "").replace(/,$/, "").replace(/^,/, "");
-        var newjson_transactions = JSON.parse(GetProductDetails(newquery));
-        productdetails_json = newjson_transactions;
-        if (family == "confirmTransactionEntry") {
-            document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
-            document.querySelectorAll(".disabled").forEach(el => {
-                el.disabled = false;
-                el.classList.remove("disabled");
-                el.classList.add("enabled");
-            });
-            document.getElementById("submitbuttonholder").classList.remove("hyper");
-            document.getElementById("myinputbar").classList.remove("hyper");
-            queryLog = newjson_transactions.finalQuery;
-            productdetails_json = newjson_transactions;
-        }
-        else if (family = "confirmCachedEntry") {
-            cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
-            cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
-            cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
-            cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
-
-            if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
-                if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
-                    document.querySelectorAll(".disabled").forEach(el => {
-                        el.disabled = false;
-                        el.classList.remove("disabled");
-                        el.classList.add("enabled");
-                    });
-            if (cachedTransactionQueries[appStates[currentAppStateIndex]])
-                if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
-                    document.querySelectorAll(".hiddenpreview").forEach(el => {
-                        el.classList.remove("hiddenpreview");
-                        el.classList.add("shownpreview");
-                    });
-
-            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
-            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
-
-            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
-            reCreateCacheCleanupForm();
-        }
-        break;
+                break;
 
             default:
-        break;
-    }
+                break;
+        }
 
 
-    event.stopPropagation();
-    createProductsView();
+        event.stopPropagation();
+        createProductsView();
 
-    try { document.querySelector("#filter-dialog>div>input").focus(); } catch (e) { }
+        try { document.querySelector("#filter-dialog>div>input").focus(); } catch (e) { }
 
     }
     function handleFilterDialogFilterSelection(event) {
@@ -2464,7 +2465,7 @@
         query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
 
         if (typeof returntype == 'undefined') var returntype = "single";
-        let rowmsg = "";
+       
 
         if (settingsObj.settings.alradaitemnames == undefined) throw new Error("settingsObj.settings.alradaitemnames is undefined");
         settingsObj.settings.alradaitemnames = settingsObj.settings.alradaitemnames.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
@@ -2582,9 +2583,7 @@
 
                 var realeditmultipliersign = (displaymultiplier == undefined) ? "=" : displaymultiplier;
                 var displaymultiplier = ((whole_multiplier > 0) ? whole_multiplier : 0) + ((retail_multiplier > 0) ? `p${retail_multiplier}` : "");
-
-                rowmsg = rowmsg + datetext + "::" + product.replace(/^\d+/g, '').trim() + "::" + multiplier + "÷÷";
-
+                
                 total = total + parseFloat(priceTotal);
 
                 projectedProfitTotal += parseFloat(projectedProfit);
