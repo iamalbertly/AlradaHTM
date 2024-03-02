@@ -115,10 +115,8 @@
         }
 
         #news_display {
-
             display: flex;
             flex-direction: row;
-            text-wrap: nowrap;
             justify-content: space-between;
             height: 40px;
         }
@@ -127,13 +125,17 @@
             display: -webkit-inline-box;
             -webkit-box-align: center;
             display: flex;
+            flex-flow: wrap;
             background: center;
             align-items: center;
             max-width: 100px;
         }
-
         #appStates {
             width: 100%;
+            border-top: 1px solid #000;
+        }
+        #appStates>span {
+            font: icon;
         }
 
         #warehouseName {
@@ -197,9 +199,7 @@
             top: 0px;
         }
 
-        #appStates {
-            border-top: 1px solid #000
-        }
+     
 
         #mywebview.wholesale_sale>* button>span,
         #productsview.wholesale_sale>* li>a>span {
@@ -242,19 +242,30 @@
         #mywebview.stocktake>div>* button>span,
         #productsview.stocktake>* li>a>span {
             background-color: #e1e1e1;
-            color: #000
+            color: #000;
         }
 
         #mywebview.stocktake>#news_display>* .highlight-border {
-            border-color: #e1e1e1 !important
+            border-color: #e1e1e1 !important;
+        }
+
+        .products>li {
+            border: .2px solid #ccc;
+            display: flex;
+            flex: 1 0 auto;
+            flex-basis: auto;
+            flex-grow: 1;
+            margin-bottom: 6px;
+            text-align: -webkit-center;
         }
 
         #results>li>a {
             flex-flow: column;
-            padding: 0 1%;
             place-content: space-between;
             text-decoration: none;
-            white-space: nowrap
+            white-space: nowrap;
+            min-height: 60px;
+            max-width: 95%;
         }
 
         #results>li>a>span {
@@ -588,16 +599,6 @@
             max-height: 300px;
         }
 
-        .products>li {
-            border: .2px solid #ccc;
-            display: flex;
-            flex: 1 0 auto;
-            flex-basis: auto;
-            flex-grow: 1;
-            margin: 3px;
-            margin-bottom: 6px;
-        }
-
         @media (min-width: 100px) {
             .products>li {
                 flex-basis: calc(50% - 10px)
@@ -875,7 +876,7 @@
         </button>
         <div id="appStates" class="flex-column">
             <button id="appState" class="highlight-border">
-                <span>💰</span>MAUZO &nbsp;
+                <span>💰</span><span>MAUZO</span>
             </button>
         </div>
         <button onclick="getwarehouseName()" id="warehouseName"></button>
@@ -910,8 +911,9 @@
         <div id="mysubmitbar" class="flex-row hidden">
             <div id="numberpadfunctions"><button id="istax" class="functionpad">T</button></div>
             <div id="submitbuttonholder"><a id="submitbutton" href="/#+"
-                    class="submitbutton togglewholesale_sale btn"><span><span>💰</span>MAUZO
-                        &nbsp;</span><span>Peleka</span></a></div>
+                    class="submitbutton togglewholesale_sale btn"><span>
+                        <span>💰</span><span>MAUZO</span>
+                    </span><span>Peleka</span></a></div>
         </div>
     </div>
 </div>
@@ -930,11 +932,11 @@
     <div id="choose-mode" class="hidden mypopupdialog">
         <h2 id="selectmode">Select Mode</h2>
         <ul>
-            <li><a href="#" onclick="changeMode('0')"><span>💰</span>MAUZO &nbsp;</a></li>
-            <li><a href="#" onclick="changeMode('2')"><span>➕</span>UPOKEZI &nbsp;</a></li>
-            <li><a href="#" onclick="changeMode('1')"><span>🤌🏽</span>MALIPO &nbsp;</a></li>
-            <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span>STOCK &nbsp;</a></li>
-            <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span>MANUNUZI &nbsp;</a></li>
+            <li><a href="#" onclick="changeMode('0')"><span>💰</span><span>MAUZO</span></a></li>
+            <li><a href="#" onclick="changeMode('2')"><span>➕</span><span>UPOKEZI</span></a></li>
+            <li><a href="#" onclick="changeMode('1')"><span>🤌🏽</span><span>MALIPO</span></a></li>
+            <li><a href="#" onclick="changeMode('3')"><span>#️⃣</span><span>STOCK</span></a></li>
+            <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span><span>MANUNUZI</span></a></li>
         </ul>
         <a id="updateStr" href="#" class="small"
             style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
@@ -1128,19 +1130,19 @@
             var local_appstate = appStates[currentAppStateIndex];
             switch (local_appstate) {
                 case "wholesale_sale":
-                    status_display = "<span>💰</span> MAUZO  &nbsp;";
+                    status_display = "<span>💰</span><span> MAUZO</span>";
                     break;
                 case "sent2_bank":
-                    status_display = "<span>🤌🏽</span> MALIPO  &nbsp;";
+                    status_display = "<span>🤌🏽</span><span> MALIPO</span>";
                     break;
                 case "wholesale_purchase_delivered":
-                    status_display = "<span>➕</span> UPOKEZI  &nbsp;";
+                    status_display = "<span>➕</span><span> UPOKEZI</span>";
                     break;
                 case "wholesale_purchase":
-                    status_display = "<span>💱</span> MANUNUZI  &nbsp;";
+                    status_display = "<span>💱</span><span> MANUNUZI</span>";
                     break;
                 case "stocktake":
-                    status_display = "<span>#️⃣</span> STOCK  &nbsp;";
+                    status_display = "<span>#️⃣</span><span> STOCK</span>";
                     break;
                 default:
             }
@@ -1541,8 +1543,8 @@
 
         window.onload = function () {
             try {
-                initializeListeners();
                 createProductsView();
+                initializeListeners();
             } catch (e) {
                 show(e.stack + "-- error trying to load", true, true);
             }
@@ -2048,60 +2050,62 @@
             document.getElementById("selectmode").addEventListener("click", e => {
                 document.getElementById("choose-mode").classList.add("hidden");
                 document.getElementById("querydialog").classList.remove("hidden");
-
                 document.querySelector("#querydialog>input").focus();
 
             });
-            document.querySelector("#traditionalQueryInput,#editCustomerName,#editTransDate").addEventListener('keyup', function (e) {
-                var thekey = e.key.toString();
-                target = e.target.id;
-                if (e.key === 'Enter') {
-                    if (target == "traditionalQueryInput") {
-                        var query = e.value;
-                        if (query == "") return 0;
-                        if (appStates[currentAppStateIndex] != "stocktake") {
-                            var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
-                            var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
-                            if (firstpart != "" && secondpart != "") {
-                                var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
-                                var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
-                                var prd = query.replaceAll(rg, "");
-                                query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
+            document.querySelectorAll("#traditionalQueryInput,#editCustomerName,#editTransDate").forEach(el => {
+                el.addEventListener('keyup', function (e) {
+                    var thekey = e.key.toString();
+                    target = e.target.id;
+                    if (e.key === 'Enter') {
+                        if (target == "traditionalQueryInput") {
+                            var query = e.value;
+                            if (query == "") return 0;
+                            if (appStates[currentAppStateIndex] != "stocktake") {
+                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                                var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
+                                if (firstpart != "" && secondpart != "") {
+                                    var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
+                                    var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
+                                    var prd = query.replaceAll(rg, "");
+                                    query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
+                                }
                             }
+                            query = `(${warehouseName.toLowerCase()})${query}`;
+                            date = new Date();
+
+                            query = (transDate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
+                                queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
+
+                            } else {
+                                queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
+                            }
+
+                            productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
+                            queryLog = productdetails_json.finalQuery;
+                            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                            document.querySelectorAll(".disabled").forEach(el => {
+                                el.disabled = false;
+                                el.classList.remove("disabled");
+                                el.classList.add("enabled");
+                            });
+                            document.getElementById("submitbuttonholder").classList.remove("hyper");
+                            document.getElementById("myinputbar").classList.remove("hyper");
+                            document.getElementById("querydialog").classList.add("hidden");
+                            document.getElementById("warehouseName").focus();
                         }
-                        query = `(${warehouseName.toLowerCase()})${query}`;
-                        date = new Date();
-
-                        query = (transDate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
-                            queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
-
-                        } else {
-                            queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
+                        else if (target == "editTransDate") {
+                            document.getElementById('editTransDate').dispatchEvent(eventClick);
                         }
+                        else if (target == "editCustomerName") {
+                            var val = (e.target.value == "") ? "HQ" : e.target.value;
+                            document.getElementById("warehouseName").innerHTML = val;
+                            warehouseName = val;
+                            document.getElementById("filter-dialog-customers").classList.add("hidden");
+                        }
+                    }
+                });
 
-                        productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
-                        queryLog = productdetails_json.finalQuery;
-                        document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
-                        document.querySelectorAll(".disabled").forEach(el => {
-                            el.disabled = false;
-                            el.classList.remove("disabled");
-                            el.classList.add("enabled");
-                        });
-                        document.getElementById("submitbuttonholder").classList.remove("hyper");
-                        document.getElementById("myinputbar").classList.remove("hyper");
-                        document.getElementById("querydialog").classList.add("hidden");
-                        document.getElementById("warehouseName").focus();
-                    }
-                    else if (target == "editTransDate") {
-                        document.getElementById('editTransDate').dispatchEvent(eventClick);
-                    }
-                    else if (target == "editCustomerName") {
-                        var val = (e.target.value == "") ? "HQ" : e.target.value;
-                        document.getElementById("warehouseName").innerHTML = val;
-                        warehouseName = val;
-                        document.getElementById("filter-dialog-customers").classList.add("hidden");
-                    }
-                }
             });
 
             document.querySelectorAll("#results.selectproduct>li>a").forEach(el => {
