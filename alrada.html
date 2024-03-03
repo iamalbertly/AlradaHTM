@@ -2168,6 +2168,7 @@
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
                         tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
+                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
                     }
                     closeFilterDialog();
                 });
@@ -2176,10 +2177,8 @@
         }
 
         function chooseToAddTransactionToCache(event) {
-
             addTransactionToCache(event);
             reCreateCacheCleanupForm();
-
         }
 
         function addTransactionToCache(event) {
@@ -2300,6 +2299,7 @@
                         }
                         else if (family == "confirmTransactionEntry") {
                             productdetails_json = newjson_transactions;
+                            
                             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
@@ -2310,6 +2310,7 @@
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
                         }
                         closeFilterDialog();
                     };
@@ -2372,6 +2373,7 @@
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,newjson_transactions.finalQuery);
                             productdetails_json = newjson_transactions;
                         }
                     };
@@ -2391,6 +2393,7 @@
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
                         tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,newjson_transactions.finalQuery);
                         productdetails_json = newjson_transactions;
                     }
                     else if (family = "confirmCachedEntry") {
@@ -2683,10 +2686,8 @@
 
 
         function clearvalues() {
-
             if(typeof tempTransQuery[appStates[currentAppStateIndex]] =="undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
             document.getElementById("search").value = "";
-            
             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
             document.querySelectorAll(".enabled").forEach(el => {
                 el.disabled = false;
