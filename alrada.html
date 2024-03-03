@@ -133,6 +133,7 @@
         #appStates {
             width: 100%;
             border-top: 1px solid #000;
+            font-size: 12pt;
         }
         #appStates>span {
             font: icon;
@@ -287,7 +288,7 @@
             border: 2px solid #a4a4a4;
             border-color: #000;
             opacity: 1 !important;
-            padding-top: 0
+            padding-top: 0;
         }
 
         #productsview>* li>a>input {
@@ -1010,7 +1011,7 @@
             editingquery = "",
             warehouseName = 'HQ',
             staffName = (typeof staffName == "undefined") ? "Al" : staffName;
-        queryLog = "",
+       
             responseClone = "",
             confirmAddReportToCache = function () { },
             confirmSendReportRightAway = function () { },
@@ -1021,6 +1022,7 @@
             finalResponseMsg = "",
             newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "";
         var currentFocusedProduct = "", oldFocusedProduct = "",
+            tempTransQuery = [],
             cachedTransObjectString = [],
             cachedTransObjectJson = [],
             cachedTransCount = [],
@@ -1028,7 +1030,6 @@
             cachedTempTrans2Process = [],
             cachedTransactionQueries = [],
             results = document.getElementById('results');
-
 
         if (typeof createScene !== "function") { /* not in tasker*/
             function setGlobal(variableName = "", value = "") {
@@ -1117,50 +1118,6 @@
             document.querySelector('#filter-dialog-transDate>div>input').focus();
         }
 
-        function changeMode(index = "") {
-            var oldstate = appStates[currentAppStateIndex];
-            if (index == "") {
-                currentAppStateIndex++;
-            } else currentAppStateIndex = eval(index);
-
-            var appStates_btn = document.getElementById("appStates");
-            appStates_btn.classList.remove(`btn-color-${oldstate}}`);
-
-            document.getElementById("productsview").className = "";
-            var local_appstate = appStates[currentAppStateIndex];
-            switch (local_appstate) {
-                case "wholesale_sale":
-                    status_display = "<span>💰</span><span> MAUZO</span>";
-                    break;
-                case "sent2_bank":
-                    status_display = "<span>🤌🏽</span><span> MALIPO</span>";
-                    break;
-                case "wholesale_purchase_delivered":
-                    status_display = "<span>➕</span><span> UPOKEZI</span>";
-                    break;
-                case "wholesale_purchase":
-                    status_display = "<span>💱</span><span> MANUNUZI</span>";
-                    break;
-                case "stocktake":
-                    status_display = "<span>#️⃣</span><span> STOCK</span>";
-                    break;
-                default:
-            }
-            document.getElementById("mywebview").classList.value = "";
-            document.getElementById("mywebview").classList.add(local_appstate);
-            document.getElementById("productsview").classList.add(local_appstate);
-            appStates_btn.classList.add("btn-color-" + local_appstate);
-            document.getElementById("appState").innerHTML = status_display;
-
-            document.getElementById("submitbutton").innerHTML = status_display + "<label>Peleka</label>";
-
-            document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
-            document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
-            clearvalues();
-            createProductsView();
-            closeFilterDialog();
-        }
-
         try {
             if (settingsObj != undefined) {
                 loadCachedTrans();
@@ -1205,17 +1162,77 @@
         }
 
 
+        
+        function changeMode(index = "") {
+            var oldstate = appStates[currentAppStateIndex];
+            if (index == "") {
+                currentAppStateIndex++;
+            } else currentAppStateIndex = eval(index);
+
+            var appStates_btn = document.getElementById("appStates");
+            appStates_btn.classList.remove(`btn-color-${oldstate}}`);
+
+            document.getElementById("productsview").className = "";
+            var local_appstate = appStates[currentAppStateIndex];
+            switch (local_appstate) {
+                case "wholesale_sale":
+                    status_display = "<span>💰</span><span> MAUZO</span>";
+                    break;
+                case "sent2_bank":
+                    status_display = "<span>🤌🏽</span><span> MALIPO</span>";
+                    break;
+                case "wholesale_purchase_delivered":
+                    status_display = "<span>➕</span><span> UPOKEZI</span>";
+                    break;
+                case "wholesale_purchase":
+                    status_display = "<span>💱</span><span> MANUNUZI</span>";
+                    break;
+                case "stocktake":
+                    status_display = "<span>#️⃣</span><span> STOCK</span>";
+                    break;
+                default:
+            }
+            document.getElementById("mywebview").classList.value = "";
+            document.getElementById("mywebview").classList.add(local_appstate);
+            document.getElementById("productsview").classList.add(local_appstate);
+            appStates_btn.classList.add("btn-color-" + local_appstate);
+            document.getElementById("appState").innerHTML = status_display;
+
+            document.getElementById("submitbutton").innerHTML = status_display + "<label>Peleka</label>";
+
+            document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
+            document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
+            clearvalues();
+            createProductsView();
+            closeFilterDialog();
+        }
+
+
 
         function loadCachedTrans() {
             try {
                 try {
                     for (const TransType in appStates) {
+                        if(global(`ALDTMP${appStates[TransType]}`)){
+                            tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
+                            productdetails_string = GetProductDetails(tempTransQuery[appStates[TransType]].replace(/^,/, ""));
+                                productdetails_json = JSON.parse(productdetails_string);
+                                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                document.querySelectorAll(".disabled").forEach(el => {
+                                    el.disabled = false;
+                                    el.classList.remove("disabled");
+                                    el.classList.add("enabled");
+                                });
+                                document.getElementById("submitbuttonholder").classList.remove("hyper");
+                                document.getElementById("myinputbar").classList.remove("hyper");
+                        } 
+                    
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
                             cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
                             cachedTransCount[appStates[TransType]] = cachedTransactionQueries[appStates[TransType]].split("||").length;
-                            queryLog = cachedTransactionQueries[appStates[TransType]];
+                            query = cachedTransactionQueries[appStates[TransType]];
 
-                            cachedTransObjectString[appStates[TransType]] = GetProductDetails(queryLog);
+                            cachedTransObjectString[appStates[TransType]] = GetProductDetails(query);
                             cachedTransObjectJson[appStates[TransType]] = JSON.parse(cachedTransObjectString[appStates[TransType]]);
 
                             var total = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(cachedTransObjectJson[appStates[TransType]].finalResponseMsg);
@@ -1260,6 +1277,7 @@
                                 currentFocusedProduct = document.querySelector(`li.product[name='${nm}']`);
                                 if (currentFocusedProduct) {
                                     if (document.querySelector("li.product.hovering")) document.querySelector("li.product.hovering").classList.remove("hovering");
+                                    target.parentNode.classList.add("hovering");
                                     document.getElementById("myinputbar").classList.remove("hyper");
                                     closeFilterDialog();
                                     document.querySelector("li.product[name='" + nm + "']>a>input").select();
@@ -1336,16 +1354,15 @@
                                 query = `(${warehouseName.toLowerCase()})${query}`;
                                 date = new Date();
 
-                                query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
-                                    queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
-
+                                query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); 
+                                if (appStates[currentAppStateIndex] == "stocktake") {
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
                                 } else {
-                                    queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                                 }
-
-                                productdetails_string = GetProductDetails(queryLog.replace(/^,/, ""));
+                                productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                 productdetails_json = JSON.parse(productdetails_string);
-                                queryLog = productdetails_json.finalQuery;
+                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
                                 document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                                 document.querySelectorAll(".disabled").forEach(el => {
                                     el.disabled = false;
@@ -1798,7 +1815,6 @@
             }
         }
 
-
         function handleCachedTransEvent(event) {
             if (!event || !event.target.id) return;
             var target = event.target,
@@ -1839,12 +1855,13 @@
                 var newquery = `${document.getElementById("edit_date").value} (${document.getElementById("edit_shopname").value})${document.getElementById("edit_drinkname").innerHTML}${mult_sign}${document.getElementById("edit_multiplier").value}`;
                 var oldquery = cachedTransactionQueries[appStates[currentAppStateIndex]].replaceAll("(plus)", "+");
 
-                queryLog = oldquery.replace(editingquery, newquery).replaceAll(/\.(\d+)$/gm, "p$1").trim();
+                tempTransQuery[appStates[currentAppStateIndex]] = oldquery.replace(editingquery, newquery).replaceAll(/\.(\d+)$/gm, "p$1").trim();
 
-                productdetails_string = GetProductDetails(queryLog);
+                productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]]);
                 cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;
                 cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
                 json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
+                
                 cachedTransactionQueries[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery;
                 cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseTotal);
 
@@ -1877,11 +1894,11 @@
 
             confirmFormYes = function () {
                 delete json_response[id];
-                queryLog = "";
+                tempTransQuery[appStates[currentAppStateIndex]] = "";
                 for (const resp in json_response) {
-                    queryLog += `${json_response[resp].transMsg},`;
+                    tempTransQuery[appStates[currentAppStateIndex]] += `${json_response[resp].transMsg},`;
                 }
-                productdetails_string = GetProductDetails(queryLog);
+                productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]]);
 
                 cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string; cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
 
@@ -1996,7 +2013,7 @@
 
             document.getElementById("resultpad").addEventListener("click", (e) => {
                 try {
-                    if ((document.getElementById("result_display").innerHTML != "") && (document.getElementById("filter-dialog").classList.contains("hidden") == false)) { }
+                    if ((document.getElementById("result_display").innerHTML != "") && (document.getElementById("filter-dialog").classList.contains("hidden") == false)) { };
                     if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
                     hideLoadingScreen();
@@ -2075,14 +2092,14 @@
                             date = new Date();
 
                             query = (transDate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
-                                queryLog = queryLog.replaceAll(query + ",", "").concat(`,${query}`);
+                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
 
                             } else {
-                                queryLog = queryLog.concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
+                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                             }
 
-                            productdetails_json = JSON.parse(GetProductDetails(queryLog.replace(/^,/, "")));
-                            queryLog = productdetails_json.finalQuery;
+                            productdetails_json = JSON.parse(GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, "")));
+                            tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
                             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
@@ -2150,7 +2167,7 @@
 
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
-                        queryLog = productdetails_json.finalQuery;
+                        tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
                     }
                     closeFilterDialog();
                 });
@@ -2250,7 +2267,7 @@
                     document.getElementById("filter-dialog-products").name = target.name + "__" + editing;
 
                     confirmFormPick = function (e) {
-                        var el = e.target;
+                        var el = e.currentTarget;
                         var selectedproductname = el.name.replace("_", " ");
                         document.getElementsByName("TransactionEditDrinkName_0").innerHTML = selectedproductname;
                         var newval = el.name.replaceAll("_", " "),
@@ -2292,7 +2309,7 @@
 
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
-                            queryLog = productdetails_json.finalQuery;
+                            tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
                         }
                         closeFilterDialog();
                     };
@@ -2354,7 +2371,7 @@
                             closeFilterDialog();
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
-                            queryLog = newjson_transactions.finalQuery;
+                            tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                             productdetails_json = newjson_transactions;
                         }
                     };
@@ -2373,7 +2390,7 @@
                         });
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
-                        queryLog = newjson_transactions.finalQuery;
+                        tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                         productdetails_json = newjson_transactions;
                     }
                     else if (family = "confirmCachedEntry") {
@@ -2666,8 +2683,11 @@
 
 
         function clearvalues() {
+
+            if(typeof tempTransQuery[appStates[currentAppStateIndex]] =="undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
             document.getElementById("search").value = "";
-            document.querySelector("#result_display>ul").innerHTML = "";
+            
+            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
             document.querySelectorAll(".enabled").forEach(el => {
                 el.disabled = false;
                 el.classList.remove("enabled");
@@ -2678,9 +2698,8 @@
                 product.classList.remove("processed");
             });
 
-            productdetails_string = "",
-                productdetails_json = [],
-                query = "", queryLog = "",
+
+                query = "",
                 warehouseName = "HQ",
                 sign_mult = "",
                 sign_wholesale_remain = "",
