@@ -1200,9 +1200,7 @@
             document.getElementById("productsview").classList.add(local_appstate);
             appStates_btn.classList.add("btn-color-" + local_appstate);
             document.getElementById("appState").innerHTML = status_display;
-
             document.getElementById("submitbutton").innerHTML = status_display + "<label>Peleka</label>";
-
             document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
             document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
             clearvalues();
