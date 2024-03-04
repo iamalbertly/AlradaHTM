@@ -2669,7 +2669,7 @@
 
         function clearvalues(scope= "") {
             if(typeof tempTransQuery[appStates[currentAppStateIndex]] =="undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
-            document.getElementById("search").value = ""; if((productdetails_json.length==0) || (productdetails_string == "")) {
+            document.getElementById("search").value = ""; if((productdetails_string == "")&& (typeof productdetails_json.finalResponseMsg != "undefined")) {
             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
             document.querySelectorAll(".enabled").forEach(el => {
                 el.disabled = false;
