@@ -130,11 +130,13 @@
             align-items: center;
             max-width: 100px;
         }
+
         #appStates {
             width: 100%;
             border-top: 1px solid #000;
             font-size: 12pt;
         }
+
         #appState>span {
             font: icon;
         }
@@ -200,14 +202,15 @@
             top: 0px;
         }
 
-     
+
 
         .wholesale_sale>* button>span,
         #productsview.wholesale_sale>* li>a>span {
             background-color: #00c853
         }
 
-        .wholesale_sale,.wholesale_sale>#news_display>* .highlight-border {
+        .wholesale_sale,
+        .wholesale_sale>#news_display>* .highlight-border {
             border-color: #00c853 !important
         }
 
@@ -217,7 +220,8 @@
             color: #fff
         }
 
-        .wholesale_purchase_delivered,#mywebview.wholesale_purchase_delivered>#news_display>* .highlight-border {
+        .wholesale_purchase_delivered,
+        #mywebview.wholesale_purchase_delivered>#news_display>* .highlight-border {
             border-color: #a200ff !important
         }
 
@@ -227,7 +231,8 @@
             color: #000
         }
 
-        .wholesale_purchase,.wholesale_purchase>#news_display>* .highlight-border {
+        .wholesale_purchase,
+        .wholesale_purchase>#news_display>* .highlight-border {
             border-color: #ffc400 !important
         }
 
@@ -236,7 +241,8 @@
             background-color: #d50000
         }
 
-        .sent2_bank,.sent2_bank>#news_display>* .highlight-border {
+        .sent2_bank,
+        .sent2_bank>#news_display>* .highlight-border {
             border-color: #d50000 !important
         }
 
@@ -246,7 +252,8 @@
             color: #000;
         }
 
-        .stocktake,.stocktake>#news_display>* .highlight-border {
+        .stocktake,
+        .stocktake>#news_display>* .highlight-border {
             border-color: #e1e1e1 !important;
         }
 
@@ -935,7 +942,8 @@
         <h2 id="selectmode">Select Mode</h2>
         <ul>
             <li class="wholesale_sale"><a href="#" onclick="changeMode('0')"><span>💰</span><span>MAUZO</span></a></li>
-            <li class="wholesale_purchase"> <a href="#" onclick="changeMode('2')"><span>➕</span><span>UPOKEZI</span></a></li>
+            <li class="wholesale_purchase"> <a href="#" onclick="changeMode('2')"><span>➕</span><span>UPOKEZI</span></a>
+            </li>
             <li class="sent2_bank"><a href="#" onclick="changeMode('1')"><span>🤌🏽</span><span>MALIPO</span></a></li>
             <li class="stocktake"><a href="#" onclick="changeMode('3')"><span>#️⃣</span><span>STOCK</span></a></li>
             <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span><span>MANUNUZI</span></a></li>
@@ -1011,10 +1019,10 @@
             writtenInSearch = "",
             editingquery = "",
             productdetails_string = "",
-            productdetails_json= [],
+            productdetails_json = [],
             warehouseName = 'HQ',
             staffName = (typeof staffName == "undefined") ? "Al" : staffName;
-            responseClone = "",
+        responseClone = "",
             confirmAddReportToCache = function () { },
             confirmSendReportRightAway = function () { },
             confirmFormYes = function () { },
@@ -1164,7 +1172,7 @@
         }
 
 
-        
+
         function changeMode(index = "") {
             var oldstate = appStates[currentAppStateIndex];
             if (index == "") {
@@ -1194,20 +1202,19 @@
                     break;
                 default:
             }
-if(typeof tempTransQuery[local_appstate]!="undefined"&&(tempTransQuery[local_appstate]!="")){
-productdetails_string = GetProductDetails(tempTransQuery[local_appstate]);
-productdetails_json = JSON.parse(productdetails_string);
-document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
-                                document.querySelectorAll(".disabled").forEach(el => {
-                                    el.disabled = false;
-                                    el.classList.remove("disabled");
-                                    el.classList.add("enabled");
-                                });
-}else {
-    productdetails_string="",productdetails_json={},
-    document.querySelector("#result_display>ul").innerHTML="";
-}
-
+            if (typeof tempTransQuery[local_appstate] != "undefined" && (tempTransQuery[local_appstate] != "")) {
+                productdetails_string = GetProductDetails(tempTransQuery[local_appstate]);
+                productdetails_json = JSON.parse(productdetails_string);
+                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                document.querySelectorAll(".disabled").forEach(el => {
+                    el.disabled = false;
+                    el.classList.remove("disabled");
+                    el.classList.add("enabled");
+                });
+            } else {
+                productdetails_string = "", productdetails_json = {},
+                    document.querySelector("#result_display>ul").innerHTML = "";
+            }
 
             document.getElementById("mywebview").classList.value = "";
             document.getElementById("mywebview").classList.add(local_appstate);
@@ -1226,11 +1233,11 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
             try {
                 try {
                     for (const TransType in appStates) {
-                        if(global(`ALDTMP${appStates[TransType]}`)){
+                        if (global(`ALDTMP${appStates[TransType]}`)) {
                             tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
-                           }
+                        }
 
-                    
+
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
                             cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
                             cachedTransCount[appStates[TransType]] = cachedTransactionQueries[appStates[TransType]].split("||").length;
@@ -1256,7 +1263,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
 
                 } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
-           changeMode("0");
+            changeMode("0");
         }
 
         function createList(products = ProductNamesLiWithInput, holderElement, hasinput = true) {
@@ -1358,7 +1365,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                                 query = `(${warehouseName.toLowerCase()})${query}`;
                                 date = new Date();
 
-                                query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); 
+                                query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
                                 if (appStates[currentAppStateIndex] == "stocktake") {
                                     tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
                                 } else {
@@ -1366,7 +1373,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                                 }
                                 productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                 productdetails_json = JSON.parse(productdetails_string);
-                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
+                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
                                 document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                                 document.querySelectorAll(".disabled").forEach(el => {
                                     el.disabled = false;
@@ -1865,7 +1872,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                 cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;
                 cachedTransObjectJson[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
                 json_response = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response;
-                
+
                 cachedTransactionQueries[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery;
                 cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseTotal);
 
@@ -2171,7 +2178,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
                         tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
-                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
+                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
                     }
                     closeFilterDialog();
                 });
@@ -2222,7 +2229,6 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                 el.classList.add("shownpreview");
             });
             clearvalues("everything");
-
             reCreateCacheCleanupForm();
         }
 
@@ -2296,7 +2302,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                         }
                         else if (family == "confirmTransactionEntry") {
                             productdetails_json = newjson_transactions;
-                            
+
                             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
@@ -2307,7 +2313,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
-                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,productdetails_json.finalQuery);
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
                         }
                         closeFilterDialog();
                     };
@@ -2361,7 +2367,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
-                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,newjson_transactions.finalQuery);
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
                             productdetails_json = newjson_transactions;
                         }
                     };
@@ -2381,7 +2387,7 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
                         tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
-                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,newjson_transactions.finalQuery);
+                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
                         productdetails_json = newjson_transactions;
                     }
                     else if (family = "confirmCachedEntry") {
@@ -2672,28 +2678,28 @@ document.querySelector("#result_display>ul").innerHTML = productdetails_json.fin
             return JSON.stringify({ json_response: responseArr, finalResponseMsg: finalResponseMsg, finalResponseTotal: total, finalQuery: newquery });
         }
 
-        function clearvalues(scope= "") {
-            if(typeof tempTransQuery[appStates[currentAppStateIndex]] =="undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
-            document.getElementById("search").value = ""; 
-            if((productdetails_string == "")&&(typeof productdetails_json.finalResponseMsg != "undefined")) {
-            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
-            document.querySelectorAll(".enabled").forEach(el => {
-                el.disabled = false;
-                el.classList.remove("enabled");
-                el.classList.add("disabled");
-            });
-        } else if(scope=="everything"){
-            document.querySelector("#result_display>ul").innerHTML = "";
-            productdetails_string="",productdetails_json={};
-            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,""); 
-        }
+        function clearvalues(scope = "") {
+            if (typeof tempTransQuery[appStates[currentAppStateIndex]] == "undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
+            document.getElementById("search").value = "";
+            if ((productdetails_string == "") && (typeof productdetails_json.finalResponseMsg != "undefined")) {
+                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
+                document.querySelectorAll(".enabled").forEach(el => {
+                    el.disabled = false;
+                    el.classList.remove("enabled");
+                    el.classList.add("disabled");
+                });
+            } else if (scope == "everything") {
+                document.querySelector("#result_display>ul").innerHTML = "";
+                productdetails_string = "", productdetails_json = {};
+                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, "");
+            }
             document.getElementById("warehouseName").innerHTML = "HQ";
             document.querySelectorAll("#results>li.product.active").forEach(product => {
                 product.classList.remove("processed");
             });
 
 
-                query = "",
+            query = "",
                 warehouseName = "HQ",
                 sign_mult = "",
                 sign_wholesale_remain = "",
