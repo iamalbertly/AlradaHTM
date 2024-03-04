@@ -1194,6 +1194,21 @@
                     break;
                 default:
             }
+if(typeof tempTransQuery[local_appstate]!="undefined"&&(tempTransQuery[local_appstate]!="")){
+productdetails_string = GetProductDetails(tempTransQuery[local_appstate]);
+productdetails_json = JSON.parse(productdetails_string);
+document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                document.querySelectorAll(".disabled").forEach(el => {
+                                    el.disabled = false;
+                                    el.classList.remove("disabled");
+                                    el.classList.add("enabled");
+                                });
+}else {
+    productdetails_string="",productdetails_json={},
+    document.querySelector("#result_display>ul").innerHTML="";
+}
+
+
             document.getElementById("mywebview").classList.value = "";
             document.getElementById("mywebview").classList.add(local_appstate);
             document.getElementById("productsview").classList.add(local_appstate);
@@ -1213,17 +1228,8 @@
                     for (const TransType in appStates) {
                         if(global(`ALDTMP${appStates[TransType]}`)){
                             tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
-                            productdetails_string = GetProductDetails(tempTransQuery[appStates[TransType]].replace(/^,/, ""));
-                                productdetails_json = JSON.parse(productdetails_string);
-                                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
-                                document.querySelectorAll(".disabled").forEach(el => {
-                                    el.disabled = false;
-                                    el.classList.remove("disabled");
-                                    el.classList.add("enabled");
-                                });
-                                document.getElementById("submitbuttonholder").classList.remove("hyper");
-                                document.getElementById("myinputbar").classList.remove("hyper");
-                        } 
+                           }
+
                     
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
                             cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
@@ -1250,7 +1256,7 @@
 
                 } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
-            clearvalues();
+           changeMode("0");
         }
 
         function createList(products = ProductNamesLiWithInput, holderElement, hasinput = true) {
@@ -2040,7 +2046,6 @@
             document.getElementById("appState").addEventListener("click", e => {
                 clearvalues();
                 document.getElementById("choose-mode").classList.remove("hidden");
-
                 document.querySelectorAll("button").forEach(btn => {
                     btn.classList.remove("pressed");
                 });
@@ -2216,7 +2221,7 @@
                 el.classList.remove("hiddenpreview");
                 el.classList.add("shownpreview");
             });
-            clearvalues();
+            clearvalues("everything");
 
             reCreateCacheCleanupForm();
         }
@@ -2669,13 +2674,18 @@
 
         function clearvalues(scope= "") {
             if(typeof tempTransQuery[appStates[currentAppStateIndex]] =="undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
-            document.getElementById("search").value = ""; if((productdetails_string == "")&& (typeof productdetails_json.finalResponseMsg != "undefined")) {
+            document.getElementById("search").value = ""; 
+            if((productdetails_string == "")&&(typeof productdetails_json.finalResponseMsg != "undefined")) {
             document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
             document.querySelectorAll(".enabled").forEach(el => {
                 el.disabled = false;
                 el.classList.remove("enabled");
                 el.classList.add("disabled");
             });
+        } else if(scope=="everything"){
+            document.querySelector("#result_display>ul").innerHTML = "";
+            productdetails_string="",productdetails_json={};
+            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`,""); 
         }
             document.getElementById("warehouseName").innerHTML = "HQ";
             document.querySelectorAll("#results>li.product.active").forEach(product => {
