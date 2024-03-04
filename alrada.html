@@ -1,9 +1,9 @@
 <!DOCTYPE html>
+<html lang="sw">
 
 <head>
     <title>Alrada</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="#">
     <style>
         * {
@@ -499,7 +499,7 @@
             min-height: 120px;
             margin: 0;
             margin-top: 3px;
-            overflow-x: clip;
+            max-width: 100vw;
             overflow-y: auto;
             padding: 2px;
             position: relative;
@@ -602,7 +602,7 @@
             padding: 0;
             margin: 0;
             list-style-type: none;
-            overflow-x: clip;
+            max-width: 100vw;
             overflow-y: auto;
             position: sticky;
             max-height: 300px;
@@ -646,7 +646,8 @@
         }
 
         .mypopupdailog>div>input {
-            text-align-last: center;
+            text-align: justify;
+            text-align: center;
             border-left: none;
             border-right: none;
             border-top: none;
@@ -688,12 +689,15 @@
             font-size: larger;
             place-content: center;
             border: .5px solid #b4b0b0;
-            padding-top: 20px;
-            padding-bottom: 20px;
             margin-left: 4px;
             margin-right: 4px;
             padding-left: 3px;
             padding-right: 2px;
+        }
+
+        #choose-mode>ul>li>a {
+            height: 63px;
+            align-items: center;
         }
 
         .mypopupdialog>.buttonholder {
@@ -968,10 +972,10 @@
         <h4>CHUJA AINA PRODUCTS</h4>
         <ul id="filterCategories"></ul>
         <div>
-            <label>Vipaombele NPS </label>
+            <label for="financial_nps">Vipaombele NPS </label>
             <input type="range" min="0" max="10" id="financial_nps" value="0">
-            <label>Kasi ya Kutembeya</label>
-            <input type="range" id="speed" min="0" max="5">
+            <label for="filter_speed">Kasi ya Kutembeya</label>
+            <input id="filter_speed" type="range" min="0" max="5">
         </div>
     </div>
     <div id="filter-dialog-customers" class="hidden mypopupdialog">
@@ -986,7 +990,7 @@
         <h4>INGIZA TAREHE</h4>
         <small>KWA Mfano <i>31/1/2025</i> </small>
         <div>
-            <input id="editTransDate" />
+            <input id="editTransDate" title="Tarehe" />
             <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
                 <button id="editTransDateSubmit">Ok</button>
             </div>
@@ -994,6 +998,8 @@
         <ul></ul>
     </div>
 </div>
+
+</html>
 <script>
     try {
         const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
@@ -1221,7 +1227,7 @@
             document.getElementById("productsview").classList.add(local_appstate);
             appStates_btn.classList.add("btn-color-" + local_appstate);
             document.getElementById("appState").innerHTML = status_display;
-            document.getElementById("submitbutton").innerHTML = status_display + "<label>Peleka</label>";
+
             document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
             document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
             clearvalues();
@@ -1501,7 +1507,7 @@
             var filterDialogProducts2CategoriesStr = "";
             for (const category in categories) {
                 filterDialogProducts2CategoriesStr += `<li onClick="handleFilterDialogFilterSelection(event)">
-        <label for="${category}">${category}</label>
+        <label for="category_${category}">${category}</label>
         <input type="checkbox" id="category_${category}" >
       </li>`;
             }
@@ -2466,7 +2472,7 @@
                         matchingProducts.push(product);
                     }
                 });
-            } else if (filterType === "speed") {
+            } else if (filterType === "filter_speed") {
 
                 const speed = eval(target.value);
                 products.forEach(product => {
