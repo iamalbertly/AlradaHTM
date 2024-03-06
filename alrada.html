@@ -1357,10 +1357,10 @@
                                             query += "1";
                                     }
                                 }
-                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
-                                var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
-                                if (appStates[currentAppStateIndex] != "stocktake") {
 
+                                if (appStates[currentAppStateIndex] != "stocktake") {
+                                    var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                                    var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
                                     if (firstpart != "" && secondpart != "") {
                                         var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
                                         var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
@@ -1370,14 +1370,20 @@
                                 } else {
                                     var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
                                     var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
-                                    var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d+\\.{0,1}\\d{0,})(.*)`);
+                                    var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d{0,}\\.{0,1}\\d{0,})(.*)`);
                                     var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
 
                                     if (exists) {
                                         /* find the amount thats already their and add it to */
-                                        var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].match(rgx);
-                                        var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
-                                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
+                                        var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").match(rgx);
+                                        if (/\./g.test(firsthalf[5])) {
+                                            var newtotalvalue = eval(firsthalf[5].replace(".", "")) + eval(newvalue.replace(".", ""));
+                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").replace(rgx, `$1$2$3$4#.${newtotalvalue}$6`).replaceAll(/#\.(\d+)/g, "#p$1");
+                                        } else {
+                                            var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
+                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
+                                        }
+
                                         productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                         productdetails_json = JSON.parse(productdetails_string);
                                         setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
