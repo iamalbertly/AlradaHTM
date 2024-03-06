@@ -1368,14 +1368,9 @@
                                         query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
                                     }
                                 } else {
-
-                                    /* check into the transactions if it matches warehouse and product name */
-                                    var newvalue = query.match(/\d+\.{0,1}\d{0,}$/)[0];
-                                    var prd = query.match(/(.*)#\d+\.{0,1}\d{0,}$/)[1];
-                                    var repl1 = new RegExp(`\(.*\)#${newvalue}`);
+                                    var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
+                                    var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
                                     var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d+\\.{0,1}\\d{0,})(.*)`);
-
-
                                     var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
 
                                     if (exists) {
