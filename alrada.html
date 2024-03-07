@@ -2731,6 +2731,7 @@
                 document.querySelector("#result_display>ul").innerHTML = "";
                 productdetails_string = "", productdetails_json = {};
                 setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, "");
+                tempTransQuery[appStates[currentAppStateIndex]]="";
             }
             document.getElementById("warehouseName").innerHTML = "HQ";
             document.querySelectorAll("#results>li.product.active").forEach(product => {
