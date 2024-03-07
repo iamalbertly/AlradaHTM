@@ -761,7 +761,7 @@
 
         #cachedTrans>span {
             width: 100%;
-            text-wrap: pretty;
+            text-wrap: wrap;
             margin-top: 10px;
         }
 
@@ -1789,13 +1789,7 @@
                     };
                     sndClient = "Tasker";
                 }
-                show("Tunatuma repoti...");
-                cachedTransCount[transactionType] = "Tunatuma Repoti";
-                cachedTransCashTotal[transactionType] = "Subiri ..";
-                document.getElementById("btnSend2Cache").classList.add("disabled");
-                document.getElementById("btnSend2Cache").disabled = true;
-                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                
                 fetch(finalurl, options)
                     .then(response => {
                         responseClone = response.clone();
@@ -1859,6 +1853,13 @@
                 setTimeout(function () {
                     hideLoadingScreen();
                 }, 4000);
+                show("Tunatuma repoti...");
+                cachedTransCount[transactionType] = "Tunatuma Repoti";
+                cachedTransCashTotal[transactionType] = "Subiri ..";
+                document.getElementById("btnSend2Cache").classList.add("disabled");
+                document.getElementById("btnSend2Cache").disabled = true;
+                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
             }
             catch (e) {
                 show(e.stack + "-an error");
