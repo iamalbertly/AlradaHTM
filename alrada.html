@@ -1343,7 +1343,7 @@
                                 try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                 var originalFocusedProduct = currentFocusedProduct;
                                 var selector = `#results>*>a[name='${currentFocusedProduct}']>input`;
-                                if (/MATUMIZI_MENGINE|Transport|Food/g.test(currentFocusedProduct)) {
+                                if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct)) {
 
                                     extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
                                     if (extraTransDetails == null || extraTransDetails == "") {
