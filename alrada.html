@@ -610,6 +610,7 @@
             list-style-type: none;
             max-width: 100vw;
             overflow-y: auto;
+            overflow-x: clip;
             position: sticky;
         }
 
@@ -671,7 +672,7 @@
             justify-content: space-around;
             position: absolute;
             min-width: 60%;
-            z-index: 90;
+            z-index: 200;
             align-items: center;
             top: 110px;
         }
@@ -996,7 +997,7 @@
         <h4>INGIZA TAREHE</h4>
         <small>KWA Mfano <i>31/1/2025</i> </small>
         <div>
-            <input id="editTransDate" title="Tarehe" />
+            <input id="editTransDate" title="Tarehe" onKeyup="confirmFormEdit(event)" />
             <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
                 <button id="editTransDateSubmit">Ok</button>
             </div>
@@ -1342,7 +1343,7 @@
                                 try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                 var originalFocusedProduct = currentFocusedProduct;
                                 var selector = `#results>*>a[name='${currentFocusedProduct}']>input`;
-                                if (/MATUMIZI_MENGINE|Transport/g.test(currentFocusedProduct)) {
+                                if (/MATUMIZI_MENGINE|Transport|Food/g.test(currentFocusedProduct)) {
 
                                     extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
                                     if (extraTransDetails == null || extraTransDetails == "") {
@@ -2365,6 +2366,58 @@
                     };
 
                     break;
+                case "TransactionEditDate":
+                    document.getElementById("filter-dialog-transDate").classList.remove("hidden");
+                    document.getElementById("filter-dialog-transDate").name = target.name + "__" + editing;
+                    confirmFormEdit = function (e) {
+                        if (e.key != "Enter") return;
+                        var newval = document.querySelector("#filter-dialog-transDate>div>input").value;
+                        var newediting = editing.replace(sign + oldval, sign + newval);
+                        var newquery = oldquery.replace(editing, newediting);
+                        var newjson_transactions = JSON.parse(GetProductDetails(newquery));
+                        if (family == "confirmCachedEntry") {
+                            cachedTransObjectJson[appStates[currentAppStateIndex]] = newjson_transactions;
+                            cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
+                            cachedTransactionQueries[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                            cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(newjson_transactions.finalResponseTotal);
+
+                            if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
+                                if (cachedTempTrans2Process[appStates[currentAppStateIndex]].length <= 0)
+                                    document.querySelectorAll(".disabled").forEach(el => {
+                                        el.disabled = false;
+                                        el.classList.remove("disabled");
+                                        el.classList.add("enabled");
+                                    });
+                            if (cachedTransactionQueries[appStates[currentAppStateIndex]])
+                                if (cachedTransactionQueries[appStates[currentAppStateIndex]].length <= 0)
+                                    document.querySelectorAll(".hiddenpreview").forEach(el => {
+                                        el.classList.remove("hiddenpreview");
+                                        el.classList.add("shownpreview");
+                                    });
+                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, "");
+                            setGlobal(`ALDCACHE${appStates[currentAppStateIndex]}`, cachedTransactionQueries[appStates[currentAppStateIndex]]);
+
+                            closeFilterDialog();
+
+                            reCreateCacheCleanupForm();
+                        } else {
+                            document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
+                            document.querySelectorAll(".disabled").forEach(el => {
+                                el.disabled = false;
+                                el.classList.remove("disabled");
+                                el.classList.add("enabled");
+                            });
+                            closeFilterDialog();
+                            document.getElementById("submitbuttonholder").classList.remove("hyper");
+                            document.getElementById("myinputbar").classList.remove("hyper");
+                            tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
+                            productdetails_json = newjson_transactions;
+                        }
+                    };
+
+                    break;
                 case "TransactionEditMultiplier":
                 case "TransactionEditUnitPrice":
                 case "TransactionEditWarehouse":
@@ -2661,7 +2714,8 @@
                         priceTotal = (priceTotal == "") ? ((/.*=\d+/.test(rawproductname)) ? rawproductname.match(/\d+$/)[0] : 0) : 0;
                     }
 
-                    let transDate = `${datetext} ${timetext}`,
+                    let transDate = datetext,
+                        transTime = timetext,
                         transMsg = product;
                     transUnitPrice = unitprice,
                         transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
@@ -2677,7 +2731,7 @@
                     response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
                     response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
-                    responseArr.push({ transDate, transWarehouseName, transMsg, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
+                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
                     itemcount++;
                     unitprice = "";
 
@@ -2694,7 +2748,8 @@
                     total = total + priceTotal;
                     response = (response + ((rawproductname == "") ? rawproductname : rawproductname) + ((unitprice > 0 && unitprice != "" && unitprice != 1) ? "@" + unitprice : "") + " | " + priceTotal.toLocaleString('en-US').replace(/\.00/g, "")).trim() + "\n";
                     date = new Date();
-                    let transDate = `${datetext} ${timetext}`,
+                    let transDate = datetext,
+                        transTime = timetext,
                         transMsg = product;
                     transUnitPrice = unitprice,
                         transStaffID = staffName.slice(0, 2),
@@ -2702,7 +2757,7 @@
                         transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
                         transCarton = 0;
                     getendvalue = (getendvalue) ? getendvalue : "";
-                    responseArr.push({ transDate, transWarehouseName, transMsg, rawproductname, getendvalue, transUnitPrice, transStaffID, transType, transWarehouseName, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
+                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, rawproductname, getendvalue, transUnitPrice, transStaffID, transType, transWarehouseName, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
                 }
 
                 try {
