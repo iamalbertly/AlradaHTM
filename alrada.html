@@ -279,7 +279,6 @@
             text-decoration: none;
             white-space: nowrap;
             min-height: 60px;
-            max-width: 95%;
         }
 
         #results>li>a>span {
@@ -288,7 +287,7 @@
             color: #fffff0;
             font-size: small;
             margin-bottom: 0;
-            pointer-events: none
+            pointer-events: none;
         }
 
         #myinputbar input:focus,
@@ -322,10 +321,6 @@
             opacity: 1;
             top: 0px;
             z-index: 90;
-        }
-
-        li.product.alcohol {
-            border: 2px solid red
         }
 
         .btn {
@@ -612,6 +607,7 @@
             overflow-y: auto;
             overflow-x: clip;
             position: sticky;
+            max-height: 100%;
         }
 
         @media (min-width: 100px) {
@@ -743,6 +739,7 @@
             display: none !important;
             width: fit-content;
             opacity: .55;
+            margin-right: 10px;
         }
 
         li.product.active {
@@ -1333,7 +1330,6 @@
                     input.removeEventListener('keyup', function (e) { });
 
                     input.addEventListener('keyup', function (e) {
-
                         var clickedvalue = e.srcElement.getAttribute("name");
                         var target = e.target.id;
                         if (e.key === 'Enter') {
