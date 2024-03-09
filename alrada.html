@@ -1846,6 +1846,7 @@
                         show(client + ": Repoti Imetumwa...");
                         goto("command||beep");
                         createProductsView();
+                        hideLoadingScreen();
                     })
                     .catch((error) => {
                         if (error.message.includes('Failed to fetch')) {
@@ -1858,16 +1859,13 @@
                                 });
                         }
                     });
-                setTimeout(function () {
-                    hideLoadingScreen();
-                }, 4000);
-                show("Tunatuma repoti...");
                 cachedTransCount[transactionType] = "Tunatuma Repoti";
                 cachedTransCashTotal[transactionType] = "Subiri ..";
                 document.getElementById("btnSend2Cache").classList.add("disabled");
                 document.getElementById("btnSend2Cache").disabled = true;
                 document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                 document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                show("Tunatuma repoti...");
             }
             catch (e) {
                 show(e.stack + "-an error");
