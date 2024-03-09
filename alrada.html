@@ -1718,7 +1718,6 @@
             var sndClient = "";
             try {
 
-
                 var transactionType = appStates[currentAppStateIndex];
                 if (cachedTransactionQueries[transactionType] == 0) return;
                 hideLoadingScreen();
@@ -1804,7 +1803,6 @@
                         if (!response.ok) {
                             return response.text().then(text => {
                                 if (text == "") {
-                                    /*store last saved in  */
                                     clearvalues();
                                     cachedTransObjectString[transactionType] = "";
                                     cachedTransactionQueries[transactionType] = "";
@@ -1833,20 +1831,20 @@
                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
 
                             setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
-
                             responseClone.text()
                                 .then(bodyText => {
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
-                        } catch (e) {
-                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-                            show(e.stack + "-there was an error");
-                        }
+                        
                         show(client + ": Repoti Imetumwa...");
                         goto("command||beep");
                         createProductsView();
                         hideLoadingScreen();
+                    } catch (e) {
+                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                            show(e.stack + "-there was an error");
+                        }
                     })
                     .catch((error) => {
                         if (error.message.includes('Failed to fetch')) {
@@ -1993,6 +1991,7 @@
 
         function showLoadingScreen(loadingTitle = "", loadingSubTitle = "", loadingMsg = "") {
             hideLoadingScreen();
+            closeFilterDialog();
 
             document.getElementById("news_display").style.pointerEvents = "none"; document.getElementById("mywebview2").style.pointerEvents = "none";
 
