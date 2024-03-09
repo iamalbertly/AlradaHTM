@@ -738,6 +738,7 @@
         li.product {
             display: none !important;
             width: fit-content;
+            width: -moz-fit-content;
             opacity: .55;
             margin-right: 10px;
         }
@@ -896,7 +897,7 @@
                 <span>💰</span><span>MAUZO</span>
             </button>
         </div>
-        <button onclick="getwarehouseName()" id="warehouseName"></button>
+        <button onclick="getwarehouseName()" id="warehouseName">HQ</button>
     </div>
 </div>
 <div id="mywebview2" class="flex-column">
@@ -959,10 +960,10 @@
         <a id="updateStr" href="#" class="small"
             style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
             onClick="fetchProductUpdate()">update<span> </span> </a>
-    </div><input id="clipboard" class="hidden" value="Alrada" style="max-height:0px" placeholder="" title="clipboard" />
+    </div><input id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard" />
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
-    <div id="querydialog" class="hidden mypopupdialog" style="width:95%"><input id="traditionalQueryInput" title="query"
-            placeholder="" type="text" style="width:100%" /></div>
+    <div id="querydialog" class="hidden mypopupdialog" ><input id="traditionalQueryInput" title="query"
+            placeholder="" type="text"  /></div>
     <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
     <div id="filter-dialog-products" class="hidden mypopupdialog">
         <h4>CHAGUA PRODUCT</h4>
@@ -1635,6 +1636,8 @@
         }
 
         function fetchProductUpdate() {
+           
+
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
@@ -1681,6 +1684,8 @@
                     return response.json();
                 })
                 .then(data => {
+                     /*clear logs*/
+                     setGlobal("ALDLOG", transDateStr+"_clr:");
                     settingsObj = data;
                     setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     loadCachedTrans();
@@ -1698,7 +1703,7 @@
                     } else {
                         responseClone.text()
                             .then(bodyText => {
-                                show('Server responded: ' + bodyText, true, true, false);
+                                 if(bodyText == "#NAME?") show(" database is busy '#NAME?'");
                             });
                     }
 
@@ -1849,7 +1854,7 @@
                             responseClone.text()
                                 .then(bodyText => {
                                     if (bodyText == '') show(sndClient + " sent but NotSure if Successful or not. #Cors.");
-                                    show('Server responded: ' + bodyText, false, true, false);
+                                    else if(bodyText == "#NAME?") show(" database is busy '#NAME?'");
                                 });
                         }
                     });
