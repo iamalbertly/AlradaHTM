@@ -473,7 +473,6 @@
         #myinputbar * span {
             background: #f0f8ff;
             border-color: #deb887;
-            white-space: nowrap;
         }
 
         #search {
@@ -762,6 +761,7 @@
             max-height: 20px;
             max-width: 110px;
             margin-top: -30px;
+            text-wrap: wrap;
         }
 
         #cachedTrans>span {
@@ -962,8 +962,8 @@
             onClick="fetchProductUpdate()">update<span> </span> </a>
     </div><input id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard" />
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
-    <div id="querydialog" class="hidden mypopupdialog" ><input id="traditionalQueryInput" title="query"
-            placeholder="" type="text"  /></div>
+    <div id="querydialog" class="hidden mypopupdialog"><input id="traditionalQueryInput" title="query" placeholder=""
+            type="text" /></div>
     <div id="processmsg-dialog" class="hidden mypopupdialog"></div>
     <div id="filter-dialog-products" class="hidden mypopupdialog">
         <h4>CHAGUA PRODUCT</h4>
@@ -1340,15 +1340,17 @@
                                 try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                 var originalFocusedProduct = currentFocusedProduct;
                                 var selector = `#results>*>a[name='${currentFocusedProduct}']>input`;
-                                if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct)) {
+                                if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct)&& (appStates[currentAppStateIndex] != "stocktake")) {
 
                                     extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
                                     if (extraTransDetails == null || extraTransDetails == "") {
                                         throw new Error('Lazima Uingize Aina Ya Malipo ');
                                     }
-                                    else { 
-                                        extraTransDetails = (appStates[currentAppStateIndex]=="wholesale_purchase_delivered")? "Amelipa "+extraTransDetails : "Hakulipa "+extraTransDetails;
-                                        currentFocusedProduct = `${currentFocusedProduct}::${extraTransDetails.trim()}`; }
+                                    else {
+                                        if (/Pesa/g.test(currentFocusedProduct))
+                                            extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
+                                        currentFocusedProduct = `${currentFocusedProduct}::${extraTransDetails.trim()}`;
+                                    }
                                     var query = currentFocusedProduct + "=" + document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;
                                 } else
                                     var query = currentFocusedProduct.replaceAll("_", " ") + appStateMarks[currentAppStateIndex] + e.target.value.replace(/^0/, ".");
@@ -1638,7 +1640,7 @@
         }
 
         function fetchProductUpdate() {
-           
+
 
             var sndClient = "";
 
@@ -1686,8 +1688,8 @@
                     return response.json();
                 })
                 .then(data => {
-                     /*clear logs*/
-                     setGlobal("ALDLOG", transDateStr+"_clr:");
+                    /*clear logs*/
+                    setGlobal("ALDLOG", transDateStr + "_clr:");
                     settingsObj = data;
                     setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     loadCachedTrans();
@@ -1705,7 +1707,7 @@
                     } else {
                         responseClone.text()
                             .then(bodyText => {
-                                 if(bodyText == "#NAME?") show(" database is busy '#NAME?'");
+                                if (bodyText == "#NAME?") show(" database is busy '#NAME?'");
                             });
                     }
 
@@ -1837,12 +1839,12 @@
                                 .then(bodyText => {
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
-                        
-                        show(client + ": Repoti Imetumwa...");
-                        goto("command||beep");
-                        createProductsView();
-                        hideLoadingScreen();
-                    } catch (e) {
+
+                            show(client + ": Repoti Imetumwa...");
+                            goto("command||beep");
+                            createProductsView();
+                            hideLoadingScreen();
+                        } catch (e) {
                             document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
                             show(e.stack + "-there was an error");
@@ -1855,7 +1857,7 @@
                             responseClone.text()
                                 .then(bodyText => {
                                     if (bodyText == '') show(sndClient + " sent but NotSure if Successful or not. #Cors.");
-                                    else if(bodyText == "#NAME?") show(" database is busy '#NAME?'");
+                                    else if (bodyText == "#NAME?") show(" database is busy '#NAME?'");
                                 });
                         }
                     });
