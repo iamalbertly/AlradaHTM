@@ -2135,8 +2135,8 @@
                     target = e.target.id;
                     if (e.key === 'Enter') {
                         if (target == "traditionalQueryInput") {
-                            var query = e.value;
-                            if (query == "") return 0;
+                            var query = e.target.value;
+                            if ((typeof query =="undefined")||(query == "")) return 0;
                             if (appStates[currentAppStateIndex] != "stocktake") {
                                 var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                                 var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
@@ -2150,7 +2150,7 @@
                             query = `(${warehouseName.toLowerCase()})${query}`;
                             date = new Date();
 
-                            query = (transDate.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
+                            query = (transDateStr.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                                 tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
 
                             } else {
