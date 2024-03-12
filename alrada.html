@@ -1340,7 +1340,7 @@
                                 try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                 var originalFocusedProduct = currentFocusedProduct;
                                 var selector = `#results>*>a[name='${currentFocusedProduct}']>input`;
-                                if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct)&& (appStates[currentAppStateIndex] != "stocktake")) {
+                                if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
 
                                     extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
                                     if (extraTransDetails == null || extraTransDetails == "") {
@@ -1840,7 +1840,7 @@
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
 
-                            show(client + ": Repoti Imetumwa...");
+                            show(sndClient + ": Repoti Imetumwa...");
                             goto("command||beep");
                             createProductsView();
                             hideLoadingScreen();
@@ -2017,11 +2017,11 @@
             document.getElementById("mywebview2").style.pointerEvents = "";
             document.getElementById("loading-screen").classList.add("hidden");
 
-
             var dialogContent = `<code><ul id="entries" class="left">`;
             for (const itemcount in cachedTransObjectJson[appStates[currentAppStateIndex]].json_response) {
                 var row = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response[itemcount];
-                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1];
+                if(row.transMsg == 'undefined') break;
+                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/.test(row.transMsg)? /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1] : 1;
                 dialogContent += `<li id="confirmCachedEntry" name="confirmCachedEntry_${itemcount}" >
        <div class="flex-column" >
         <span class="flex-row"><a href="#" id="confirmCachedEntry" name="TransactionEditDate_${itemcount}" title="${row.transDate}" onClick="handleTransEvent(event)">${row.transDate}</a>
@@ -2136,7 +2136,7 @@
                     if (e.key === 'Enter') {
                         if (target == "traditionalQueryInput") {
                             var query = e.target.value;
-                            if ((typeof query =="undefined")||(query == "")) return 0;
+                            if ((typeof query == "undefined") || (query == "")) return 0;
                             if (appStates[currentAppStateIndex] != "stocktake") {
                                 var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
                                 var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
