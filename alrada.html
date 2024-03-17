@@ -604,12 +604,19 @@
             list-style-type: none;
             max-width: 100vw;
             overflow-y: auto;
-            overflow-x: clip;
+            overflow-x: none;
             position: sticky;
             max-height: 100%;
         }
 
+        @media (max-width: 400px) {
+            #cachedTrans {
+                margin-top: -50px !important;
+            }
+        }
+
         @media (min-width: 100px) {
+
             .products>li {
                 flex-basis: calc(50% - 10px)
             }
@@ -620,7 +627,7 @@
             }
 
             #results>li>a>span {
-                margin-top: 2px
+                margin-top: 2px;
             }
         }
 
@@ -736,8 +743,8 @@
 
         li.product {
             display: none !important;
-            width: fit-content;
             width: -moz-fit-content;
+            width: fit-content;
             opacity: .55;
             margin-right: 10px;
         }
@@ -885,6 +892,11 @@
         .selectproduct>li>a>input {
             display: none;
         }
+
+        .shownpreview {
+            color: yellow;
+            background-color: black !important;
+        }
     </style>
 </head>
 <div id="mywebview" class="wholesale_sale">
@@ -913,11 +925,10 @@
         <button disabled id="btnSend2Cache" onClick="addTransactionToCache(event)"
             class="functionpad disabled">➡️</button>
         <button id="cachedTrans" class="flex-row notbutton">
-
-            <span class="hiddenpreview" style="color: yellow;background-color: black!important;">BADO REPOTI <sub
-                    style="white-space: nowrap;">👇🏽 HAIJATUMWA ! 👇🏽</sub></span>
+            <span class="hiddenpreview">BADO REPOTI <sub>👇🏽 HAIJATUMWA !
+                    👇🏽</sub></span>
             <span>
-                <span class="part2 highlight-border" style="border:none;background: none;font-size: revert;">-</span>
+                <span class="part2 highlight-border">-</span>
                 <span class="part1 highlight-border">-</span>
             </span>
         </button>
@@ -940,26 +951,27 @@
         <div class="loading-content">
             <h2 id="loading-title" class="sr-only">Tafadhali Subiri</h2>
             <div class="spinner-border" role="status"><small id="loading-subtitle"></small></div>
-            <div id="loading-text" class="loading-text"
-                style="border-bottom: 1px solid whitesmoke;overflow-y: auto;height: min-content;max-height: 185px;">
+            <div id="loading-text" class="loading-text">
                 ...
             </div>
-            <div class="buttonholder" style="display:flex;flex-direction:row;margin-top:15px"></div>
+            <div class="buttonholder"></div>
         </div>
     </div>
     <div id="choose-mode" class="hidden mypopupdialog">
         <h2 id="selectmode">Select Mode</h2>
         <ul>
-            <li class="wholesale_sale"><a href="#" onclick="changeMode('0')"><span>💰</span><span>MAUZO</span></a></li>
-            <li class="wholesale_purchase"> <a href="#" onclick="changeMode('2')"><span>➕</span><span>UPOKEZI</span></a>
+            <li class="wholesale_sale"><a href="#" onclick="changeMode('0',event)"><span>💰</span><span>MAUZO</span></a>
             </li>
-            <li class="sent2_bank"><a href="#" onclick="changeMode('1')"><span>🤌🏽</span><span>MALIPO</span></a></li>
-            <li class="stocktake"><a href="#" onclick="changeMode('3')"><span>#️⃣</span><span>STOCK</span></a></li>
-            <li class="hidden"><a href="#" onclick="changeMode('4')"><span>💱</span><span>MANUNUZI</span></a></li>
+            <li class="wholesale_purchase"> <a href="#"
+                    onclick="changeMode('2',event)"><span>➕</span><span>UPOKEZI</span></a>
+            </li>
+            <li class="sent2_bank"><a href="#" onclick="changeMode('1',event)"><span>🤌🏽</span><span>MALIPO</span></a>
+            </li>
+            <li class="stocktake"><a href="#" onclick="changeMode('3',event)"><span>#️⃣</span><span>STOCK</span></a>
+            </li>
+            <li class="hidden"><a href="#" onclick="changeMode('4',event)"><span>💱</span><span>MANUNUZI</span></a></li>
         </ul>
-        <a id="updateStr" href="#" class="small"
-            style="color:#dcdcdc;width: 100%;place-content: center;padding: 0;margin: 0;"
-            onClick="fetchProductUpdate()">update<span> </span> </a>
+        <a id="updateStr" href="#" class="small" onClick="fetchProductUpdate()">update<span> </span> </a>
     </div><input id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard" />
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
     <div id="querydialog" class="hidden mypopupdialog"><input id="traditionalQueryInput" title="query" placeholder=""
@@ -995,7 +1007,7 @@
         <h4>INGIZA TAREHE</h4>
         <small>KWA Mfano <i>31/1/2025</i> </small>
         <div>
-            <input id="editTransDate" title="Tarehe" onKeyup="confirmFormEdit(event)" />
+            <input id="editTransDate" title="Tarehe" onkeyup="confirmFormEdit(event)" />
             <div><button id="editTransDateleft" class="flex-row">⬅️</button><button id="editTransDateRight">➡️</button>
                 <button id="editTransDateSubmit">Ok</button>
             </div>
@@ -1140,11 +1152,13 @@
 
         try {
             if (settingsObj != undefined) {
+                createProductsView();
                 loadCachedTrans();
             }
             else {
                 if (global('ALDSETTING')) {
                     var settingsObj = JSON.parse(global('ALDSETTING'));
+                    createProductsView();
                     loadCachedTrans();
                 }
                 else
@@ -1165,8 +1179,9 @@
                         .then(data => {
                             settingsObj = data;
                             setGlobal('ALDSETTING', JSON.stringify(settingsObj));
-                            loadCachedTrans();
                             createProductsView();
+                            loadCachedTrans();
+
                         })
                         .catch((error) => { });
             }
@@ -1183,7 +1198,7 @@
 
 
 
-        function changeMode(index = "") {
+        function changeMode(index = "", e = undefined) {
             var oldstate = appStates[currentAppStateIndex];
             if (index == "") {
                 currentAppStateIndex++;
@@ -1235,7 +1250,9 @@
             document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
             document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
             clearvalues();
-            createProductsView();
+            if (typeof e != "undefined") {
+                createProductsView();
+            }
             closeFilterDialog();
         }
 
@@ -1245,8 +1262,17 @@
                     for (const TransType in appStates) {
                         if (global(`ALDTMP${appStates[TransType]}`)) {
                             tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
+                            if (TransType == '0' && typeof tempTransQuery['wholesale_sale'] != "undefined" && (tempTransQuery['wholesale_sale'] != "")) {
+                                productdetails_string = GetProductDetails(tempTransQuery['wholesale_sale']);
+                                productdetails_json = JSON.parse(productdetails_string);
+                                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                document.querySelectorAll(".disabled").forEach(el => {
+                                    el.disabled = false;
+                                    el.classList.remove("disabled");
+                                    el.classList.add("enabled");
+                                });
+                            }
                         }
-
 
                         if (global(`ALDCACHE${appStates[TransType]}`)) {
                             cachedTransactionQueries[appStates[TransType]] = global(`ALDCACHE${appStates[TransType]}`);
@@ -1273,7 +1299,7 @@
 
                 } catch (e) { show(`Error Loading CachedTrans loadCachedTrans(): ${e.stack}`) }
             } catch (e) { show("error loadCachedTrans::" + e.stack, true); }
-            changeMode("0");
+
         }
 
         function createList(products = ProductNamesLiWithInput, holderElement, hasinput = true) {
@@ -1401,12 +1427,8 @@
                                             el.classList.remove("disabled");
                                             el.classList.add("enabled");
                                         });
-
-
-
                                         return 0;
                                     }
-
                                 }
 
                                 query = `(${warehouseName.toLowerCase()})${query}`;
@@ -1414,9 +1436,9 @@
 
                                 query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
                                 if (appStates[currentAppStateIndex] == "stocktake") {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
                                 } else {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").replace(/^,/, "").trim());
                                 }
                                 productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                 productdetails_json = JSON.parse(productdetails_string);
@@ -1432,10 +1454,12 @@
 
                                 if (appStates[currentAppStateIndex] == "stocktake") {
                                     var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
-                                    document.querySelector(el).classList.add("hidden");
+                                    var child = document.querySelector(el).lastChild;
+
+                                    child.classList.add("hidden");
                                 }
-                                document.getElementById('search').value="";
-                                createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
+                                document.getElementById('search').value = "";
+                                /* createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));*/
                                 document.getElementById("warehouseName").focus();
                             }
                         }
@@ -1445,8 +1469,6 @@
                 show(e.stack + " -- error creating list");
             }
         }
-
-
 
         function createProductsView() {
             const localAppState = appStates[currentAppStateIndex];
@@ -1460,8 +1482,6 @@
 
                     products_jsonString.sort((a, b) => {
 
-                        if ((/Kick/g.test(a.OfficialName)) && (/Konyag|Kvant/g.test(b.OfficialName))) { return 1; }
-
                         if (/Pesa/g.test(a.OfficialName)) {
                             return 1;
                         }
@@ -1469,12 +1489,12 @@
                         /* If a is "Pesa", put b before a */
                         if (/Crate Peke|Fungu la Chupa/g.test(a.OfficialName)) return 1;
 
-                        if (a.category_breakdown < b.category_breakdown) return 1;
-
                         /* Group closely matching OfficialNames together */
                         if (a.OfficialName.includes(b.OfficialName.slice(0, 4)) || b.OfficialName.includes(a.OfficialName.slice(0, 4))) {
                             return 0;
                         }
+
+                        if (a.category_breakdown < b.category_breakdown) return 1;
 
                         if (b.laststocktakedate < a.laststocktakedate) {
                             return -1;
@@ -1642,8 +1662,6 @@
         }
 
         function fetchProductUpdate() {
-
-
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
@@ -2022,16 +2040,16 @@
             var dialogContent = `<code><ul id="entries" class="left">`;
             for (const itemcount in cachedTransObjectJson[appStates[currentAppStateIndex]].json_response) {
                 var row = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response[itemcount];
-                if(row.transMsg == 'undefined') break;
-                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/.test(row.transMsg)? /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1] : 1;
+                if (row.transMsg == 'undefined') break;
+                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/.test(row.transMsg) ? /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1] : 1;
                 dialogContent += `<li id="confirmCachedEntry" name="confirmCachedEntry_${itemcount}" >
        <div class="flex-column" >
         <span class="flex-row"><a href="#" id="confirmCachedEntry" name="TransactionEditDate_${itemcount}" title="${row.transDate}" onClick="handleTransEvent(event)">${row.transDate}</a>
         <a href="#" id="confirmCachedEntry" type="Jina La Shop" name="TransactionEditWarehouse_${itemcount}" title="${row.transWarehouseName}" onClick="handleTransEvent(event)">(${row.transWarehouseName})</a></span>
         <div class="flex-row"><div class="flex-row">
-        <a href="#" id="confirmCachedEntry" name="TransactionEditDrinkName_${itemcount}" title="${row.rawproductname}" onClick="handleTransEvent(event)">${row.rawproductname}</a>
+        <a href="#" id="confirmCachedEntry" name="TransactionEditDrinkName_${itemcount}" title="${row.rawproductname}" onClick="handleTransEvent(event)">${row.rawproductname}${row.transExtraDetails}</a>
         <a href="#" id="confirmCachedEntry" name="TransactionEditUnitPrice_${itemcount}" rel="@" type="Kiasi" title="${row.unitprice}" onClick="handleTransEvent(event)">@${row.unitprice}</a>
-        <a href="#" id="confirmCachedEntry" name="TransactionEditMultiplier_${itemcount}" title="${displaymultiplier.match(/\d+\.{0,1}\d{0,}/g)[0]}" onClick="handleTransEvent(event)" type="" rel="${appStateMarks[currentAppStateIndex]}">${displaymultiplier}=${row.priceTotal}</a></div>
+        <a href="#" id="confirmCachedEntry" name="TransactionEditMultiplier_${itemcount}" title="${displaymultiplier.match(/\d+\.{0,1}\d{0,}/g)[0]}" onClick="handleTransEvent(event)" type="" rel="${appStateMarks[currentAppStateIndex]}">${displaymultiplier}</a></div>
        <button id="confirmCachedEntry" name="TransactionDelete_${itemcount}" onClick="handleTransEvent(event)">❌</button></div>
        </div></li>`;
             }
@@ -2122,7 +2140,7 @@
             });
 
             document.getElementById("search").addEventListener("focus", (e) => {
-             /*   e.srcElement.value = ""; */
+                /*   e.srcElement.value = ""; */
             });
 
             document.getElementById("selectmode").addEventListener("click", e => {
@@ -2612,7 +2630,7 @@
             var cleanasjson = asjson.replace(/(?:\r\n|\r|\n)/g, "<br>").replace(/\sTZS/g, "");
 
             if (typeof query !== "string") { query = new String(query); }
-            var howmanyitems = query.split(new RegExp("(\\s\\&\\s)|,\\s|,|\\sn\\s")).filter((n) => n);
+            var howmanyitems = query.split(new RegExp(",")).filter((n) => n);
 
             let response = "", itemcount = 1, total = 0, projectedProfitTotal = 0, remain = "", multiplier = "", rawproductname = "", projectedProfit = 0, responseArr = [];
             howmanyitems.some(function (product, n) {
@@ -2622,7 +2640,7 @@
                     appStateMark = /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/.test(product) ? /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/g.exec(product)[1] : "",
                     myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
                     whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
-                    retail_multiplier = 0, transCarton = "";
+                    retail_multiplier = 0, transCarton = "", transExtraDetails = "";
                 var getmultipliers = getendvalue.split(" ");
 
                 getmultipliers = getmultipliers[0];
@@ -2636,7 +2654,8 @@
                 rawproductname = rawproductname.replace(/^[r,p] +/g, "").replace(/\s#\d+|ӿp{0,1}\d+\.{0,1}\d{0,}/, "");
                 rawproductname = rawproductname.replace(/\s[r,p]\d+\.{0,1}\d{0,}|\+[r,p]\d+\.{0,1}\d{0,}v$/, "");
                 rawproductname = rawproductname.replace(/=\d+\.{0,1}\d{0,}|[r,p]\d+\.{0,1}\d{0,}$/, "").replace(/^\(.*\)/, "").replace(/\+$/, "").trim();
-
+                transExtraDetails = (/(::.*)/.test(rawproductname)) ? rawproductname.match(/(::.*)/)[0] : "";
+                rawproductname = rawproductname.replace(transExtraDetails, "");
                 if (!/\$\d+$/.test(product)) {
                     if (transType == "" || transType == undefined)
                         transType = (/\#\d+/g.test(product.trim())) ? "stocktake" : (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
@@ -2708,9 +2727,8 @@
                     }
                     var realitemcount = itemcount - 1;
 
-                    var realeditmultipliersign = (displaymultiplier == undefined) ? "=" : displaymultiplier;
                     var displaymultiplier = ((whole_multiplier > 0) ? whole_multiplier : 0) + ((retail_multiplier > 0) ? `p${retail_multiplier}` : "");
-
+                    var realeditmultipliersign = (appStateMark == "=") ? "" : `${appStateMark}${displaymultiplier}`;
                     total = total + parseFloat(priceTotal);
 
                     projectedProfitTotal += parseFloat(projectedProfit);
@@ -2727,18 +2745,16 @@
                         transType = (specialTransType == "") ? appState : specialTransType;
                     getendvalue = (getendvalue) ? getendvalue : "";
 
-
                     response = `${response} <li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
-                    response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}" onClick="handleTransEvent(event)" > ${rawproductname} </a>`;
+                    response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> @${unitprice}</a>`;
-                    response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${appStateMark}${displaymultiplier} = ${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
+                    response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
                     response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
                     response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
-                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
+                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
                     itemcount++;
                     unitprice = "";
-
                 }
                 if ((responseArr.length == 0) || (/\$\d+$/.test(product))) {
                     remain = (/\#\d+/.test(product)) ? parseFloat(product.match(/\#\d+/)[0].replace("#", "")) : 0;
@@ -2761,12 +2777,18 @@
                         transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
                         transCarton = 0;
                     getendvalue = (getendvalue) ? getendvalue : "";
-                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, rawproductname, getendvalue, transUnitPrice, transStaffID, transType, transWarehouseName, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
+                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, rawproductname, getendvalue, transUnitPrice, transStaffID, transType, transWarehouseName, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
                 }
 
                 try {
                     var sele = 'li.product[name=\"' + rawproductname.replaceAll(" ", "_") + '\"]';
-                    document.querySelector(sele).classList.add("processed");
+                    try {
+                        document.querySelector(sele).classList.add("processed");
+                        if (appStates[currentAppStateIndex] == "stocktake") {
+                            var child = document.querySelector(sele).lastChild;
+                            child.classList.add("hidden");
+                        }
+                    } catch (e) { }
                 } catch (e) { }
             });
 
