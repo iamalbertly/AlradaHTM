@@ -52,6 +52,16 @@
             min-height: unset;
         }
 
+        #loading-text {
+            overflow-y: auto;
+        }
+        #loading-text>code>ul {
+            margin-left: 0;
+            margin-top: 0;
+            padding-left: 0;
+            text-align: left;
+        }
+
         #loading-text>code>ul>li {
             overflow-x: auto;
             margin-right: 20px;
@@ -800,12 +810,7 @@
             width: 75%
         }
 
-        #loading-text>code>ul {
-            margin-left: 0;
-            margin-top: 0;
-            padding-left: 0;
-            text-align: left;
-        }
+     
 
         #btnClose,
         #close-dialog {
@@ -2030,7 +2035,6 @@
             document.getElementById("loading-text").innerHTML = "...";
             document.getElementById("loading-screen").classList.add("hidden");
         }
-
 
         function reCreateCacheCleanupForm() {
             document.getElementById("news_display").style.pointerEvents = "";
