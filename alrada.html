@@ -27,6 +27,7 @@
         #cachedTrans>span {
             font-size: xx-small;
             align-self: center;
+            align-self: end;
         }
 
 
@@ -55,6 +56,7 @@
         #loading-text {
             overflow-y: auto;
         }
+
         #loading-text>code>ul {
             margin-left: 0;
             margin-top: 0;
@@ -195,12 +197,6 @@
             flex-direction: column
         }
 
-        #results>li>a {
-            font-size: 3vw;
-            justify-content: center;
-            margin: 0;
-            width: 100%
-        }
 
         a {
             text-decoration: none;
@@ -273,7 +269,9 @@
             border-color: #e1e1e1 !important;
         }
 
-        .products>li {
+        .products>li,
+        .customers>li,
+        .suppliers>li {
             border: .2px solid #ccc;
             display: flex;
             flex: 1 0 auto;
@@ -283,14 +281,20 @@
             text-align: -webkit-center;
         }
 
+        #CustomersList>li>a,
         #results>li>a {
             flex-flow: column;
             place-content: space-between;
             text-decoration: none;
             white-space: nowrap;
             min-height: 60px;
+            font-size: 3vw;
+            justify-content: center;
+            margin: 0;
+            width: 100%
         }
 
+        #CustomersList>li>a>span,
         #results>li>a>span {
             align-self: stretch;
             background-color: #483d8b;
@@ -301,6 +305,7 @@
         }
 
         #myinputbar input:focus,
+        #CustomersList>li>a.pressed,
         #results>li>a:hover,
         #results>li>a.pressed,
         #results>li>a:active,
@@ -543,10 +548,14 @@
             font-weight: bold;
         }
 
-        div#result_display>ul>li>span {
+        div#result_display>ul>li>div {
             min-width: 245px;
             align-items: baseline;
             font-weight: 100;
+        }
+
+        div#result_display>ul>li>div>div>a {
+            align-self: center;
         }
 
         div#result_display>ul>li>div>button {
@@ -604,6 +613,7 @@
             padding: 1%
         }
 
+        #CustomersList,
         #results {
             display: flex;
             flex-wrap: wrap;
@@ -810,7 +820,7 @@
             width: 75%
         }
 
-     
+
 
         #btnClose,
         #close-dialog {
@@ -988,7 +998,7 @@
         <div>
             <input id="editProductName" title="Edit Product Name" placeholder="Chagua Product" />
         </div>
-        <ul class="products selectproduct"></ul>
+        <ul id="CustomersList" class="products selectproduct"></ul>
     </div>
     <div id="filter-dialog-products2" class="hidden mypopupdialog">
         <h4>CHUJA AINA PRODUCTS</h4>
@@ -1006,7 +1016,7 @@
         <div>
             <input id="editCustomerName" placeholder="hq" />
         </div>
-        <ul class="selectproduct"></ul>
+        <ul class="selectproduct" id="CustomersList"></ul>
     </div>
     <div id="filter-dialog-transDate" class="hidden mypopupdialog">
         <h4>INGIZA TAREHE</h4>
@@ -1036,10 +1046,12 @@
             isMultTextArray = {},
             products_jsonString = {},
             suppliers_jsonString = {},
+            customers_jsonString = {},
             productsJsonString = undefined;
         currentAppStateIndex = 0,
             ProductNamesLiWithInput = [],
             ProductNamesLiWithOutInput = [],
+            CustomerNamesLiWithoutInput = [],
             categories = {},
             npsValues = {},
             runningSpeedRanges = {},
@@ -1355,6 +1367,50 @@
                             }
                         });
                     });
+                } else if (holderElement.id == "CustomersList") {
+                    document.querySelectorAll("a.product").forEach(el => {
+                        el.addEventListener("focus", (e) => {
+                            var nm = e.srcElement.getAttribute("name");
+                            var target = e.target;
+                            if (target.parentNode.parentNode.id == "CustomersList") {
+                                document.getElementById("editProductName").value = nm;
+                            }
+                            else if (target.parentNode.parentNode.id == "results") {
+                                if (nm != oldFocusedProduct && document.querySelector(`li.product[name='${oldFocusedProduct}']`)) {
+                                    document.querySelector(`li.product[name='${oldFocusedProduct}']`).classList.remove("hovering");
+                                }
+
+                                currentFocusedProduct = document.querySelector(`li.product[name='${nm}']`);
+                                if (currentFocusedProduct) {
+                                    if (document.querySelector("li.product.hovering")) document.querySelector("li.product.hovering").classList.remove("hovering");
+                                    target.parentNode.classList.add("hovering");
+                                    document.getElementById("myinputbar").classList.remove("hyper");
+                                    closeFilterDialog();
+                                    document.querySelector("li.product[name='" + nm + "']>a>input").select();
+                                }
+                                currentFocusedProduct = nm;
+                                oldFocusedProduct = nm;
+                                document.querySelectorAll('a').forEach(el => {
+                                    el.classList.remove('pressed');
+                                });
+                                e.srcElement.classList.add('pressed');
+                                document.getElementById("myinputbar").classList.add("hyper");
+
+                                const clickedvalue = e.srcElement.getAttribute('name');
+                                const local_appstate = appStates[currentAppStateIndex];
+                                const input = document.querySelector(".product.pressed > input:not(.hidden)");
+                                isMultTextArray[clickedvalue] = input ? input.value : "";
+
+                                const num = isMultTextArray[clickedvalue] || "1";
+                                const newlink = clickedvalue + appStateMarks[currentAppStateIndex] + num;
+                                document.getElementById("submitbutton").innerHTML = newlink;
+                                document.getElementById("submitbutton").href = "/" + newlink;
+                                try { input.focus(); } catch (e) { }
+                            }
+                        });
+                    });
+
+
                 }
 
                 document.querySelectorAll(".product > input").forEach(input => {
@@ -1441,9 +1497,9 @@
 
                                 query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
                                 if (appStates[currentAppStateIndex] == "stocktake") {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "").replace(/,$/, "");
                                 } else {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").replace(/^,/, "").trim());
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").replace(/^,/, "").replace(/,$/, "").trim());
                                 }
                                 productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                 productdetails_json = JSON.parse(productdetails_string);
@@ -1519,7 +1575,7 @@
                         const categoryArr = product.category_breakdown.split("_");
                         const cat = categoryArr.join(" ");
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState, true);
                     });
                     ProductNamesLiWithOutInput = products_jsonString.map(product => {
                         const name = product.OfficialName;
@@ -1527,7 +1583,7 @@
                         const categoryArr = product.category_breakdown.split("_");
                         const cat = categoryArr.join(" ");
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState, "", false);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, localAppState, false);
                     });
                     break;
                 }
@@ -1536,12 +1592,12 @@
                     ProductNamesLiWithInput = suppliers_jsonString.map(supplier => {
                         const name = supplier.officialname;
                         const contactName = supplier.contactname;
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "", "", "", localAppState, contactName);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "", "", "", localAppState, false, contactName);
                     });
                     ProductNamesLiWithOutInput = suppliers_jsonString.map(supplier => {
                         const name = supplier.officialname;
                         const contactName = supplier.contactname;
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "", "", "", localAppState, contactName, false);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "", "", "", localAppState, false, contactName, supplier.contact_numbers);
                     });
                     break;
                 }
@@ -1609,14 +1665,16 @@
                 return purchaseprice.toString().replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, '$&,');
         }
 
-        function createProductLi(name, formattedname, category, price, categorySign, localAppState, contactName = "", hasinput = true) {
+        function createProductLi(name, formattedname, category, price, categorySign, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
-            const inputTag = localAppState === "sent2_bank" ? contactName : price + " tsh";
+            const inputTag = (/sent2_bank|CustomerFilter/.test(localAppState)) ? contactPhone : price + " tsh";
             const inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`;
-            const onClickEvent = (!hasinput) ? `onClick="confirmFormPick(event)"` : ``;
-            hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onClick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
-            return `<li class="product active ${category}" data-category="${category}" name="${formattedname}">
-            <a class="product ${category}" href="#" name="${formattedname}" ${onClickEvent}>
+            if (onLiClickEvent == "")
+                onLiClickEvent = (!hasinput) ? `handleTransEvent(event)` : ``;
+
+            hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onclick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
+            return `<li class="product active ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
+            <a class="product ${category}" href="#" name="${formattedname}" title="${name}" >
               ${productNameWithContact(name, contactName)}
               <span>${inputTag}<span class="classification">${categorySign}</span></span>
               ${hasinput}         
@@ -1624,7 +1682,7 @@
         }
 
         function productNameWithContact(name, contactName) {
-            return contactName ? `${name} -${contactName}` : name;
+            return (contactName && (name != contactName)) ? `${name} -${contactName}` : name;
         }
 
         function hideExistingInputs() {
@@ -1642,10 +1700,23 @@
                 });
             });
         }
+        function reLoadSettingsData() {
+            createProductsView();
+            customers_jsonString = JSON.parse(settingsObj.settings.customers).slice(1);
+            CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
+                const name = customer.customer_name;
+                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+            });
+
+            createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
+
+        }
 
         window.onload = function () {
             try {
-                createProductsView();
+                fetchProductUpdate(false, true, reLoadSettingsData);
+
+
                 initializeListeners();
             } catch (e) {
                 show(e.stack + "-- error trying to load", true, true);
@@ -1666,7 +1737,7 @@
                 .catch(error => console.error('Error:', error));
         }
 
-        function fetchProductUpdate() {
+        function fetchProductUpdate(ShowUpdateScreen = true, JustGetDB = false, callback = undefined) {
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
@@ -1699,13 +1770,13 @@
                 };
                 sndClient = "Tasker";
             }
-            showLoadingScreen("Fetching updates...", "Tafadhali Subiri.");
+            if (ShowUpdateScreen)
+                showLoadingScreen("Fetching updates...", "Tafadhali Subiri.");
 
             fetch(finalurl, options)
                 .then(response => {
                     responseClone = response.clone();
                     if (!response.ok) {
-                        var retHeaders = response.headers();
                         return response.text().then(text => {
                             throw new Error('ErrServer response: ' + text, false, true);
                         });
@@ -1718,10 +1789,13 @@
                     settingsObj = data;
                     setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     loadCachedTrans();
-                    createProductsView();
 
-                    fetchHTMUpdate();
-                    show(client + ": Has been updated products...");
+                    if (callback)
+                        callback();
+
+                    if (!JustGetDB)
+                        fetchHTMUpdate();
+                    show(sndClient + ": Successfully Updated Settings...");
                     goto("command||beep");
                     hideLoadingScreen();
                     clearvalues();
@@ -1738,7 +1812,7 @@
 
                     hideLoadingScreen();
                     clearvalues();
-                    show("DB update failed!");
+                    show("Error!\n" + error.stack);
                 });
 
         }
@@ -1848,20 +1922,25 @@
                         return response.json();
                     })
                     .then(data => {
-                        clearvalues();
-                        cachedTransObjectString[transactionType] = "";
-                        cachedTransactionQueries[transactionType] = "";
-                        cachedTransCount[transactionType] = 0;
-                        cachedTransCashTotal[transactionType] = 0;
-                        try {
-                            document.getElementById("btnSend2Cache").classList.remove("disabled");
-                            document.getElementById("btnSend2Cache").disabled = false;
-                            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-                            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
 
-                            setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
+                        try {
+
                             responseClone.text()
                                 .then(bodyText => {
+                                    if (!/Muda wa huduma umeisha/g.test(bodyText)) {
+                                        clearvalues();
+                                        cachedTransObjectString[transactionType] = "";
+                                        cachedTransactionQueries[transactionType] = "";
+                                        cachedTransCount[transactionType] = 0;
+                                        cachedTransCashTotal[transactionType] = 0;
+                                        document.getElementById("btnSend2Cache").classList.remove("disabled");
+                                        document.getElementById("btnSend2Cache").disabled = false;
+                                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+
+                                        setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
+                                    }
+
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
 
@@ -2052,7 +2131,7 @@
         <a href="#" id="confirmCachedEntry" type="Jina La Shop" name="TransactionEditWarehouse_${itemcount}" title="${row.transWarehouseName}" onClick="handleTransEvent(event)">(${row.transWarehouseName})</a></span>
         <div class="flex-row"><div class="flex-row">
         <a href="#" id="confirmCachedEntry" name="TransactionEditDrinkName_${itemcount}" title="${row.rawproductname}" onClick="handleTransEvent(event)">${row.rawproductname}${row.transExtraDetails}</a>
-        <a href="#" id="confirmCachedEntry" name="TransactionEditUnitPrice_${itemcount}" rel="@" type="Kiasi" title="${row.unitprice}" onClick="handleTransEvent(event)">@${row.unitprice}</a>
+        <a href="#" id="confirmCachedEntry" name="TransactionEditUnitPrice_${itemcount}" rel="@" type="Kiasi" title="${row.unitprice}" onClick="handleTransEvent(event)">${((row.unitprice == "") || (row.unitprice == 1)) ? "" : "@" + row.unitprice}</a>
         <a href="#" id="confirmCachedEntry" name="TransactionEditMultiplier_${itemcount}" title="${displaymultiplier.match(/\d+\.{0,1}\d{0,}/g)[0]}" onClick="handleTransEvent(event)" type="" rel="${appStateMarks[currentAppStateIndex]}">${displaymultiplier}</a></div>
        <button id="confirmCachedEntry" name="TransactionDelete_${itemcount}" onClick="handleTransEvent(event)">❌</button></div>
        </div></li>`;
@@ -2316,8 +2395,18 @@
             }
         }
 
+        function confirmCustomerPick(event) {
+            var target = event.target;
+            if (target.title == "") return;
+            warehouseName = target.title;
+            document.getElementById("warehouseName").innerHTML = warehouseName;
+
+            closeFilterDialog();
+        }
+
         function handleTransEvent(event) {
             var target = event.target,
+                grandparent = target.parentNode.parentNode,
                 action = target.name.split("_"),
                 family = target.id;
             id = eval(action[1]),
@@ -2612,7 +2701,7 @@
         }
 
         function GetProductDetails(query = "(hq)Uhai 600ml @400+1", appState = "", exactdtail = "") {
-            query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").trim();
+            query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").replace(/,$/, "").trim();
 
             if (typeof returntype == 'undefined') var returntype = "single";
 
@@ -2640,10 +2729,10 @@
             howmanyitems.some(function (product, n) {
                 var priceTotal = 0, netpriceTotal = 0, transType = "",
                     unitprice = (/\@\d+/.test(product)) ? eval(product.match(/\@\d+\.{0,1}\d{0,}/)[0].replace("@", "")) : "",
-                    getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
-                    appStateMark = /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/.test(product) ? /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ)\d{0,}p{0,1}\d+$/g.exec(product)[1] : "",
-                    myval = getendvalue.match(/[ӿ,\+,\-,\#](\d+)/),
-                    whole_multiplier = (/[ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#](\d+\.{0,1}\d{0,})/)[1]) : 1,
+                    getendvalue = /(\+{1,2}|\-{1,2}|ӿ|\-|\#|\$)\d{0,}\s{0,1}[r,p]{0,1}\d+\.{0,1}\d{0,}$|[r,p]\d+\.{0,1}\d{0,}$/.test(product) ? /(\+{1,2}|\-{1,2}|ӿ|\-|\#|\$)\d{0,}\s{0,1}[r,p]{0,1}\d+$|[r,p]\d+$/.exec(product)[0] : "",
+                    appStateMark = /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ|\$)\d{0,}p{0,1}\d+$/.test(product) ? /(\+\+|\-\-|\+|\-|\=|\$|\#|ӿ|\$)\d{0,}p{0,1}\d+$/g.exec(product)[1] : "",
+                    myval = getendvalue.match(/[ӿ,\+,\-,\#,\$](\d+)/),
+                    whole_multiplier = (/[\$,ӿ,\#,\+,\-][r,p]\d+\.{0,1}\d{0,}/.test(product)) ? 0 : (/[ӿ,\+,\-,\#,\$]\d{0,}p{0,1}\d+$/.test(product)) ? eval(getendvalue.match(/[ӿ,\+,\-,\#,\$](\d+\.{0,1}\d{0,})/)[1]) : 1,
                     retail_multiplier = 0, transCarton = "", transExtraDetails = "";
                 var getmultipliers = getendvalue.split(" ");
 
@@ -2660,129 +2749,108 @@
                 rawproductname = rawproductname.replace(/=\d+\.{0,1}\d{0,}|[r,p]\d+\.{0,1}\d{0,}$/, "").replace(/^\(.*\)/, "").replace(/\+$/, "").trim();
                 transExtraDetails = (/(::.*)/.test(rawproductname)) ? rawproductname.match(/(::.*)/)[0] : "";
                 rawproductname = rawproductname.replace(transExtraDetails, "");
-                if (!/\$\d+$/.test(product)) {
-                    if (transType == "" || transType == undefined)
-                        transType = (/\#\d+/g.test(product.trim())) ? "stocktake" : (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
-                            ? "retail"
-                            : "wholesale";
-                    try {
-                        if (/\=\d+/g.test(product)) {
-                            unitprice = 1;
-                            priceTotal = eval(/\=(\d+)/g.exec(product)[1]),
-                                displaymultiplier = priceTotal;
-                        }
-                        else
-                            JSON.parse(cleanasjson).some(function (item, i) {
 
-                                if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {
-                                    transCarton = item.carton;
+                if (transType == "" || transType == undefined)
+                    transType = (/\#\d+/g.test(product.trim())) ? "stocktake" : (/\=\d|\+\+/g.test(product.trim())) ? "purchase" : /(\d\s[r,p]\s)|(\s[r,p]\s)|(^r\s)|([r,p]\d+$)/g.test(product.trim().toLowerCase())
+                        ? "retail"
+                        : "wholesale";
+                try {
+                    if (/\=\d+/g.test(product)) {
+                        unitprice = 1;
+                        priceTotal = eval(/\=(\d+)/g.exec(product)[1]),
+                            displaymultiplier = priceTotal;
+                    }
+                    else
+                        JSON.parse(cleanasjson).some(function (item, i) {
 
-                                    if (getendvalue.match(/\#/)) {
-                                        w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;
-                                        r_remain = (!/[r,p]\d+/g.test(getendvalue)) ? "" : eval(/[r,p](\d+)/g.exec(getendvalue)[1]) / item.carton;
-                                        remain = w_remain + r_remain;
-                                    }
+                            if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {
+                                transCarton = item.carton;
 
-                                    retail_multiplier = (getendvalue.indexOf("p") == -1) ? 0 : eval(getendvalue.match(/[r,p]\d+/)[0].replace("p", ""));
-                                    multiplier = whole_multiplier + (retail_multiplier / item.carton);
-
-                                    if ((transType == "purchase") || (transType == "stocktake")) {
-                                        var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
-                                        var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)));
-                                        projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
-                                    }
-                                    if (unitprice == "") {
-                                        if (transType == "purchase") {
-                                            if (whole_multiplier)
-                                                unitprice = item.w_purchase_a,
-                                                    priceTotal += item.w_purchase_a * whole_multiplier;
-                                            if (retail_multiplier) {
-
-                                                if (retail_multiplier = (item.carton / 2))
-                                                    unitprice = (item.w_purchase_a / 2) / retail_multiplier;
-                                                else
-                                                    unitprice = Math.round((((unitprice == "") ? (item.w_purchase_a + item.p_purchasemarkup_a) : unitprice) / item.carton) * 100) / 100;
-
-                                                priceTotal += unitprice * retail_multiplier;
-                                            }
-                                        }
-                                        else {
-                                            if (whole_multiplier || whole_multiplier == 0)
-                                                unitprice = item.w_price_a,
-                                                    priceTotal += item.w_price_a * whole_multiplier;
-                                            if (retail_multiplier)
-                                                unitprice = ((unitprice == "") ? item.w_price_a : unitprice) / item.carton,
-                                                    priceTotal += unitprice * retail_multiplier;
-                                        }
-                                        product = product.replace(new RegExp(`(${getendvalue.replaceAll(/(\+)/gm, "\\$1")})`), `@${unitprice}$1`);
-                                    } else {
-                                        if (whole_multiplier)
-                                            priceTotal = unitprice * whole_multiplier;
-                                        if (retail_multiplier)
-                                            priceTotal += unitprice * retail_multiplier;
-                                        product = product.replace(new RegExp(`(\@\d+\.{0,1}\d{0,})`), `@${unitprice}`);
-                                    }
-
-                                    throw BreakException;
+                                if (getendvalue.match(/\#/)) {
+                                    w_remain = (/\#\d+/g.test(getendvalue)) ? eval(getendvalue.match(/\#\d+/)[0].replace("#", "")) : 0;
+                                    r_remain = (!/[r,p]\d+/g.test(getendvalue)) ? "" : eval(/[r,p](\d+)/g.exec(getendvalue)[1]) / item.carton;
+                                    remain = w_remain + r_remain;
                                 }
-                            });
-                    } catch (e) {
-                        if (e !== BreakException) throw e;
-                    }
-                    var realitemcount = itemcount - 1;
 
-                    var displaymultiplier = ((whole_multiplier > 0) ? whole_multiplier : 0) + ((retail_multiplier > 0) ? `p${retail_multiplier}` : "");
-                    var realeditmultipliersign = (appStateMark == "=") ? "" : `${appStateMark}${displaymultiplier}`;
-                    total = total + parseFloat(priceTotal);
+                                retail_multiplier = (getendvalue.indexOf("p") == -1) ? 0 : eval(getendvalue.match(/[r,p]\d+/)[0].replace("p", ""));
+                                multiplier = whole_multiplier + (retail_multiplier / item.carton);
 
-                    projectedProfitTotal += parseFloat(projectedProfit);
-                    if (priceTotal == "") {
-                        priceTotal = (priceTotal == "") ? ((/.*=\d+/.test(rawproductname)) ? rawproductname.match(/\d+$/)[0] : 0) : 0;
-                    }
+                                if ((transType == "purchase") || (transType == "stocktake")) {
+                                    var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
+                                    var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)));
+                                    projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
+                                }
+                                if (unitprice == "") {
+                                    if (transType == "purchase") {
+                                        if (whole_multiplier)
+                                            unitprice = item.w_purchase_a,
+                                                priceTotal += item.w_purchase_a * whole_multiplier;
+                                        if (retail_multiplier) {
 
-                    let transDate = datetext,
-                        transTime = timetext,
-                        transMsg = product;
-                    transUnitPrice = unitprice,
-                        transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
-                        transStaffID = staffName.slice(0, 2),
-                        transType = (specialTransType == "") ? appState : specialTransType;
-                    getendvalue = (getendvalue) ? getendvalue : "";
+                                            if (retail_multiplier = (item.carton / 2))
+                                                unitprice = (item.w_purchase_a / 2) / retail_multiplier;
+                                            else
+                                                unitprice = Math.round((((unitprice == "") ? (item.w_purchase_a + item.p_purchasemarkup_a) : unitprice) / item.carton) * 100) / 100;
 
-                    response = `${response} <li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
-                    response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
-                    response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> @${unitprice}</a>`;
+                                            priceTotal += unitprice * retail_multiplier;
+                                        }
+                                    }
+                                    else {
+                                        if (whole_multiplier || whole_multiplier == 0)
+                                            unitprice = item.w_price_a,
+                                                priceTotal += item.w_price_a * whole_multiplier;
+                                        if (retail_multiplier)
+                                            unitprice = ((unitprice == "") ? item.w_price_a : unitprice) / item.carton,
+                                                priceTotal += unitprice * retail_multiplier;
+                                    }
+                                    product = product.replace(new RegExp(`(${getendvalue.replaceAll(/(\+)/gm, "\\$1")})`), `@${unitprice}$1`);
+                                } else {
+                                    if (whole_multiplier)
+                                        priceTotal = unitprice * whole_multiplier;
+                                    if (retail_multiplier)
+                                        priceTotal += unitprice * retail_multiplier;
+                                    product = product.replace(new RegExp(`(\@\d+\.{0,1}\d{0,})`), `@${unitprice}`);
+                                }
+
+                                throw BreakException;
+                            }
+                        });
+                } catch (e) {
+                    if (e !== BreakException) throw e;
+                }
+                var realitemcount = itemcount - 1;
+
+                var displaymultiplier = ((whole_multiplier > 0) ? whole_multiplier : 0) + ((retail_multiplier > 0) ? `p${retail_multiplier}` : "");
+                var realeditmultipliersign = (appStateMark == "=") ? "" : `${appStateMark}${displaymultiplier}`;
+                total = total + parseFloat(priceTotal);
+
+                projectedProfitTotal += parseFloat(projectedProfit);
+                if (priceTotal == "") {
+                    priceTotal = (priceTotal == "") ? ((/.*=\d+/.test(rawproductname)) ? rawproductname.match(/\d+$/)[0] : 0) : 0;
+                }
+
+                let transDate = datetext,
+                    transTime = timetext,
+                    transMsg = product;
+                transUnitPrice = unitprice,
+                    transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
+                    transStaffID = staffName.slice(0, 2),
+                    transType = (specialTransType == "") ? appState : specialTransType;
+                getendvalue = (getendvalue) ? getendvalue : "";
+
+                response = `${response} <li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
+                response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
+                response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> ${((unitprice == "") || (unitprice == 1)) ? "" : "@" + unitprice}</a>`;
+                if (appStateMark != "$")
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
-                    response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
-                    response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
+                else
+                    response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}</a>`;
+                response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
+                response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
-                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
-                    itemcount++;
-                    unitprice = "";
-                }
-                if ((responseArr.length == 0) || (/\$\d+$/.test(product))) {
-                    remain = (/\#\d+/.test(product)) ? parseFloat(product.match(/\#\d+/)[0].replace("#", "")) : 0;
-                    unitprice = 1;
-                    var rx = new RegExp("\\" + appStateMark + "\\d+");
-
-                    multiplier = (rx.test(product)) ? parseFloat(product.match(rx)[0].replace(appStateMark, "")) : 1;
-                    priceTotal = (/\=\d+/.test(product)) ? parseFloat(product.match(/\=\d+/)[0].replace("=", "")) * -1 : multiplier * unitprice;
-                    netpriceTotal = 0;
-
-                    total = total + priceTotal;
-                    response = (response + ((rawproductname == "") ? rawproductname : rawproductname) + ((unitprice > 0 && unitprice != "" && unitprice != 1) ? "@" + unitprice : "") + " | " + priceTotal.toLocaleString('en-US').replace(/\.00/g, "")).trim() + "\n";
-                    date = new Date();
-                    let transDate = datetext,
-                        transTime = timetext,
-                        transMsg = product;
-                    transUnitPrice = unitprice,
-                        transStaffID = staffName.slice(0, 2),
-                        transType = (specialTransType == "") ? appStates[currentAppStateIndex] : specialTransType,
-                        transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
-                        transCarton = 0;
-                    getendvalue = (getendvalue) ? getendvalue : "";
-                    responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, rawproductname, getendvalue, transUnitPrice, transStaffID, transType, transWarehouseName, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
-                }
+                responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
+                itemcount++;
+                unitprice = "";
 
                 try {
                     var sele = 'li.product[name=\"' + rawproductname.replaceAll(" ", "_") + '\"]';
