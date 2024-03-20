@@ -27,7 +27,6 @@
         #cachedTrans>span {
             font-size: xx-small;
             align-self: center;
-            align-self: end;
         }
 
 
@@ -248,9 +247,10 @@
             border-color: #ffc400 !important
         }
 
+
         .sent2_bank>div>* button>span,
         #productsview.sent2_bank>* li>a>span {
-            background-color: #d50000
+            background-color: #d50000;
         }
 
         .sent2_bank,
@@ -912,6 +912,16 @@
             color: yellow;
             background-color: black !important;
         }
+        .attentionparent{
+            background: tomato;
+            border: 1px solid  #d50000 !important;
+        }
+
+        .attention {
+            color: white;
+            background-color: #d50000 !important;
+            font-size: xx-large !important;
+        }
     </style>
 </head>
 <div id="mywebview" class="wholesale_sale">
@@ -998,7 +1008,7 @@
         <div>
             <input id="editProductName" title="Edit Product Name" placeholder="Chagua Product" />
         </div>
-        <ul id="CustomersList" class="products selectproduct"></ul>
+        <ul id="ProductsList" class="products selectproduct"></ul>
     </div>
     <div id="filter-dialog-products2" class="hidden mypopupdialog">
         <h4>CHUJA AINA PRODUCTS</h4>
@@ -1016,7 +1026,7 @@
         <div>
             <input id="editCustomerName" placeholder="hq" />
         </div>
-        <ul class="selectproduct" id="CustomersList"></ul>
+        <ul class="selectproduct customers" id="CustomersList"></ul>
     </div>
     <div id="filter-dialog-transDate" class="hidden mypopupdialog">
         <h4>INGIZA TAREHE</h4>
@@ -1496,10 +1506,11 @@
                                 date = new Date();
 
                                 query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
+                                if(!tempTransQuery[appStates[currentAppStateIndex]])  tempTransQuery[appStates[currentAppStateIndex]]="";
                                 if (appStates[currentAppStateIndex] == "stocktake") {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "").replace(/,$/, "");
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
                                 } else {
-                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").replace(/^,/, "").replace(/,$/, "").trim());
+                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
                                 }
                                 productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
                                 productdetails_json = JSON.parse(productdetails_string);
@@ -1667,22 +1678,26 @@
 
         function createProductLi(name, formattedname, category, price, categorySign, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
-            const inputTag = (/sent2_bank|CustomerFilter/.test(localAppState)) ? contactPhone : price + " tsh";
+
+            const inputTag = (price < 0) ? `DENI: ${price} tsh` : `${price} tsh`;
             const inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`;
             if (onLiClickEvent == "")
                 onLiClickEvent = (!hasinput) ? `handleTransEvent(event)` : ``;
 
             hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onclick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
-            return `<li class="product active ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
+            var re = `<li class="product active ${(price < 0) ? "attentionparent" : ""} ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
             <a class="product ${category}" href="#" name="${formattedname}" title="${name}" >
-              ${productNameWithContact(name, contactName)}
-              <span>${inputTag}<span class="classification">${categorySign}</span></span>
-              ${hasinput}         
-            </a></li>`;
+              ${productNameWithContact(name, contactName, contactPhone)}`;
+            if (price != 0)
+
+                re = re + `<span class="${(price < 0) ? "attention" : ""}">${inputTag}<span class="classification">${categorySign}</span></span>`;
+            re = re + `${hasinput}</a></li>`;
+
+            return re;
         }
 
-        function productNameWithContact(name, contactName) {
-            return (contactName && (name != contactName)) ? `${name} -${contactName}` : name;
+        function productNameWithContact(name, contactName, contactPhone = "") {
+            return (contactName && (name != contactName)) ? `${name} -${contactName}${(contactPhone != "") ? "<br>" + contactPhone : ""}` : name;
         }
 
         function hideExistingInputs() {
@@ -1705,7 +1720,7 @@
             customers_jsonString = JSON.parse(settingsObj.settings.customers).slice(1);
             CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
                 const name = customer.customer_name;
-                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
             });
 
             createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
@@ -1714,9 +1729,17 @@
 
         window.onload = function () {
             try {
-                fetchProductUpdate(false, true, reLoadSettingsData);
-
-
+                var rgx = new RegExp(transDateStr + "_clr","g");
+                if (global('ALDSETTING') &&  rgx.test(global("ALDLOG")) ) {
+                    var settingsObj = JSON.parse(global('ALDSETTING'));
+                    
+                    loadCachedTrans();
+                    reLoadSettingsData();
+                    createProductsView();
+                }else{
+                
+                fetchProductUpdate(true, true, reLoadSettingsData);
+                }
                 initializeListeners();
             } catch (e) {
                 show(e.stack + "-- error trying to load", true, true);
