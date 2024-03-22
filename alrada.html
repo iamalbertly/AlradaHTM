@@ -316,8 +316,7 @@
             padding-top: 0;
         }
 
-        #productsview>* li>a:active>input,
-        #productsview>* li>a.pressed>input {
+        #results>li>a>input{
             display: flex;
             text-align: center;
         }
@@ -1838,22 +1837,24 @@
             var sndClient = "";
             try {
 
-                var transactionType = appStates[currentAppStateIndex];
-                if (cachedTransactionQueries[transactionType] == 0) return;
-                hideLoadingScreen();
-                var transObjStr = cachedTransObjectString[transactionType];
-                if (global(`ALDLSTTransStr${appStates[currentAppStateIndex]}`) == cachedTransObjectString[transactionType]) {
-                    show("Hakuna Data Mpya, Hii Inajirudiya!");
-                    return 0;
-                }
-
-                setGlobal(`ALDLSTTransStr${appStates[currentAppStateIndex]}`, cachedTransObjectString[transactionType]);
-
-                var json_response = JSON.parse(cachedTransObjectString[transactionType]).json_response;
+                var transactionType = appStates[currentAppStateIndex],
+                JsonObj_BeingProcessed = cachedTransObjectJson[transactionType], 
+                json_response = JsonObj_BeingProcessed.json_response,
+                text_response = JsonObj_BeingProcessed.finalResponseMsg;
                 if (!json_response) {
                     show("Hujafadhi chochote...");
                     return 0;
                 };
+                hideLoadingScreen();
+                var transObjStr = cachedTransObjectString[transactionType];
+                if (global(`ALDLSTTransStr${appStates[currentAppStateIndex]}`) == transObjStr) {
+                    show("Hakuna Data Mpya, Hii Inajirudiya!");
+                    return 0;
+                }
+
+                setGlobal(`ALDLSTTransStr${appStates[currentAppStateIndex]}`, transObjStr);
+
+                
 
                 const timestampMilliseconds = (new Date()).getTime();
                 const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
@@ -1941,12 +1942,15 @@
                     .then(data => {
 
                         try {
-
                             responseClone.text()
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
+                                        var finalResponseMsg = JSON.parse(transObjStr);
+                                        if(finalResponseMsg)
+                                        finalResponseMsg = finalResponseMsg.finalResponseMsg;
+                                    else finalResponseMsg = "loading...";
 
-                                        goto(`command||sendupdate_${appStates[currentAppStateIndex]}_${JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg}`);
+                                        goto(`command||sendupdate_${transactionType}_${finalResponseMsg}`);
                                         clearvalues();
                                         cachedTransObjectString[transactionType] = "";
                                         cachedTransactionQueries[transactionType] = "";
