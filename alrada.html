@@ -1441,7 +1441,7 @@
                         var target = e.target.id;
                         if (!keysPressed[currentFocusedProduct])
                             keysPressed[currentFocusedProduct] = "";
-                        // Only add keys that are numbers, plus signs, or minus signs
+                      
                         if (!isNaN(e.key) || e.key === '+' || e.key === '-') {
                             keysPressed[currentFocusedProduct] += e.key;
                         } else if (e.key === "Backspace") {
@@ -1471,13 +1471,13 @@
                                     else {
                                         if (/Pesa/g.test(currentFocusedProduct))
                                             extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
-                                 
+
                                     }
                                     var obj = document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
                                     /*  var val = document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;*/
-                                    var query =  `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
+                                    var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
                                 } else
-                                    var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;  ;
+                                    var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
 
                                 if (!/\d+$/.test(query)) {
                                     if ((appStates[currentAppStateIndex] == "stocktake"))
