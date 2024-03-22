@@ -1063,9 +1063,8 @@
             writtenInSearch = "",
             editingquery = "",
             productdetails_string = "",
-            productdetails_json = [],
-            warehouseName = 'HQ',
             staffName = (typeof staffName == "undefined") ? "Al" : staffName;
+            warehouseName = staffName,
         responseClone = "",
             confirmAddReportToCache = function () { },
             confirmSendReportRightAway = function () { },
@@ -1077,6 +1076,7 @@
             newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "";
         var currentFocusedProduct = "", oldFocusedProduct = "",
             tempTransQuery = [],
+            tempTransObj = [],
             cachedTransObjectString = [],
             cachedTransObjectJson = [],
             cachedTransCount = [],
@@ -1250,15 +1250,16 @@
             }
             if (typeof tempTransQuery[local_appstate] != "undefined" && (tempTransQuery[local_appstate] != "")) {
                 productdetails_string = GetProductDetails(tempTransQuery[local_appstate]);
-                productdetails_json = JSON.parse(productdetails_string);
-                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+
+                document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                 document.querySelectorAll(".disabled").forEach(el => {
                     el.disabled = false;
                     el.classList.remove("disabled");
                     el.classList.add("enabled");
                 });
             } else {
-                productdetails_string = "", productdetails_json = {},
+                productdetails_string = "", tempTransObj[appStates[currentAppStateIndex]] = {},
                     document.querySelector("#result_display>ul").innerHTML = "";
             }
 
@@ -1285,8 +1286,9 @@
                             tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
                             if (TransType == '0' && typeof tempTransQuery['wholesale_sale'] != "undefined" && (tempTransQuery['wholesale_sale'] != "")) {
                                 productdetails_string = GetProductDetails(tempTransQuery['wholesale_sale']);
-                                productdetails_json = JSON.parse(productdetails_string);
-                                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                                
+                                document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                                 document.querySelectorAll(".disabled").forEach(el => {
                                     el.disabled = false;
                                     el.classList.remove("disabled");
@@ -1484,9 +1486,10 @@
                                         }
 
                                         productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                        productdetails_json = JSON.parse(productdetails_string);
-                                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
-                                        document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                        tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                                        
+                                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                                        document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                                         document.querySelectorAll(".disabled").forEach(el => {
                                             el.disabled = false;
                                             el.classList.remove("disabled");
@@ -1507,9 +1510,9 @@
                                     tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
                                 }
                                 productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                productdetails_json = JSON.parse(productdetails_string);
-                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
-                                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                                tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                                document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                                 document.querySelectorAll(".disabled").forEach(el => {
                                     el.disabled = false;
                                     el.classList.remove("disabled");
@@ -1732,7 +1735,7 @@
                     createProductsView();
                 } else {
 
-                    fetchProductUpdate(true, true, reLoadSettingsData);
+                    fetchProductUpdate(true, false, reLoadSettingsData);
                 }
                 initializeListeners();
             } catch (e) {
@@ -1839,8 +1842,7 @@
 
                 var transactionType = appStates[currentAppStateIndex],
                 JsonObj_BeingProcessed = cachedTransObjectJson[transactionType], 
-                json_response = JsonObj_BeingProcessed.json_response,
-                text_response = JsonObj_BeingProcessed.finalResponseMsg;
+                json_response = JsonObj_BeingProcessed.json_response;
                 if (!json_response) {
                     show("Hujafadhi chochote...");
                     return 0;
@@ -1853,8 +1855,6 @@
                 }
 
                 setGlobal(`ALDLSTTransStr${appStates[currentAppStateIndex]}`, transObjStr);
-
-                
 
                 const timestampMilliseconds = (new Date()).getTime();
                 const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.transWarehouseName]);
@@ -1945,12 +1945,7 @@
                             responseClone.text()
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
-                                        var finalResponseMsg = JSON.parse(transObjStr);
-                                        if(finalResponseMsg)
-                                        finalResponseMsg = finalResponseMsg.finalResponseMsg;
-                                    else finalResponseMsg = "loading...";
-
-                                        goto(`command||sendupdate_${transactionType}_${finalResponseMsg}`);
+                                        goto(`command||sendupdate_${transactionType}_${JsonObj_BeingProcessed.finalTextResponseMsg}`);
                                         clearvalues();
                                         cachedTransObjectString[transactionType] = "";
                                         cachedTransactionQueries[transactionType] = "";
@@ -2200,6 +2195,15 @@
 
             document.getElementById("resultpad").addEventListener("click", (e) => {
                 try {
+                    const clipboard = document.getElementById("clipboard");
+                    clipboard.value = tempTransObj[appStates[currentAppStateIndex]].finalTextResponseMsg;
+                    clipboard.focus();
+                    navigator.clipboard.writeText(clipboard.value).then(function (x) {
+                        show("Text copied to clipboard");
+                    });
+                } catch (e) {
+                }
+                try {
                     if ((document.getElementById("result_display").innerHTML != "") && (document.getElementById("filter-dialog").classList.contains("hidden") == false)) { };
                     if (document.querySelector("a.product.pressed")) document.querySelector("a.product.pressed").parentNode.classList.remove("hovering");
 
@@ -2284,9 +2288,9 @@
                                 tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query},`).replace("undefined", "").replace(/\n/, "").trim());
                             }
 
-                            productdetails_json = JSON.parse(GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, "")));
-                            tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
-                            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                            tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, "")));
+                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransObj[appStates[currentAppStateIndex]].finalQuery;
+                            document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
                                 el.classList.remove("disabled");
@@ -2301,7 +2305,7 @@
                             document.getElementById('editTransDate').dispatchEvent(eventClick);
                         }
                         else if (target == "editCustomerName") {
-                            var val = (e.target.value == "") ? "HQ" : e.target.value;
+                            var val = (e.target.value == "") ? staffName : e.target.value;
                             document.getElementById("warehouseName").innerHTML = val;
                             warehouseName = val;
                             document.getElementById("filter-dialog-customers").classList.add("hidden");
@@ -2343,8 +2347,8 @@
                         reCreateCacheCleanupForm();
                     }
                     else if (family == "confirmTransactionEntry") {
-                        productdetails_json = newjson_transactions;
-                        document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                        tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
+                        document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                         document.querySelectorAll(".disabled").forEach(el => {
                             el.disabled = false;
                             el.classList.remove("disabled");
@@ -2353,8 +2357,8 @@
 
                         document.getElementById("submitbuttonholder").classList.remove("hyper");
                         document.getElementById("myinputbar").classList.remove("hyper");
-                        tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
-                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
+                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransObj[appStates[currentAppStateIndex]].finalQuery;
+                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
                     }
                     closeFilterDialog();
                 });
@@ -2364,15 +2368,15 @@
 
         function addTransactionToCache(event) {
             if (cachedTransCashTotal[appStates[currentAppStateIndex]] == "Subiri ..") return;
-            let target = event.target, currentQuery = productdetails_json.finalQuery;
+            let target = event.target, currentQuery = tempTransObj[appStates[currentAppStateIndex]].finalQuery;
 
             if (cachedTransactionQueries[appStates[currentAppStateIndex]] == undefined) {
 
                 cachedTransactionQueries[appStates[currentAppStateIndex]] = currentQuery;
                 cachedTransCount[appStates[currentAppStateIndex]] = 1;
-                cachedTransObjectJson[appStates[currentAppStateIndex]] = productdetails_json;
+                cachedTransObjectJson[appStates[currentAppStateIndex]] = tempTransObj[appStates[currentAppStateIndex]];
                 cachedTransObjectString[appStates[currentAppStateIndex]] = productdetails_string;
-                cachedTransCashTotal[appStates[currentAppStateIndex]] = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(productdetails_json.finalResponseMsg);
+                cachedTransCashTotal[appStates[currentAppStateIndex]] = /TOTAL:\sTZS\s(\d+,{0,1}\d+,{0,1}\d+,{0,1}\d+)/gm.exec(tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg);
 
                 if (cachedTransCashTotal[appStates[currentAppStateIndex]])
                     cachedTransCashTotal[appStates[currentAppStateIndex]] = (cachedTransCashTotal[appStates[currentAppStateIndex]].length > 0) ? eval(cachedTransCashTotal[appStates[currentAppStateIndex]][1].replaceAll(",", "")) : 0;
@@ -2443,7 +2447,7 @@
                 var json_transactions = JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]);
             }
             else if (family == "confirmTransactionEntry") {
-                var json_transactions = productdetails_json;
+                var json_transactions = tempTransObj[appStates[currentAppStateIndex]];
             }
             var oldquery = json_transactions.finalQuery,
                 editing = `${json_transactions.json_response[id].transMsg}`;
@@ -2487,9 +2491,9 @@
                             reCreateCacheCleanupForm();
                         }
                         else if (family == "confirmTransactionEntry") {
-                            productdetails_json = newjson_transactions;
+                            tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
 
-                            document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");
+                            document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
                             document.querySelectorAll(".disabled").forEach(el => {
                                 el.disabled = false;
                                 el.classList.remove("disabled");
@@ -2498,8 +2502,8 @@
 
                             document.getElementById("submitbuttonholder").classList.remove("hyper");
                             document.getElementById("myinputbar").classList.remove("hyper");
-                            tempTransQuery[appStates[currentAppStateIndex]] = productdetails_json.finalQuery;
-                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, productdetails_json.finalQuery);
+                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransObj[appStates[currentAppStateIndex]].finalQuery;
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
                         }
                         closeFilterDialog();
                     };
@@ -2552,7 +2556,7 @@
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                             setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
-                            productdetails_json = newjson_transactions;
+                            tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
                         }
                     };
 
@@ -2606,7 +2610,7 @@
                             document.getElementById("myinputbar").classList.remove("hyper");
                             tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                             setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
-                            productdetails_json = newjson_transactions;
+                            tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
                         }
                     };
                     document.getElementById("filter-dialog").classList.remove("hidden");
@@ -2614,7 +2618,7 @@
                 case "TransactionDelete":
                     var newquery = oldquery.replace(editing, "").replace(/,$/, "").replace(/^,/, "");
                     var newjson_transactions = JSON.parse(GetProductDetails(newquery));
-                    productdetails_json = newjson_transactions;
+                    tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
                     if (family == "confirmTransactionEntry") {
                         document.querySelector("#result_display>ul").innerHTML = newjson_transactions.finalResponseMsg.replaceAll("\n", "<br/>");
                         document.querySelectorAll(".disabled").forEach(el => {
@@ -2626,7 +2630,7 @@
                         document.getElementById("myinputbar").classList.remove("hyper");
                         tempTransQuery[appStates[currentAppStateIndex]] = newjson_transactions.finalQuery;
                         setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, newjson_transactions.finalQuery);
-                        productdetails_json = newjson_transactions;
+                        tempTransObj[appStates[currentAppStateIndex]] = newjson_transactions;
                     }
                     else if (family = "confirmCachedEntry") {
                         cachedTransObjectString[appStates[currentAppStateIndex]] = JSON.stringify(newjson_transactions);
@@ -2724,7 +2728,7 @@
             });
         }
 
-        function GetProductDetails(query = "(hq)Uhai 600ml @400+1", appState = "", exactdtail = "") {
+        function GetProductDetails(query = "(al)Uhai 600ml @400+1", appState = "", exactdtail = "") {
             query = query.replace(/\(plus\)/gm, "+").replace(/,$/, "").replaceAll(/\|\|/gm, "").replace(/^,/, "").replace(/,$/, "").trim();
 
             if (typeof returntype == 'undefined') var returntype = "single";
@@ -2869,7 +2873,7 @@
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
                 else
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}</a>`;
-                response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != "hq") ? transWarehouseName : "&nbsp;"}</a></small></div>`;
+                response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != staffName) ? transWarehouseName : "&nbsp;"}</a></small></div>`;
                 response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
                 responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
@@ -2894,18 +2898,21 @@
             }).replace(/\.00/g, "") + " " + ((projectedProfitTotal == "") ? "\n" : ` <small>&nbsp;(prf: ${projectedProfitTotal.toLocaleString('en-US').replace(/\.00/g, "")})</small>  </li>\n`);
 
             var newquery = "";
+            var dom = new DOMParser().parseFromString(finalResponseMsg,"text/html");
+            var finalTextResponseMsg = dom.body.textContent.replace("❌","") || "";
+
             for (const val in responseArr) {
                 newquery += `,${responseArr[val].transMsg}`;
             }
             newquery = newquery.replace(/^,/, "");
-            return JSON.stringify({ json_response: responseArr, finalResponseMsg: finalResponseMsg, finalResponseTotal: total, finalQuery: newquery });
+            return JSON.stringify({ json_response: responseArr, finalTextResponseMsg: finalTextResponseMsg, finalResponseMsg: finalResponseMsg, finalResponseTotal: total, finalQuery: newquery });
         }
 
         function clearvalues(scope = "") {
             if (typeof tempTransQuery[appStates[currentAppStateIndex]] == "undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
             document.getElementById("search").value = "";
-            if ((productdetails_string == "") && (typeof productdetails_json.finalResponseMsg != "undefined")) {
-                document.querySelector("#result_display>ul").innerHTML = productdetails_json.finalResponseMsg.replaceAll("\n", "<br/>");;
+            if ((productdetails_string == "") && (typeof tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg != "undefined")) {
+                document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");;
                 document.querySelectorAll(".enabled").forEach(el => {
                     el.disabled = false;
                     el.classList.remove("enabled");
@@ -2913,18 +2920,18 @@
                 });
             } else if (scope == "everything") {
                 document.querySelector("#result_display>ul").innerHTML = "";
-                productdetails_string = "", productdetails_json = {};
+                productdetails_string = "", tempTransObj[appStates[currentAppStateIndex]] = {};
                 setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, "");
                 tempTransQuery[appStates[currentAppStateIndex]] = "";
             }
-            document.getElementById("warehouseName").innerHTML = "HQ";
+            document.getElementById("warehouseName").innerHTML = staffName;
             document.querySelectorAll("#results>li.product.active").forEach(product => {
                 product.classList.remove("processed");
             });
 
 
             query = "",
-                warehouseName = "HQ",
+                warehouseName = staffName,
                 sign_mult = "",
                 sign_wholesale_remain = "",
                 sign_retail_remain = "",
