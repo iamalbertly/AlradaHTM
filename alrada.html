@@ -1721,7 +1721,6 @@
             });
 
             createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
-
         }
 
         window.onload = function () {
@@ -2911,6 +2910,7 @@
         function clearvalues(scope = "") {
             if (typeof tempTransQuery[appStates[currentAppStateIndex]] == "undefined") tempTransQuery[appStates[currentAppStateIndex]] = "";
             document.getElementById("search").value = "";
+            if(tempTransObj[appStates[currentAppStateIndex]])
             if ((productdetails_string == "") && (typeof tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg != "undefined")) {
                 document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");;
                 document.querySelectorAll(".enabled").forEach(el => {
