@@ -211,8 +211,6 @@
             top: 0px;
         }
 
-
-
         .wholesale_sale>* button>span,
         #productsview.wholesale_sale>* li>a>span {
             background-color: #00c853
@@ -224,9 +222,9 @@
         }
 
         .wholesale_purchase_delivered>* button>span,
-        #productsview.wholesale_purchase_delivered>* li>a>span {
+        #productsview.wholesale_purchase_delivered>ul>li>a>span {
             background-color: #a200ff;
-            color: #fff
+            color: #fff !important;
         }
 
         .wholesale_purchase_delivered,
@@ -235,7 +233,7 @@
         }
 
         #mywebview.wholesale_purchase>* button>span,
-        #productsview.wholesale_purchase>* li>a>span {
+        #productsview.wholesale_purchase>ul>li>a>span {
             background-color: #ffc400;
             color: #000
         }
@@ -247,8 +245,9 @@
 
 
         .sent2_bank>div>* button>span,
-        #productsview.sent2_bank>* li>a>span {
+        #productsview.sent2_bank>ul>li>a>span {
             background-color: #d50000;
+            color: #fff !important;
         }
 
         .sent2_bank,
@@ -257,7 +256,7 @@
         }
 
         .stocktake>div>* button>span,
-        #productsview.stocktake>* li>a>span {
+        #productsview.stocktake>ul>li>a>span {
             background-color: #e1e1e1;
             color: #000;
         }
@@ -289,7 +288,8 @@
             font-size: 3vw;
             justify-content: center;
             margin: 0;
-            width: 100%
+            width: 100%;
+            text-wrap: wrap;
         }
 
         #CustomersList>li>a>span,
@@ -979,19 +979,19 @@
     <div id="choose-mode" class="hidden mypopupdialog">
         <h2 id="selectmode">Select Mode</h2>
         <ul>
-            <li class="wholesale_sale"><a href="#" onclick="changeMode('0',event)"><span>💰</span><span>MAUZO</span></a>
+            <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>💰</span><span>MAUZO</span></a>
             </li>
             <li class="wholesale_purchase"> <a href="#"
-                    onclick="changeMode('2',event)"><span>➕</span><span>UPOKEZI</span></a>
+                    onclick="ChangeView('2',event)"><span>➕</span><span>UPOKEZI</span></a>
             </li>
-            <li class="sent2_bank"><a href="#" onclick="changeMode('1',event)"><span>🤌🏽</span><span>MALIPO</span></a>
+            <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>🤌🏽</span><span>MALIPO</span></a>
             </li>
-            <li class="stocktake"><a href="#" onclick="changeMode('3',event)"><span>#️⃣</span><span>STOCK</span></a>
+            <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>#️⃣</span><span>STOCK</span></a>
             </li>
-            <li class="hidden"><a href="#" onclick="changeMode('4',event)"><span>💱</span><span>MANUNUZI</span></a></li>
+            <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>💱</span><span>MANUNUZI</span></a></li>
         </ul>
         <a id="updateStr" href="#" class="small" onClick="fetchProductUpdate()">update<span> </span> </a>
-    </div><input id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard" />
+    </div><textarea id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard"></textarea>
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
     <div id="querydialog" class="hidden mypopupdialog"><input id="traditionalQueryInput" title="query" placeholder=""
             type="text" /></div>
@@ -1218,18 +1218,19 @@
         }
 
 
-
-        function changeMode(index = "", e = undefined) {
+        function ChangeView(index = "", e = undefined) {
             var oldstate = appStates[currentAppStateIndex];
-            if (index == "") {
+            if (index == "" && index != 0) {
                 currentAppStateIndex++;
-            } else currentAppStateIndex = eval(index);
-
+            } else {
+                currentAppStateIndex = eval(index);
+                var local_appstate = appStates[currentAppStateIndex];
+            }
             var appStates_btn = document.getElementById("appStates");
             appStates_btn.classList.remove(`btn-color-${oldstate}}`);
 
             document.getElementById("productsview").className = "";
-            var local_appstate = appStates[currentAppStateIndex];
+
             switch (local_appstate) {
                 case "wholesale_sale":
                     status_display = "<span>💰</span><span> MAUZO</span>";
@@ -1272,10 +1273,13 @@
             document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
             document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
             clearvalues();
-            if (typeof e != "undefined") {
-                createProductsView();
-            }
+
+            createProductsView();
+
             closeFilterDialog();
+            /*set the view into cache*/
+            setGlobal(`ALDSTATE`, currentAppStateIndex);
+
         }
 
         function loadCachedTrans() {
@@ -1441,8 +1445,8 @@
                         var target = e.target.id;
                         if (!keysPressed[currentFocusedProduct])
                             keysPressed[currentFocusedProduct] = "";
-                      
-                        if (!isNaN(e.key) || e.key === '+' || e.key === '-') {
+
+                        if (!isNaN(e.key) || e.key === '+' || e.key === '-' || e.key === '.') {
                             keysPressed[currentFocusedProduct] += e.key;
                         } else if (e.key === "Backspace") {
                             keysPressed[currentFocusedProduct] = keysPressed[currentFocusedProduct].slice(0, -1);
@@ -1718,7 +1722,6 @@
             <a class="product ${category}" href="#" name="${formattedname}" title="${name}" >
               ${productNameWithContact(name, contactName, contactPhone)}`;
             if (price != 0)
-
                 re = re + `<span class="${(price < 0) ? "attention" : ""}">${inputTag}<span class="classification">${categorySign}</span></span>`;
             re = re + `${hasinput}</a></li>`;
 
@@ -1726,7 +1729,7 @@
         }
 
         function productNameWithContact(name, contactName, contactPhone = "") {
-            return (contactName && (name != contactName)) ? `${name} -${contactName}${(contactPhone != "") ? "<br>" + contactPhone : ""}` : name;
+            return (contactName && (name != contactName)) ? `${name} -${contactName}${(contactPhone != "") ? "<br><span>" + contactPhone + "</span>" : "<span> - </span>"}` : name;
         }
 
         function hideExistingInputs() {
@@ -1757,16 +1760,18 @@
 
         window.onload = function () {
             try {
+                if (global('ALDSTATE'))
+                    currentAppStateIndex = eval(global("ALDSTATE"));
+
                 var rgx = new RegExp(`${partOfDay}_${transDateStr}_clr`, "g");
                 if (global('ALDSETTING') && rgx.test(global("ALDLOG"))) {
                     var settingsObj = JSON.parse(global('ALDSETTING'));
-
                     loadCachedTrans();
                     reLoadSettingsData();
-                    createProductsView();
+                    ChangeView(currentAppStateIndex);
                 } else {
-
-                    fetchProductUpdate(true, false, reLoadSettingsData);
+                    fetchProductUpdate(false, false, reLoadSettingsData);
+                    ChangeView(currentAppStateIndex);
                 }
                 initializeListeners();
             } catch (e) {
@@ -1823,6 +1828,8 @@
             }
             if (ShowUpdateScreen)
                 showLoadingScreen("Fetching updates...", "Tafadhali Subiri.");
+            else
+                show("Fetching updates...");
 
             fetch(finalurl, options)
                 .then(response => {
@@ -1858,11 +1865,17 @@
                             .then(bodyText => {
                                 if (bodyText == "#NAME?") show(" database is busy '#NAME?'");
                             });
+                        show("Error!\n" + error.stack);
                     }
-
+                    if (global('ALDSETTING')) {
+                        var settingsObj = JSON.parse(global('ALDSETTING'));
+                        loadCachedTrans();
+                        reLoadSettingsData();
+                        ChangeView(currentAppStateIndex);
+                    }
                     hideLoadingScreen();
                     clearvalues();
-                    show("Error!\n" + error.stack);
+
                 });
 
         }
@@ -1870,7 +1883,6 @@
         function sendCachedTrans(event) {
             var sndClient = "";
             try {
-
                 var transactionType = appStates[currentAppStateIndex],
                     JsonObj_BeingProcessed = cachedTransObjectJson[transactionType],
                     json_response = JsonObj_BeingProcessed.json_response;
@@ -2816,10 +2828,13 @@
                 try {
                     if (/\=\d+/g.test(product)) {
                         unitprice = 1;
-                        priceTotal = eval(/\=(\d+)/g.exec(product)[1]),
-                            displaymultiplier = priceTotal;
-                    }
-                    else
+                        priceTotal = /\=(\d+)/g.exec(product)[1];
+                        displaymultiplier = priceTotal;
+                    } else if (/\$\d+/g.test(product)) {
+                        unitprice = 1;
+                        priceTotal = /\$(\d+)/g.exec(product)[1];
+                        displaymultiplier = priceTotal;
+                    } else
                         JSON.parse(cleanasjson).some(function (item, i) {
 
                             if (new RegExp(rawproductname.toLowerCase()).test(item.DrinkName.toLowerCase())) {
@@ -2897,14 +2912,17 @@
                     transType = (specialTransType == "") ? appState : specialTransType;
                 getendvalue = (getendvalue) ? getendvalue : "";
 
-                response = `${response} <li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
+                response = `${response}<li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
                 response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
                 response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> ${((unitprice == "") || (unitprice == 1)) ? "" : "@" + unitprice}</a>`;
-                if (appStateMark != "$")
+                if (appStateMark == "=") {
+                    response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${priceTotal}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
+                }
+                else if (appStateMark != "$")
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
                 else
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}</a>`;
-                response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != staffName) ? transWarehouseName : "&nbsp;"}</a></small></div>`;
+                response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != staffName) ? "(" + transWarehouseName + ")" : "&nbsp;"}</a></small></div>`;
                 response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
                 responseArr.push({ transDate, transTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
@@ -2926,11 +2944,11 @@
             finalResponseMsg = `${response}\n<li class="total">TOTAL: ` + total.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'tzs'
-            }).replace(/\.00/g, "") + " " + ((projectedProfitTotal == "") ? "\n" : ` <small>&nbsp;(prf: ${projectedProfitTotal.toLocaleString('en-US').replace(/\.00/g, "")})</small>  </li>\n`);
+            }).replace(/\.00/g, "") + " " + ((projectedProfitTotal == "") ? `\r\n` : ` <small>&nbsp;(prf: ${projectedProfitTotal.toLocaleString('en-US').replace(/\.00/g, "")})</small>  </li>\n`);
 
             var newquery = "";
             var dom = new DOMParser().parseFromString(finalResponseMsg, "text/html");
-            var finalTextResponseMsg = dom.body.textContent.replace("❌", "") || "";
+            var finalTextResponseMsg = dom.body.textContent.replaceAll("❌", `\n`).trim() || "";
 
             for (const val in responseArr) {
                 newquery += `,${responseArr[val].transMsg}`;
