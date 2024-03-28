@@ -1922,7 +1922,7 @@
                 params.append('payload', values);
                 const geturl = AppScriptPostUrl + "?" + params;
                 var options = {}; var islocal = window.location;
-                if (window.location.hostname == "127.0.0.1") {
+                if ((window.location.hostname == "127.0.0.1")||(typeof createScene == 'undefined')) {
                     var finalurl = geturl;
                     options = {
                         mode: 'no-cors',
