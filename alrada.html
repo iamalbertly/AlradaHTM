@@ -2923,7 +2923,7 @@
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${displaymultiplier}" onClick="handleTransEvent(event)">${realeditmultipliersign}</a>`;
                 response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != staffName) ? "(" + transWarehouseName + ")" : "&nbsp;"}</a></small></div>`;
                 response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
-                // Get the current Unix timestamp
+
                 const currentUnixTime = Math.floor(Date.now() / 1000);
 
                 responseArr.push({ transDate, transTime, currentUnixTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
