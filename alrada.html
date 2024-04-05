@@ -1811,13 +1811,15 @@
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
+            if(typeof settingsObj != "undefined"){
+                params.append('version', settingsObj.date);
+            }
 
-            params.append('version', settingsObj.date);
             const geturl = AppScriptPostUrl + "?" + params;
             var options = {};
             if (typeof createScene == 'undefined') {
                 /* not in tasker and not localhost*/
-                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+               /* var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                 options = {
                     method: 'POST',
                     headers: {
@@ -1826,6 +1828,10 @@
                         'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
                     },
                     body: new URLSearchParams({ 'my-url': geturl })
+                }; */
+                var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
+                options = {
+                    method: 'GET'
                 };
                 sndClient = "Web-Proxy";
             }
