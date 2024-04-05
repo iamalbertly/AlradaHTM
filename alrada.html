@@ -1040,7 +1040,7 @@
     try {
         const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
             appStateMarks = ['ӿ', '$', '++', '#'],
-            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz2tfoeS9SWmF9i8fNwwzCsc7nVGz4quMO9n9R_pAbnezwrlEFdelKEJDNsqtrrxkpw8Q/exec",
+            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz0MTsq8zYg3Fc2sZI9HrsVWLYPhg_BcUbeegi1DwvQ1hnmUT4-ju46CYXNeuahMeZ2/exec",
             eventClick = new Event('click', {
                 bubbles: false,
                 cancelable: false
@@ -1362,9 +1362,11 @@
 
                 if (holderElement.id == "results") {
                     document.querySelectorAll("a.product").forEach(el => {
-                        if (hasinput) {
+                        var parent = el.parentElement;
+                        if (hasinput && parent.classList.contains("childHasInput") ) {
+                            
                             var child = el.childNodes;
-                            var input = child[2];
+                            var input = (child[1].localName == "input")? child[1]: (child[2].localName == "input")? child[2]: "";
                             try {
                                 input.classList.remove("pressed");
                                 input.removeEventListener('keyup', function (e) { });
@@ -1743,13 +1745,15 @@
         function createProductLi(name, formattedname, category, price, categorySign, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
 
-            const inputTag = (price < 0) ? `DENI: ${price} tsh` : `${price} tsh`;
-            const inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`;
+            const inputTag = (price < 0) ? `DENI: ${price} tsh` : `${price} tsh`,
+             inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`,
+             IfChildHasInputClass = (hasinput)? "childHasInput": "";
+            
             if (onLiClickEvent == "")
                 onLiClickEvent = (!hasinput) ? `handleTransEvent(event)` : ``;
 
             hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onclick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
-            var re = `<li class="product active ${(price < 0) ? "attentionparent" : ""} ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
+            var re = `<li class="product active ${IfChildHasInputClass} ${(price < 0) ? "attentionparent" : ""} ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
             <a class="product ${category}" href="#" name="${formattedname}" title="${name}" >
               ${productNameWithContact(name, contactName, contactPhone)}`;
             if (price != 0)
