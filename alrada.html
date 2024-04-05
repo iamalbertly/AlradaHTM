@@ -1045,12 +1045,12 @@
                 bubbles: false,
                 cancelable: false
             });
-            //keyup event that represents someone pressing the enter key
-        
-           var eventKeyUpEnter = new KeyboardEvent('keyup', {
-                key: "Enter",
-                keyCode: 13
-            });
+        //keyup event that represents someone pressing the enter key
+
+        var eventKeyUpEnter = new KeyboardEvent('keyup', {
+            key: "Enter",
+            keyCode: 13
+        });
 
         var specialTransType = "", extraTransDetails = "",
             BreakException = {},
@@ -1363,10 +1363,10 @@
                 if (holderElement.id == "results") {
                     document.querySelectorAll("a.product").forEach(el => {
                         var parent = el.parentElement;
-                        if (hasinput && parent.classList.contains("childHasInput") ) {
-                            
+                        if (hasinput && parent.classList.contains("childHasInput")) {
+
                             var child = el.childNodes;
-                            var input = (child[1].localName == "input")? child[1]: (child[2].localName == "input")? child[2]: "";
+                            var input = (child[1].localName == "input") ? child[1] : (child[2].localName == "input") ? child[2] : "";
                             try {
                                 input.classList.remove("pressed");
                                 input.removeEventListener('keyup', function (e) { });
@@ -1400,7 +1400,7 @@
                                     }
 
                                     if (e.key === 'Enter') {
-                                        
+
                                         /* click enter inside 1 of the products in the results productview: submittransacions*/
                                         e.preventDefault();
                                         try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
@@ -1746,9 +1746,9 @@
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
 
             const inputTag = (price < 0) ? `DENI: ${price} tsh` : `${price} tsh`,
-             inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`,
-             IfChildHasInputClass = (hasinput)? "childHasInput": "";
-            
+                inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`,
+                IfChildHasInputClass = (hasinput) ? "childHasInput" : "";
+
             if (onLiClickEvent == "")
                 onLiClickEvent = (!hasinput) ? `handleTransEvent(event)` : ``;
 
@@ -1832,7 +1832,7 @@
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
-            if(typeof settingsObj != "undefined"){
+            if (typeof settingsObj != "undefined") {
                 params.append('version', settingsObj.date);
             }
 
@@ -1840,16 +1840,16 @@
             var options = {};
             if (typeof createScene == 'undefined') {
                 /* not in tasker and not localhost*/
-               /* var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
-                options = {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded',
-                        'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
-                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
-                    },
-                    body: new URLSearchParams({ 'my-url': geturl })
-                }; */
+                /* var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+                 options = {
+                     method: 'POST',
+                     headers: {
+                         'content-type': 'application/x-www-form-urlencoded',
+                         'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
+                         'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
+                     },
+                     body: new URLSearchParams({ 'my-url': geturl })
+                 }; */
                 var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
                 options = {
                     method: 'GET'
