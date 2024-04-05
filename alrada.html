@@ -2329,6 +2329,7 @@
             });
             document.querySelectorAll("#traditionalQueryInput,#editCustomerName,#editTransDate").forEach(el => {
                 el.addEventListener('keyup', function (e) {
+                    if (e.key == undefined) return -1;
                     var thekey = e.key.toString();
                     target = e.target.id;
                     if (e.key === 'Enter') {
