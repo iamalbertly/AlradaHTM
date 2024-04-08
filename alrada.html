@@ -919,6 +919,10 @@
             background-color: #d50000 !important;
         }
 
+        .product.unavailable {
+            opacity: 0.15;
+        }
+
         .latestupdate {
             color: gray;
             opacity: 0.5;
@@ -1060,14 +1064,14 @@
         var settingsObj = {
             "products": undefined,
             "staff_suppliers_customers": undefined
-        }
+        },
 
-        var eventKeyUpEnter = new KeyboardEvent('keyup', {
-            key: "Enter",
-            keyCode: 13
-        });
+            eventKeyUpEnter = new KeyboardEvent('keyup', {
+                key: "Enter",
+                keyCode: 13
+            }),
 
-        var specialTransType = "", extraTransDetails = "",
+            specialTransType = "", extraTransDetails = "",
             BreakException = {},
             isMultTextArray = {},
             products_jsonString = {},
@@ -1210,39 +1214,38 @@
         }
 
         try {
-            if (settingsObj.products != undefined) {
+            if (global('ALDSETTING')) {
+                var settingsObj = JSON.parse(global('ALDSETTING'));
+                createProductsView();
+                loadCachedTrans();
+            }
+            else if (settingsObj.products != undefined) {
                 createProductsView();
                 loadCachedTrans();
             }
             else {
-                if (global('ALDSETTING')) {
-                    var settingsObj = JSON.parse(global('ALDSETTING'));
-                    createProductsView();
-                    loadCachedTrans();
-                }
-                else
-                    fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
-                        .then(response => {
-                            responseClone = response.clone();
-                            if (!response.ok) {
-                                responseClone.text()
-                                    .then(function (bodyText) {
-                                        show("recieved the following: " + bodyText);
-                                    });
-                                return response.text().then(text => {
-                                    throw new Error('Server response: ' + text, true, true);
+                fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
+                    .then(response => {
+                        responseClone = response.clone();
+                        if (!response.ok) {
+                            responseClone.text()
+                                .then(function (bodyText) {
+                                    show("recieved the following: " + bodyText);
                                 });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            settingsObj = data;
-                            setGlobal('ALDSETTING', JSON.stringify(settingsObj));
-                            createProductsView();
-                            loadCachedTrans();
+                            return response.text().then(text => {
+                                throw new Error('Server response: ' + text, true, true);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        settingsObj = data;
+                        setGlobal('ALDSETTING', JSON.stringify(settingsObj));
+                        createProductsView();
+                        loadCachedTrans();
 
-                        })
-                        .catch((error) => { });
+                    })
+                    .catch((error) => { });
             }
 
             if (global('ALRADAUSER'))
@@ -1771,8 +1774,14 @@
 
         function createProductLi(name, formattedname, category, price, categorySign, thysaylaststocktakeamt, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
-            const inputstocktakeclass = (/^\-/g.test(thysaylaststocktakeamt)) ? "attention" : "";
-            thysaylaststocktakeamt = (/^$|0/g.test(thysaylaststocktakeamt)) ? "-<i> HAMNA </i> -" : `-<b> ${thysaylaststocktakeamt}</b> -`;
+            var inputstocktakeclass = (/^\-/g.test(thysaylaststocktakeamt)) ? "attention" : "";
+
+            if (/^$|0/g.test(thysaylaststocktakeamt)) {
+                thysaylaststocktakeamt = "-<i> HAMNA </i> -";
+                inputstocktakeclass = "unavailable";
+            } else {
+                thysaylaststocktakeamt = `-<b> ${thysaylaststocktakeamt}</b> -`;
+            }
             const inputprice = (price < 0) ? `DENI: ${price} tsh` : `${price} tsh`,
                 inputId = `${inputType}_${localAppState}_${formattedname}_${hasinput}`,
                 IfChildHasInputClass = (hasinput) ? "childHasInput" : "";
@@ -1780,7 +1789,7 @@
                 onLiClickEvent = (!hasinput) ? `handleTransEvent(event)` : ``;
 
             hasinput = (hasinput) ? `<input type="number" id="${inputId}" name="${formattedname}" placeholder="#️⃣ Kiasi" class="${inputType}" onclick="event.target.parentNode.dispatchEvent(new Event('focus'))" />` : '';
-            var re = `<li class="product active ${IfChildHasInputClass} ${(price < 0) ? "attentionparent" : ""} ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
+            var re = `<li class="product active ${inputstocktakeclass} ${IfChildHasInputClass} ${(price < 0) ? "attentionparent" : ""} ${category}" data-category="${category}" name="${formattedname}" title="${name}" onclick="${onLiClickEvent}">
             <a class="product ${category}" href="#" name="${formattedname}" title="${name}" >
               ${productNameWithContact(name, contactName, contactPhone)}`;
             if (price != 0)
@@ -1813,12 +1822,12 @@
         function reLoadSettingsData() {
 
             customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
-            const unixTimestamp = settingsObj.unixTime;
+            const unixTimestamp = settingsObj.products.unixTime;
 
             const settingsDateTime = new Date(unixTimestamp * 1000);
 
             const day = settingsDateTime.getDate();
-            const month = settingsDateTime.getMonth() + 1; 
+            const month = settingsDateTime.getMonth() + 1;
             const year = settingsDateTime.getFullYear();
 
             const hours = settingsDateTime.getHours();
@@ -1878,27 +1887,27 @@
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
             if (typeof settingsObj != "undefined") {
-                params.append('version', settingsObj.date);
+                params.append('version', settingsObj.products.unixTime);
             }
 
             const geturl = AppScriptPostUrl + "?" + params;
             var options = {};
             if (typeof createScene == 'undefined') {
                 /* not in tasker and not localhost*/
-                /* var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
-                 options = {
-                     method: 'POST',
-                     headers: {
-                         'content-type': 'application/x-www-form-urlencoded',
-                         'X-RapidAPI-Key': 'b885eb794emsh79a1af1e8dff803p1c9f71jsnf78274969f09',
-                         'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
-                     },
-                     body: new URLSearchParams({ 'my-url': geturl })
-                 }; */
-                var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
+                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                 options = {
-                    method: 'GET'
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded',
+                        'X-RapidAPI-Key': 'ed66f1ba3fmsh2df55bb1aaf3489p155a57jsnb67785beedcf',
+                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
+                    },
+                    body: new URLSearchParams({ 'my-url': geturl })
                 };
+                /* var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
+                options = {
+                     method: 'GET'
+                 }; */
                 sndClient = "Web-Proxy";
             }
             else { /* inside Tasker*/
@@ -1929,7 +1938,8 @@
                 })
                 .then(data => {
                     setGlobal("ALDLOG", `${partOfDay}_${transDateStr}_clr:`);
-                    settingsObj = data;
+                    settingsObj.data.alradaitemnames = data.data.alradaitemnames;
+                    settingsObj.products = data.products;
                     setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     loadCachedTrans();
 
