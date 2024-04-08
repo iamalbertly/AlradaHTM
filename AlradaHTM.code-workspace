@@ -11,7 +11,15 @@
 				"name": "http://127.0.0.1:3000/AlradaHTML/alrada.html",
 				"request": "launch",
 				"url": "http://127.0.0.1:3000/AlradaHTML/alrada.html",
-				"runtimeArgs": ["--disable-web-security"]
+				"runtimeArgs": [
+					"--disable-web-security"
+				]
+			},
+			{
+				"type": "msedge",
+				"name": "http://127.0.0.1:3000/AlradaHTM/alrada.html",
+				"request": "launch",
+				"url": "http://127.0.0.1:3000/AlradaHTM/alrada.html"
 			}
 		]
 	}
