@@ -1057,6 +1057,10 @@
                 bubbles: false,
                 cancelable: false
             });
+        var settingsObj = {
+            "products": undefined,
+            "staff_suppliers_customers": undefined
+        }
 
         var eventKeyUpEnter = new KeyboardEvent('keyup', {
             key: "Enter",
@@ -1206,7 +1210,7 @@
         }
 
         try {
-            if (settingsObj != undefined) {
+            if (settingsObj.products != undefined) {
                 createProductsView();
                 loadCachedTrans();
             }
@@ -1377,7 +1381,7 @@
                         if (hasinput && parent.classList.contains("childHasInput")) {
 
                             var child = el.childNodes;
-                            var input = (child[1].localName == "input") ? child[1] : (child[2].localName == "input") ? child[2] : "";
+                            var input = (child[1].localName == "input") ? child[1] : (child[2].localName == "input") ? child[2] : (child[3].localName == "input") ? child[3] : "";
                             try {
                                 input.classList.remove("pressed");
                                 input.removeEventListener('keyup', function (e) { });
@@ -1627,7 +1631,7 @@
                 case "wholesale_purchase":
                 case "wholesale_purchase_delivered":
                 case "stocktake": {
-                    products_jsonString = JSON.parse(settingsObj.settings.alradaitemnames).slice(1);
+                    products_jsonString = JSON.parse(settingsObj.data.alradaitemnames).slice(1);
 
                     products_jsonString.sort((a, b) => {
 
@@ -1689,7 +1693,7 @@
                     break;
                 }
                 case "sent2_bank": {
-                    suppliers_jsonString = JSON.parse(settingsObj.settings.suppliers).slice(1);
+                    suppliers_jsonString = JSON.parse(settingsObj.data.suppliers).slice(1);
                     ProductNamesLiWithInput = suppliers_jsonString.map(supplier => {
                         const name = supplier.officialname;
                         const contactName = supplier.contactname;
@@ -1808,7 +1812,7 @@
         }
         function reLoadSettingsData() {
 
-            customers_jsonString = JSON.parse(settingsObj.settings.customers).slice(1);
+            customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
             const unixTimestamp = settingsObj.unixTime;
 
             const settingsDateTime = new Date(unixTimestamp * 1000);
@@ -1824,7 +1828,7 @@
             const formattedDate = `${day}/${month}/${year}`;
             const formattedTime = `${hours}:${minutes}:${seconds}`;
 
-            document.querySelector(".latestupdate").innerHTML = `${formattedDate} ${formattedTime} :Data ya Mwisho`;
+            document.querySelector(".latestupdate").innerHTML = `${formattedDate} ${formattedTime} :Data Mwisho`;
 
             CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
                 const name = customer.customer_name;
@@ -2844,10 +2848,10 @@
 
             if (typeof returntype == 'undefined') var returntype = "single";
 
-            if (settingsObj.settings.alradaitemnames == undefined) throw new Error("settingsObj.settings.alradaitemnames is undefined");
-            settingsObj.settings.alradaitemnames = settingsObj.settings.alradaitemnames.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
+            if (settingsObj.data.alradaitemnames == undefined) throw new Error("settingsObj.data.alradaitemnames is undefined");
+            settingsObj.data.alradaitemnames = settingsObj.data.alradaitemnames.replace(/(?:\[r,p]\n|\[r,p]|\n)/g, "<br>").replace(/\sTZS/g, "");
 
-            var data = JSON.parse(settingsObj.settings.alradaitemnames);
+            var data = JSON.parse(settingsObj.data.alradaitemnames);
             var headerRow = Object.keys(data[0]);
             var body = data.map(row => Object.values(row));
             var dataHeadings = [], dataBody = [];
