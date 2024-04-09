@@ -306,7 +306,7 @@
 
         #myinputbar input:focus,
         #CustomersList>li>a.pressed,
-        #results>li>a:hover,
+        #results>li,
         #results>li>a.pressed,
         #results>li>a:active,
         .processed,
@@ -688,7 +688,7 @@
             flex-direction: column;
             justify-content: space-around;
             position: absolute;
-            min-width: 60%;
+            min-width: 70%;
             z-index: 200;
             align-items: center;
             top: 110px;
@@ -717,6 +717,8 @@
             margin-right: 4px;
             padding-left: 3px;
             padding-right: 2px;
+            padding-top: 12px;
+            padding-bottom: 12px;
         }
 
         #choose-mode>ul>li>a {
@@ -930,6 +932,8 @@
             position: fixed;
             bottom: 0;
             left: 0;
+            padding-left: 9px;
+            padding-top: 12px;
         }
     </style>
 </head>
@@ -1048,7 +1052,7 @@
         </div>
         <ul></ul>
     </div>
-    <div class="latestupdate"> - - </div>
+    <div class="latestupdate" onClick="fetchProductUpdate(false)"> - - </div>
 </div>
 
 </html>
@@ -1700,12 +1704,12 @@
                     ProductNamesLiWithInput = suppliers_jsonString.map(supplier => {
                         const name = supplier.officialname;
                         const contactName = supplier.contactname;
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "supplier", "", "", localAppState, true, contactName, supplier.contact_numbers);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "supplier", "", "", "", localAppState, true, contactName, supplier.contact_numbers);
                     });
                     ProductNamesLiWithOutInput = suppliers_jsonString.map(supplier => {
                         const name = supplier.officialname;
                         const contactName = supplier.contactname;
-                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "supplier", "", "", localAppState, false, contactName, supplier.contact_numbers);
+                        return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "supplier", "", "", "", localAppState, false, contactName, supplier.contact_numbers);
                     });
                     break;
                 }
@@ -1778,7 +1782,7 @@
 
             if (/^$|0/g.test(thysaylaststocktakeamt)) {
                 thysaylaststocktakeamt = "-<i> HAMNA </i> -";
-                inputstocktakeclass = "unavailable";
+                inputstocktakeclass = (/supplier|customer/g.test(category)) ? "" : "unavailable";
             } else {
                 thysaylaststocktakeamt = `-<b> ${thysaylaststocktakeamt}</b> -`;
             }
@@ -1841,10 +1845,22 @@
 
             CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
                 const name = customer.customer_name;
-                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
             });
 
             createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
+        }
+        function ShouldWeCheckUpdates() {
+            if (typeof createScene != 'undefined') {
+                /* is in tasker */
+                return true;
+
+            } else {
+                var rgx = new RegExp(`${partOfDay}_${transDateStr}_clr`, "g");
+                return rgx.test(global("ALDLOG"));
+            }
+
+            return false;
         }
 
         window.onload = function () {
@@ -1852,13 +1868,14 @@
                 if (global('ALDSTATE'))
                     currentAppStateIndex = eval(global("ALDSTATE"));
 
-                var rgx = new RegExp(`${partOfDay}_${transDateStr}_clr`, "g");
-                if (global('ALDSETTING') && rgx.test(global("ALDLOG"))) {
-                    var settingsObj = JSON.parse(global('ALDSETTING'));
+
+                if (global('ALDSETTING') && ShouldWeCheckUpdates()) {
+                    settingsObj = JSON.parse(global('ALDSETTING'));
                     loadCachedTrans();
                     reLoadSettingsData();
                     ChangeView(currentAppStateIndex);
                 } else {
+
                     fetchProductUpdate(false, false, reLoadSettingsData);
 
                 }
@@ -1951,6 +1968,7 @@
                     show(sndClient + ": Successfully Updated Settings...");
                     goto("command||beep");
                     hideLoadingScreen();
+                    createProductsView();
                     clearvalues();
                 })
                 .catch((error) => {
