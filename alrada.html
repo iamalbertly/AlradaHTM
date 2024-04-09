@@ -303,10 +303,13 @@
             display: flex;
             place-content: space-between;
         }
+        #results>li:hover{
+            opacity: 1 !important;
+        }
 
         #myinputbar input:focus,
         #CustomersList>li>a.pressed,
-        #results>li,
+        #results>li>a:hover,
         #results>li>a.pressed,
         #results>li>a:active,
         .processed,
@@ -314,7 +317,6 @@
             background-color: #FAF9CB;
             border: 2px solid #a4a4a4;
             border-color: #000;
-            opacity: 1 !important;
             padding-top: 0;
         }
 
@@ -718,7 +720,7 @@
             padding-left: 3px;
             padding-right: 2px;
             padding-top: 12px;
-            padding-bottom: 12px;
+    padding-bottom: 12px;
         }
 
         #choose-mode>ul>li>a {
@@ -762,7 +764,6 @@
             display: none !important;
             width: -moz-fit-content;
             width: fit-content;
-            opacity: .55;
             margin-right: 10px;
         }
 
