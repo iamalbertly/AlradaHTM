@@ -1172,10 +1172,11 @@
             partOfDay = "Saa za Kufunga";
         }
 
-        var transDateStr = transDate.getDate() + "/" + eval(transDate.getMonth() + 1) + "/" + eval(transDate.getFullYear());
-        var todayDateStr = transDateStr;
-        document.querySelector("#showTransDate>span").innerHTML = transDateStr;
-        document.getElementById("editTransDate").value = transDateStr;
+        var currentTransDateStr = transDate.getDate() + "/" + eval(transDate.getMonth() + 1) + "/" + transDate.getFullYear();
+        var currentTransDateStr_Official = `${eval(transDate.getMonth() + 1)}/${transDate.getDate()}/${transDate.getFullYear()}`;
+        var todayDateStr = currentTransDateStr;
+        document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
+        document.getElementById("editTransDate").value = currentTransDateStr;
         if (!String.prototype.replaceAll) {
             String.prototype.replaceAll = function (search, replacement) {
                 return this.replace(new RegExp(search, 'g'), replacement);
@@ -1509,7 +1510,7 @@
                                         query = `(${warehouseName.toLowerCase()})${query}`;
                                         date = new Date();
 
-                                        query = (transDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
+                                        query = (currentTransDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
                                         if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
                                         if (appStates[currentAppStateIndex] == "stocktake") {
                                             tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
@@ -1831,9 +1832,8 @@
         function reLoadSettingsData() {
 
             customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
-            const unixTimestamp = settingsObj.products.unixTime;
 
-            const settingsDateTime = new Date(unixTimestamp * 1000);
+            const settingsDateTime = new Date(settingsObj.products.unixTime * 1000);
 
             const day = settingsDateTime.getDate();
             const month = settingsDateTime.getMonth() + 1;
@@ -1861,7 +1861,7 @@
                 return true;
 
             } else {
-                var rgx = new RegExp(`${partOfDay}_${transDateStr}_clr`, "g");
+                var rgx = new RegExp(`${partOfDay}_${currentTransDateStr}_clr`, "g");
                 return rgx.test(global("ALDLOG"));
             }
 
@@ -1892,7 +1892,7 @@
 
         function fetchHTMUpdate() {
             var sndClient = "";
-            const timestampMilliseconds = (new Date()).getTime();
+
             const AppScriptPostUrl = "https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alrada-min.html";
 
             fetch(AppScriptPostUrl)
@@ -1959,7 +1959,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    setGlobal("ALDLOG", `${partOfDay}_${transDateStr}_clr:`);
+                    setGlobal("ALDLOG", `${partOfDay}_${currentTransDateStr}_clr:`);
                     settingsObj.data.alradaitemnames = data.data.alradaitemnames;
                     settingsObj.products = data.products;
                     setGlobal('ALDSETTING', JSON.stringify(settingsObj));
@@ -2016,9 +2016,9 @@
 
                 setGlobal(`ALDLSTTransStr${appStates[currentAppStateIndex]}`, transObjStr);
 
-                const timestampMilliseconds = (new Date()).getTime();
+                const snapshotUnixTime = Math.floor(Date.now() / 1000);
                 const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
-                const values = JSON.stringify({ usr: staffName, data: data, time: timestampMilliseconds, cmd: "add_transaction" });
+                const values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
 
                 setClip(values, "", function (x) {
                     showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
@@ -2322,8 +2322,8 @@
             document.getElementById('editTransDateSubmit').addEventListener('click', function (e) {
                 var val = document.getElementById("editTransDate").value;
                 if (/^(0{0,1}[1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(val)) {
-                    transDateStr = (val == "") ? transDateStr : val;
-                    document.querySelector("#showTransDate>span").innerHTML = transDateStr;
+                    currentTransDateStr = (val == "") ? currentTransDateStr : val;
+                    document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
                 } else show("Not a Valid Date", true);
                 document.getElementById("filter-dialog-transDate").classList.add("hidden");
             });
@@ -2429,7 +2429,7 @@
                             query = `(${warehouseName.toLowerCase()})${query}`;
                             date = new Date();
 
-                            query = (transDateStr.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
+                            query = (currentTransDateStr.replaceAll("&nbsp;", "").trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim(); if (appStates[currentAppStateIndex] == "stocktake") {
                                 tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
 
                             } else {
@@ -3030,7 +3030,7 @@
                 response += `<small><a id="confirmTransactionEntry" href="#" name="TransactionEditWarehouse_${realitemcount}" title="${transWarehouseName}" type="Jina La Shop" onClick="handleTransEvent(event)">&nbsp;${(transWarehouseName != staffName) ? "(" + transWarehouseName + ")" : "&nbsp;"}</a></small></div>`;
                 response += `<div class="buttonholder flex-row"><button id="confirmTransactionEntry" name="TransactionDelete_${realitemcount}" onClick="handleTransEvent(event)">❌</button></div></div></li>`;
 
-                const currentUnixTime = Math.floor(Date.now() / 1000);
+                const currentUnixTime = Math.floor(new Date(currentTransDateStr_Official) / 1000);
 
                 responseArr.push({ transDate, transTime, currentUnixTime, transWarehouseName, transMsg, transExtraDetails, getendvalue, rawproductname, transUnitPrice, transStaffID, transType, rawproductname, remain, multiplier, transCarton, unitprice, priceTotal, netpriceTotal });
                 itemcount++;
