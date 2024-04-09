@@ -1140,7 +1140,7 @@
                     clipboard.focus();
                     if (typeof callback != "undefined") {
 
-                        navigator.clipboard.writeText(clipboard.value).then(callback)
+                        navigator.clipboard.writeText(clipboard.value).then(callback);
 
                     }
 
@@ -1635,7 +1635,7 @@
 
         function createProductsView() {
             const localAppState = appStates[currentAppStateIndex];
-            if (!settingsObj) return;
+            if (!settingsObj || !settingsObj.data.alradaitemnames) return;
             switch (localAppState) {
                 case "wholesale_sale":
                 case "wholesale_purchase":
@@ -1728,7 +1728,7 @@
 
                 categories[category][product.OfficialName].push({
                     name: product.OfficialName,
-                    classes: category.split(".").map(part => part.toLowerCase()).join(" ")
+                    classes: category.split(".").map(part => part.toLowerCase()).join(" ");
                 });
 
                 const financialnps = product.category_breakdown.split("_")[3];
@@ -1830,30 +1830,29 @@
             });
         }
         function reLoadSettingsData() {
+            if (typeof settingsObj.data.customers != "undefined") {
+                customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
+                const settingsDateTime = new Date(settingsObj.products.unixTime * 1000);
 
-            customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
+                const day = settingsDateTime.getDate();
+                const month = settingsDateTime.getMonth() + 1;
+                const year = settingsDateTime.getFullYear();
 
-            const settingsDateTime = new Date(settingsObj.products.unixTime * 1000);
+                const hours = settingsDateTime.getHours();
+                const minutes = settingsDateTime.getMinutes();
+                const seconds = settingsDateTime.getSeconds();
 
-            const day = settingsDateTime.getDate();
-            const month = settingsDateTime.getMonth() + 1;
-            const year = settingsDateTime.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
+                const formattedTime = `${hours}:${minutes}:${seconds}`;
 
-            const hours = settingsDateTime.getHours();
-            const minutes = settingsDateTime.getMinutes();
-            const seconds = settingsDateTime.getSeconds();
+                document.querySelector(".latestupdate").innerHTML = `${formattedDate} ${formattedTime} :Data Mwisho`;
 
-            const formattedDate = `${day}/${month}/${year}`;
-            const formattedTime = `${hours}:${minutes}:${seconds}`;
-
-            document.querySelector(".latestupdate").innerHTML = `${formattedDate} ${formattedTime} :Data Mwisho`;
-
-            CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
-                const name = customer.customer_name;
-                return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
-            });
-
-            createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
+                CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
+                    const name = customer.customer_name;
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+                });
+                createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
+            }
         }
         function ShouldWeCheckUpdates() {
             if (typeof createScene != 'undefined') {
