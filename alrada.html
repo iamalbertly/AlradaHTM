@@ -303,7 +303,8 @@
             display: flex;
             place-content: space-between;
         }
-        #results>li:hover{
+
+        #results>li:hover {
             opacity: 1 !important;
         }
 
@@ -720,7 +721,7 @@
             padding-left: 3px;
             padding-right: 2px;
             padding-top: 12px;
-    padding-bottom: 12px;
+            padding-bottom: 12px;
         }
 
         #choose-mode>ul>li>a {
@@ -1782,7 +1783,10 @@
             var inputstocktakeclass = (/^\-/g.test(thysaylaststocktakeamt)) ? "attention" : "";
 
             if (/^$|0/g.test(thysaylaststocktakeamt)) {
-                thysaylaststocktakeamt = "-<i> HAMNA </i> -";
+                if (/supplier|customer/g.test(category)) {
+                    thysaylaststocktakeamt = "";
+                } else
+                    thysaylaststocktakeamt = "-<i> HAMNA </i> -";
                 inputstocktakeclass = (/supplier|customer/g.test(category)) ? "" : "unavailable";
             } else {
                 thysaylaststocktakeamt = `-<b> ${thysaylaststocktakeamt}</b> -`;
@@ -1904,10 +1908,10 @@
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
-            if (typeof settingsObj != "undefined") {
+            if (typeof settingsObj.products != "undefined") {
                 params.append('version', settingsObj.products.unixTime);
-            }
-
+            } else
+                params.append('version', 0);
             const geturl = AppScriptPostUrl + "?" + params;
             var options = {};
             if (typeof createScene == 'undefined') {
@@ -1980,7 +1984,7 @@
                             .then(bodyText => {
                                 if (bodyText == "#NAME?") show(" database is busy '#NAME?'");
                             });
-                        show("Error!\n" + error.stack);
+                        show("Error! " + error.message + "\n" + error.stack);
                     }
                     if (global('ALDSETTING')) {
                         var settingsObj = JSON.parse(global('ALDSETTING'));
