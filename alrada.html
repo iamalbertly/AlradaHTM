@@ -136,22 +136,43 @@
             flex-direction: row;
             justify-content: space-between;
             height: 40px;
+            border-bottom: .5px solid lightgray;
         }
 
-        #showTransDate {
+        #showTransDate,
+        #warehouseName {
             display: -webkit-inline-box;
             -webkit-box-align: center;
             display: flex;
             flex-flow: wrap;
             background: center;
+            background-color: none;
+            color: black;
             align-items: center;
             max-width: 100px;
+            border: none;
+            text-align: right;
+            font-family: monospace;
+
+        }
+
+        #appState,
+        #choose-mode>ul>li {
+            border: none;
+            border: 1px solid #000000de;
+            box-shadow: 0px 0px 4px 2px black;
+        }
+
+        #appState:active,
+        #choose-mode>ul>li:active {
+            box-shadow: inset 0px 0px 4px 2px black;
         }
 
         #appStates {
             width: 100%;
-            border-top: 1px solid #000;
+            border: none;
             font-size: 12pt;
+
         }
 
         #appState>span {
@@ -211,7 +232,7 @@
             top: 0px;
         }
 
-        .wholesale_sale>* button>span,
+        .wholesale_sale>* button,
         #productsview.wholesale_sale>* li>a>span {
             background-color: #00c853
         }
@@ -221,10 +242,10 @@
             border-color: #00c853 !important
         }
 
-        .wholesale_purchase_delivered>* button>span,
+        .wholesale_purchase_delivered>* button,
         #productsview.wholesale_purchase_delivered>ul>li>a>span {
             background-color: #a200ff;
-            color: #fff !important;
+            color: #fff;
         }
 
         .wholesale_purchase_delivered,
@@ -232,7 +253,7 @@
             border-color: #a200ff !important
         }
 
-        #mywebview.wholesale_purchase>* button>span,
+        #mywebview.wholesale_purchase>* button,
         #productsview.wholesale_purchase>ul>li>a>span {
             background-color: #ffc400;
             color: #000
@@ -244,10 +265,10 @@
         }
 
 
-        .sent2_bank>div>* button>span,
+        .sent2_bank>div>* button,
         #productsview.sent2_bank>ul>li>a>span {
             background-color: #d50000;
-            color: #fff !important;
+            color: #fff;
         }
 
         .sent2_bank,
@@ -255,7 +276,7 @@
             border-color: #d50000 !important
         }
 
-        .stocktake>div>* button>span,
+        .stocktake>div>* button,
         #productsview.stocktake>ul>li>a>span {
             background-color: #e1e1e1;
             color: #000;
@@ -941,15 +962,14 @@
 </head>
 <div id="mywebview" class="wholesale_sale">
     <div id="news_display">
-        <button id="showTransDate" onclick="getShopDate()">📆&nbsp;
-            <span> </span>
-        </button>
         <div id="appStates" class="flex-column">
             <button id="appState" class="highlight-border">
                 <span>💰</span><span>MAUZO</span>
             </button>
         </div>
         <button onclick="getwarehouseName()" id="warehouseName">HQ</button>
+        <button id="showTransDate" onclick="getShopDate()"><span> </span></button>
+
     </div>
 </div>
 <div id="mywebview2" class="flex-column">
@@ -1059,6 +1079,32 @@
 
 </html>
 <script>
+    function wait(ms) {
+        var start = new Date().getTime();
+        var end = start;
+        while (end < start + ms) {
+            end = new Date().getTime();
+        }
+    }
+    function show(msg, timer = false, clip = true, flash = true) {
+        try {
+            /* log errors */
+            setGlobal("ALDLOG", global("ALDLOG") + "\n<<<>>>\n" + msg);
+            if (clip) setClip("show():" + msg, false);
+            if (flash) flashLong(msg);
+        } catch (e) { }
+        if (timer) wait(5000);
+        console.log("log: " + msg);
+    }
+    function goto(location) {
+        /* if in tasker*/
+        if (typeof createScene !== 'undefined') {
+            window.location.href = location;
+        } else {
+            console.log("goto: " + location);
+        }
+    }
+
     try {
         const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
             appStateMarks = ['ӿ', '$', '++', '#'],
@@ -1092,6 +1138,9 @@
             categories = {},
             npsValues = {},
             runningSpeedRanges = {},
+            partOfDay = "Saa za Kufunga",
+            currentTransDateStr = "",
+            currentTransDateStr_Official = "",
             ald_lstreply = "",
             writtenInSearch = "",
             editingquery = "",
@@ -1149,62 +1198,48 @@
             function flashLong(par1 = "", par2 = "") { }
         }
 
-        var transDate = new Date();
-        var todayDate = transDate;
 
-        const month = transDate.getMonth(),
-            day = transDate.getDate(),
-            hour = (transDate.getUTCHours() + 3),
-            minute = transDate.getMinutes();
+        function updateTime() {
+            var timeAppRefreshed = new Date();
 
-        let partOfDay;
+            var year = timeAppRefreshed.getFullYear(),
+                month = timeAppRefreshed.getMonth(),
+                day = timeAppRefreshed.getDate(),
+                hour = (timeAppRefreshed.getUTCHours() + 3),
+                minute = timeAppRefreshed.getMinutes(),
+                seconds = timeAppRefreshed.getSeconds();
 
-        if (hour >= 5 && hour < 12) {
-            partOfDay = "Asubuhi";
-        } else if (hour >= 12 && hour < 18) {
-            partOfDay = "Mchana";
-        } else if (hour >= 18 && hour < 21) {
-            partOfDay = "Jioni";
-        } else {
-            partOfDay = "Saa za Kufunga";
+            let partOfDay;
+
+            if (hour >= 5 && hour < 12) {
+                partOfDay = "Asubuhi";
+            } else if (hour >= 12 && hour < 18) {
+                partOfDay = "Mchana";
+            } else if (hour >= 18 && hour < 21) {
+                partOfDay = "Jioni";
+            }
+
+            var formattedDate = `${day}/${month}/${year}`;
+            var formattedTime = `${hour}:${minute}:${seconds}`;
+
+            currentTransDateStr = `${formattedDate} ${formattedTime}`;
+            currentTransDateStr_Official = `${eval(timeAppRefreshed.getMonth() + 1)}/${timeAppRefreshed.getDate()}/${timeAppRefreshed.getFullYear()} ${formattedTime}`;
+
+            document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
+            document.getElementById("editTransDate").value = currentTransDateStr;
         }
 
-        var currentTransDateStr = transDate.getDate() + "/" + eval(transDate.getMonth() + 1) + "/" + transDate.getFullYear();
-        var currentTransDateStr_Official = `${eval(transDate.getMonth() + 1)}/${transDate.getDate()}/${transDate.getFullYear()}`;
-        var todayDateStr = currentTransDateStr;
-        document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
-        document.getElementById("editTransDate").value = currentTransDateStr;
+        updateTime();
+        setInterval(updateTime, 1000);
+
+
         if (!String.prototype.replaceAll) {
             String.prototype.replaceAll = function (search, replacement) {
                 return this.replace(new RegExp(search, 'g'), replacement);
             };
         }
-        function wait(ms) {
-            var start = new Date().getTime();
-            var end = start;
-            while (end < start + ms) {
-                end = new Date().getTime();
-            }
-        }
 
-        function show(msg, timer = false, clip = true, flash = true) {
-            try {
-                /* log errors */
-                setGlobal("ALDLOG", global("ALDLOG") + "\n<<<>>>\n" + msg);
-                if (clip) setClip("show():" + msg, false);
-                if (flash) flashLong(msg);
-            } catch (e) { }
-            if (timer) wait(5000);
-            console.log("log: " + msg);
-        }
-        function goto(location) {
-            /* if in tasker*/
-            if (typeof createScene !== 'undefined') {
-                window.location.href = location;
-            } else {
-                console.log("goto: " + location);
-            }
-        }
+
 
         function getwarehouseName() {
             document.getElementById('filter-dialog-customers').classList.remove('hidden');
@@ -1319,7 +1354,6 @@
             document.querySelector("#cachedTrans>span>.part1").innerHTML = ((!cachedTransCount[appStates[currentAppStateIndex]]) ? 0 : cachedTransCount[appStates[currentAppStateIndex]]);
             document.querySelector("#cachedTrans>span>.part2").innerHTML = ((!cachedTransCashTotal[appStates[currentAppStateIndex]]) ? 0 : cachedTransCashTotal[appStates[currentAppStateIndex]].toLocaleString('en-US').replace(/\.00/g, ""));
 
-
             closeFilterDialog();
             /*set the view into cache*/
             setGlobal(`ALDSTATE`, currentAppStateIndex);
@@ -1383,9 +1417,10 @@
                 holderElement.innerHTML = products_contents;
 
                 if (holderElement.id == "results") {
-                    document.querySelectorAll("a.product").forEach(el => {
-                        var parent = el.parentElement;
-                        if (hasinput && parent.classList.contains("childHasInput")) {
+                    for (var productlp = 0; productlp < products.length; productlp++) {
+                        var el = holderElement.childNodes[productlp].childNodes[1];
+
+                        if (hasinput && el.parentNode.classList.contains("childHasInput")) {
 
                             var child = el.childNodes;
                             var input = (child[1].localName == "input") ? child[1] : (child[2].localName == "input") ? child[2] : (child[3].localName == "input") ? child[3] : "";
@@ -1446,7 +1481,6 @@
                                         /* e.preventDefault();*/
                                         try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                         var originalFocusedProduct = currentFocusedProduct;
-
 
                                         var parts = keysPressed[currentFocusedProduct].split("-");
 
@@ -1527,10 +1561,10 @@
                                         query = `(${warehouseName.toLowerCase()})${query}`;
                                         date = new Date();
 
-                                        query = (currentTransDateStr.trim() + ` ${(date.getHours())}:${date.getMinutes()} ` + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
+                                        query = (currentTransDateStr.trim() + " " + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
                                         if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
                                         if (appStates[currentAppStateIndex] == "stocktake") {
-                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`);
+                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
                                         } else {
                                             tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
                                         }
@@ -1600,7 +1634,7 @@
                                 try { input.focus(); } catch (e) { }
                             }
                         });
-                    });
+                    };
                 } else if (holderElement.id == "CustomersList") {
                     document.querySelectorAll("a.product").forEach(el => {
                         el.addEventListener("focus", (e) => {
@@ -1854,9 +1888,9 @@
                 customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
                 const settingsDateTime = new Date(settingsObj.products.unixTime * 1000);
 
-                const day = settingsDateTime.getDate();
-                const month = settingsDateTime.getMonth() + 1;
-                const year = settingsDateTime.getFullYear();
+                var day = settingsDateTime.getDate();
+                var month = settingsDateTime.getMonth() + 1;
+                var year = settingsDateTime.getFullYear();
 
                 const hours = settingsDateTime.getHours();
                 const minutes = settingsDateTime.getMinutes();
@@ -1978,9 +2012,13 @@
                     return response.json();
                 })
                 .then(data => {
-                    settingsObj.data.alradaitemnames = data.data.alradaitemnames;
-                    settingsObj.products = data.products;
-                    setGlobal('ALDSETTING', JSON.stringify(settingsObj));
+                    if (data.data) {
+                        settingsObj.data.alradaitemnames = data.data.alradaitemnames;
+                        settingsObj.products = data.products;
+                        setGlobal('ALDSETTING', JSON.stringify(settingsObj));
+                    }
+                    else show("nothing to update.");
+
                     reLoadSettingsData();
                     loadCachedTrans();
 
@@ -2036,7 +2074,7 @@
                 setGlobal(`ALDLSTTransStr${appStates[currentAppStateIndex]}`, transObjStr);
 
                 const snapshotUnixTime = Math.floor(Date.now() / 1000);
-                const data = json_response.map(entry => [entry.transDate, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
+                const data = json_response.map(entry => [`${entry.transDate} ${entry.transTime}`, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
                 const values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
 
                 setClip(values, "", function (x) {
@@ -2617,7 +2655,7 @@
                 var json_transactions = tempTransObj[appStates[currentAppStateIndex]];
             }
             var oldquery = json_transactions.finalQuery,
-                editing = `${json_transactions.json_response[id].transMsg}`;
+                editing = `${json_transactions.json_response[id].transDate} ${json_transactions.json_response[id].transTime} ${json_transactions.json_response[id].transMsg}`;
             var dialog = document.getElementById("filter-dialog");
 
             switch (action) {
@@ -2936,8 +2974,8 @@
                     var datetext = /(\d+\/\d+)[(\/\d+)]{0,5}/gm.exec(product)[0].trim();
                 else { datetext = ALRADADATE }
                 if (/\d+\/\d+[\/\d+]{0,5}\s(\d+:\d+).*\(/gm.exec(product))
-                    var timetext = /\d+\/\d+[\/\d+]{0,5}\s(\d+:\d+).*\(/gm.exec(product)[1].trim();
-                else var timetext = "00:00";
+                    var timetext = /\d+\/\d+[\/\d+]{0,5}\s(\d+:\d+:\d+).*\(/gm.exec(product)[1].trim();
+                else var timetext = "00:00:00";
                 rawproductname = product.replace(/(\d+\/\d+)[(\/\d+)]{0,5}/gm, "").replace(/(\d+ +[r,p] +|^[r,p] +|^\d+ +|^\d+|[ӿ,\+,\$]\d+$)/g, "").replace(/#\d{0,}[r,p]{0,1}\d+|\#\d+$|[\+,\$]\d+|[\-\-,\+\+]/, "").replace(/\#\d+/, "").replace(/@\d+\.{0,1}\d{0,}/g, "").replace(/^t +| +0 +/, "").replace(/^[r,p] +|\s[r,p]\d+\.{0,1}\d{0,}$/g, "").replace(/^.*(\(.*)/g, "$1").trim();
                 rawproductname = rawproductname.replace(/^[r,p] +/g, "").replace(/\s#\d+|ӿp{0,1}\d+\.{0,1}\d{0,}/, "");
                 rawproductname = rawproductname.replace(/\s[r,p]\d+\.{0,1}\d{0,}|\+[r,p]\d+\.{0,1}\d{0,}v$/, "");
@@ -3029,7 +3067,7 @@
 
                 let transDate = datetext,
                     transTime = timetext,
-                    transMsg = product;
+                    transMsg = product.replace(`${datetext} ${timetext}`, "").trim();
                 transUnitPrice = unitprice,
                     transWarehouseName = /\((.*)\)/gm.test(product) ? /\((.*)\)/gm.exec(product)[1].toLowerCase() : warehouseName.toLowerCase(),
                     transStaffID = staffName.slice(0, 2),
@@ -3077,7 +3115,8 @@
             var finalTextResponseMsg = dom.body.textContent.replaceAll("❌", `\n`).trim() || "";
 
             for (const val in responseArr) {
-                newquery += `,${responseArr[val].transMsg}`;
+
+                newquery += `,${responseArr[val].transDate} ${responseArr[val].transTime} ${responseArr[val].transMsg}`;
             }
             newquery = newquery.replace(/^,/, "");
             return JSON.stringify({ json_response: responseArr, finalTextResponseMsg: finalTextResponseMsg, finalResponseMsg: finalResponseMsg, finalResponseTotal: total, finalQuery: newquery });
