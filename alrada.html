@@ -1239,8 +1239,6 @@
             };
         }
 
-
-
         function getwarehouseName() {
             document.getElementById('filter-dialog-customers').classList.remove('hidden');
             document.querySelector('#filter-dialog-customers>div>input').focus();
@@ -1418,12 +1416,12 @@
 
                 if (holderElement.id == "results") {
                     for (var productlp = 0; productlp < products.length; productlp++) {
-                        var el = holderElement.childNodes[productlp].childNodes[1];
+                        var el = (typeof holderElement.childNodes[productlp].childNodes[1]!="undefined")? holderElement.childNodes[productlp].childNodes[1] : holderElement.childNodes[productlp].childNodes[0];
 
                         if (hasinput && el.parentNode.classList.contains("childHasInput")) {
 
                             var child = el.childNodes;
-                            var input = (child[1].localName == "input") ? child[1] : (child[2].localName == "input") ? child[2] : (child[3].localName == "input") ? child[3] : "";
+                            var input = child[1].localName == "input" ? child[1] : child[2].localName == "input" ? child[2] : child[3].localName == "input" ? child[3] : child[4].localName == "input" ? child[4] : "";
                             try {
                                 input.classList.remove("pressed");
                                 /* input.removeEventListener('input', function (e) { });
