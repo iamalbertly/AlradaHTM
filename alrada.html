@@ -1203,7 +1203,7 @@
             var timeAppRefreshed = new Date();
 
             var year = timeAppRefreshed.getFullYear(),
-                month = timeAppRefreshed.getMonth(),
+                month = timeAppRefreshed.getMonth()+1,
                 day = timeAppRefreshed.getDate(),
                 hour = (timeAppRefreshed.getUTCHours() + 3),
                 minute = timeAppRefreshed.getMinutes(),
@@ -1231,7 +1231,6 @@
 
         updateTime();
         setInterval(updateTime, 1000);
-
 
         if (!String.prototype.replaceAll) {
             String.prototype.replaceAll = function (search, replacement) {
@@ -1421,7 +1420,7 @@
                         if (hasinput && el.parentNode.classList.contains("childHasInput")) {
 
                             var child = el.childNodes;
-                            var input = child[1].localName == "input" ? child[1] : child[2].localName == "input" ? child[2] : child[3].localName == "input" ? child[3] : child[4].localName == "input" ? child[4] : "";
+                            var input = child[1].localName == "input" ? child[1] : child[2].localName == "input" ? child[2] : child[3].localName == "input" ? child[3] : child[4].localName == "input" ? child[4] : child[5].localName == "input" ? child[5] : "";
                             try {
                                 input.classList.remove("pressed");
                                 /* input.removeEventListener('input', function (e) { });
