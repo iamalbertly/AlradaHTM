@@ -1129,8 +1129,8 @@
             products_jsonString = {},
             suppliers_jsonString = {},
             customers_jsonString = {},
-            productsJsonString = undefined;
-        currentAppStateIndex = 0,
+            productsJsonString = undefined,
+            currentAppStateIndex = 0,
             keysPressed = [],
             ProductNamesLiWithInput = [],
             ProductNamesLiWithOutInput = [],
@@ -1145,8 +1145,8 @@
             writtenInSearch = "",
             editingquery = "",
             productdetails_string = "",
-            staffName = (typeof staffName == "undefined") ? "Al" : staffName;
-        warehouseName = staffName,
+            staffName = (typeof staffName == "undefined") ? "Al" : staffName,
+            warehouseName = staffName,
             responseClone = "",
             confirmAddReportToCache = function () { },
             confirmSendReportRightAway = function () { },
@@ -1155,8 +1155,8 @@
             confirmFormEdit = function () { },
             confirmFormPick = function () { },
             finalResponseMsg = "",
-            newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "";
-        var currentFocusedProduct = "", oldFocusedProduct = "",
+            newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "",
+            currentFocusedProduct = "", oldFocusedProduct = "",
             tempTransQuery = [],
             tempTransObj = [],
             cachedTransObjectString = [],
@@ -1203,7 +1203,7 @@
             var timeAppRefreshed = new Date();
 
             var year = timeAppRefreshed.getFullYear(),
-                month = timeAppRefreshed.getMonth()+1,
+                month = timeAppRefreshed.getMonth() + 1,
                 day = timeAppRefreshed.getDate(),
                 hour = (timeAppRefreshed.getUTCHours() + 3),
                 minute = timeAppRefreshed.getMinutes(),
@@ -1242,7 +1242,6 @@
             document.getElementById('filter-dialog-customers').classList.remove('hidden');
             document.querySelector('#filter-dialog-customers>div>input').focus();
         }
-
 
         function getShopDate() {
             document.getElementById('filter-dialog-transDate').classList.remove('hidden');
@@ -1415,7 +1414,7 @@
 
                 if (holderElement.id == "results") {
                     for (var productlp = 0; productlp < products.length; productlp++) {
-                        var el = (typeof holderElement.childNodes[productlp].childNodes[1]!="undefined")? holderElement.childNodes[productlp].childNodes[1] : holderElement.childNodes[productlp].childNodes[0];
+                        var el = (typeof holderElement.childNodes[productlp].childNodes[1] != "undefined") ? holderElement.childNodes[productlp].childNodes[1] : holderElement.childNodes[productlp].childNodes[0];
 
                         if (hasinput && el.parentNode.classList.contains("childHasInput")) {
 
@@ -1423,9 +1422,9 @@
                             var input = child[1].localName == "input" ? child[1] : child[2].localName == "input" ? child[2] : child[3].localName == "input" ? child[3] : child[4].localName == "input" ? child[4] : child[5].localName == "input" ? child[5] : "";
                             try {
                                 input.classList.remove("pressed");
-                                /* input.removeEventListener('input', function (e) { });
+                                input.removeEventListener('input', function (e) { });
                                  input.removeEventListener('keyup', function (e) { });
-                                 input.removeEventListener('blur', function (e) { }); */
+                                 input.removeEventListener('blur', function (e) { }); 
 
                                 input.addEventListener('blur', function (e) {
 
@@ -1441,52 +1440,19 @@
                                     }
                                     if (e.target.parentNode.parentNode.parentNode.id == "results") {
                                         /* trigger an enter keyup event */
-                                        /* input.dispatchEvent(eventKeyUpEnter); */
-
+                           
                                         var parts = keysPressed[currentFocusedProduct].split("-");
                                         var val = parts.reduce(function (a, b) {
                                             if (a == 0)
                                                 return b;
                                             return Number(a) + Number(b);
                                         }, 0);
+                                        if(!Number.isNaN(val) || val!=""){
                                         document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
-                                    }
-                                });
-                                input.addEventListener('input', function (e) {
-                                    var clickedvalue = e.srcElement.getAttribute("name");
-                                    var target = e.target.id;
-                                    if (typeof keysPressed[currentFocusedProduct] == "undefined")
-                                        keysPressed[currentFocusedProduct] = "";
-
-                                    if (!isNaN(e.data) || e.data === '+' || e.data === '-' || e.data === '.') {
-                                        keysPressed[currentFocusedProduct] += e.data;
-                                    }
-
-                                });
-
-                                input.addEventListener('keyup', function (e) {
-                                    var clickedvalue = e.srcElement.getAttribute("name");
-                                    var target = e.target.id;
-                                    if (typeof keysPressed[currentFocusedProduct] == "undefined")
-                                        keysPressed[currentFocusedProduct] = "";
-
-                                    if (e.key === "Backspace") {
-                                        keysPressed[currentFocusedProduct] = keysPressed[currentFocusedProduct].slice(0, -1);
-                                    }
-                                    else if (e.key === 'Enter') {
-                                        /* click enter inside 1 of the products in the results productview: submittransacions*/
-                                        /* e.preventDefault();*/
+                                        
                                         try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
                                         var originalFocusedProduct = currentFocusedProduct;
 
-                                        var parts = keysPressed[currentFocusedProduct].split("-");
-
-                                        var val = parts.reduce(function (a, b) {
-                                            if (a == 0)
-                                                return b;
-                                            return Number(a) + Number(b);
-                                        }, 0);
-                                        document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value = val;
                                         if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
 
                                             extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
@@ -1587,6 +1553,38 @@
                                         /* createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));*/
                                         document.getElementById("warehouseName").focus();
                                         keysPressed[currentFocusedProduct] = "";
+                                        
+                                        }
+                                    }
+                                });
+                                input.addEventListener('input', function (e) {
+                                   
+                                    var clickedvalue = e.srcElement.getAttribute("name");
+                                    var target = e.target.id;
+                                    if (typeof keysPressed[currentFocusedProduct] == "undefined")
+                                        keysPressed[currentFocusedProduct] = "";
+
+                                    if (!isNaN(e.data) || e.data === '+' || e.data === '-' || e.data === '.') {
+                                        keysPressed[currentFocusedProduct] += e.data;
+                                    }
+
+                                });
+                                
+                                input.addEventListener('keyup', function (e) {
+                                   
+                                    var clickedvalue = e.srcElement.getAttribute("name");
+                                    var target = e.target.id;
+                                    if (typeof keysPressed[currentFocusedProduct] == "undefined")
+                                        keysPressed[currentFocusedProduct] = "";
+
+                                    if (e.key === "Backspace") {
+                                        keysPressed[currentFocusedProduct] = keysPressed[currentFocusedProduct].slice(0, -1);
+                                    }
+                                    else if (e.key === 'Enter') {
+                                        /* click enter insid 1 of the products in the results productview: submittransacions*/
+                                        e.preventDefault();
+                                        e.target.blur();
+                                        
                                     }
 
                                 });
@@ -2209,27 +2207,27 @@
             if (json_response[id].transType == "sent2_bank")
                 var old_mulitplier = json_response[id].priceTotal;
             else
-                var old_mulitplier = (json_response[id].multiplier < 1) ? "." + (json_response[id].transCarton * json_response[id].multiplier) : json_response[id].multiplier;
+            var old_mulitplier = (json_response[id].multiplier < 1) ? "." + (json_response[id].transCarton * json_response[id].multiplier) : json_response[id].multiplier;
             editingquery = `${json_response[id].transMsg}`;
 
             var ConfirmDialogContent = `<div id="myModal">
-    <div class="editvalues showonlyadmin">
-    <a href="#" class="notyet" id="edit_date">${json_response[id].transDate}</a>
-    <a href="#" class="notyet" id="edit_shopname" >${json_response[id].transWarehouseName}</a>
-    <a href="#" class="" id="edit_drinkname" onclick="document.getElementById('filter-dialog-products').classList.remove('hidden');"  placeholder="" value="${json_response[id].rawproductname}">${json_response[id].rawproductname}</a>
-    <span id="edit_multipliersign">${appStateMarks[currentAppStateIndex]}</span>
-    <input type="text" id="edit_multiplier"  placeholder="${old_mulitplier}" value="${old_mulitplier}" />
-        </div>
-    <div class="buttonholder" style="display:flex">
+            <div class="editvalues showonlyadmin">
+            <a href="#" class="notyet" id="edit_date">${json_response[id].transDate}</a>
+            <a href="#" class="notyet" id="edit_shopname" >${json_response[id].transWarehouseName}</a>
+            <a href="#" class="" id="edit_drinkname" onclick="document.getElementById('filter-dialog-products').classList.remove('hidden');"  placeholder="" value="${json_response[id].rawproductname}">${json_response[id].rawproductname}</a>
+            <span id="edit_multipliersign">${appStateMarks[currentAppStateIndex]}</span>
+            <input type="text" id="edit_multiplier"  placeholder="${old_mulitplier}" value="${old_mulitplier}" />
+            </div>
+            <div class="buttonholder" style="display:flex">
 
-    <button onclick="confirmFormYes()">🚮 ONDOA KABISA</button>`;
+            <button onclick="confirmFormYes()">🚮 ONDOA KABISA</button>`;
 
             if (appStates[currentAppStateIndex] == "wholesale_sale") ConfirmDialogContent += `<button onclick="confirmFormEdit('isLoan')">⚠️ DENI</button>`;
 
             ConfirmDialogContent += `<button onclick="confirmFormEdit()">🛠️ REKEBISHA MPYA</button>
-    <button onclick="confirmFormNo()">👌🏽 USIBADILISHE</button></div>
-  </div>
-</div>`;
+            <button onclick="confirmFormNo()">👌🏽 USIBADILISHE</button></div>
+            </div>
+            </div>`;
             confirmFormNo = function () {
                 hideLoadingScreen();
             };
@@ -3156,9 +3154,9 @@
 
         document.getElementById("warehouseName").innerHTML = warehouseName;
         /* disable clicks on link */
-        /*  document.querySelector("a").addEventListener("click", (e) => {
+          document.querySelector("a").addEventListener("click", (e) => {
               e.preventDefault();
-          }); */
+          }); 
 
         try {
             var ALRADADATE = day + " / " + month;
@@ -3166,6 +3164,6 @@
 
     }
     catch (e) {
-        show("error: " + e.stack, true, true);
+        show("Main Err: " + e.stack, true, true);
     }
 </script>
