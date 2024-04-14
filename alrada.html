@@ -1698,7 +1698,7 @@
                         }
 
                         /* If a is "Pesa", put b before a */
-                        if (/Crate Tupu|Fungu la Chupa/g.test(a.OfficialName)) return 1;
+                        if (/Crate Tupu|Chupa/g.test(a.OfficialName)) return 1;
 
                         /* Group closely matching OfficialNames together */
                         if (a.OfficialName.includes(b.OfficialName.slice(0, 4)) || b.OfficialName.includes(a.OfficialName.slice(0, 4))) {
