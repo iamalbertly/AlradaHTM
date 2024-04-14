@@ -1108,11 +1108,8 @@
     try {
         const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
             appStateMarks = ['ӿ', '$', '++', '#'],
-            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz0MTsq8zYg3Fc2sZI9HrsVWLYPhg_BcUbeegi1DwvQ1hnmUT4-ju46CYXNeuahMeZ2/exec",
-            eventClick = new Event('click', {
-                bubbles: false,
-                cancelable: false
-            });
+            AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz0MTsq8zYg3Fc2sZI9HrsVWLYPhg_BcUbeegi1DwvQ1hnmUT4-ju46CYXNeuahMeZ2/exec";
+
         var settingsObj = {
             "products": undefined,
             "staff_suppliers_customers": undefined
@@ -1130,6 +1127,7 @@
             suppliers_jsonString = {},
             customers_jsonString = {},
             productsJsonString = undefined,
+            dontsubmit = false,
             currentAppStateIndex = 0,
             keysPressed = [],
             ProductNamesLiWithInput = [],
@@ -1423,8 +1421,8 @@
                             try {
                                 input.classList.remove("pressed");
                                 input.removeEventListener('input', function (e) { });
-                                 input.removeEventListener('keyup', function (e) { });
-                                 input.removeEventListener('blur', function (e) { }); 
+                                input.removeEventListener('keyup', function (e) { });
+                                input.removeEventListener('blur', function (e) { });
 
                                 input.addEventListener('blur', function (e) {
 
@@ -1440,125 +1438,129 @@
                                     }
                                     if (e.target.parentNode.parentNode.parentNode.id == "results") {
                                         /* trigger an enter keyup event */
-                           
+
                                         var parts = keysPressed[currentFocusedProduct].split("-");
                                         var val = parts.reduce(function (a, b) {
                                             if (a == 0)
                                                 return b;
                                             return Number(a) + Number(b);
                                         }, 0);
-                                        if(!Number.isNaN(val) || val!=""){
-                                        document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
-                                        
-                                        try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
-                                        var originalFocusedProduct = currentFocusedProduct;
+                                        if (!Number.isNaN(val) && val != "") {
+                                            document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
 
-                                        if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
+                                            try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
+                                            var originalFocusedProduct = currentFocusedProduct;
 
-                                            extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
-                                            if (extraTransDetails == null || extraTransDetails == "") {
-                                                throw new Error('Lazima Uingize Aina Ya Malipo ');
-                                            }
-                                            else {
-                                                if (/Pesa/g.test(currentFocusedProduct))
-                                                    extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
+                                            if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
 
-                                            }
-                                            var obj = document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
-                                            /*  var val = document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;*/
-                                            var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
-                                        } else
-                                            var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
-
-                                        if (!/\d+$/.test(query)) {
-                                            if ((appStates[currentAppStateIndex] == "stocktake"))
-                                                query += "0";
-                                            else {
-                                                if (/Kony|vant|Valu|Hanson/.test(query))
-                                                    query += ".1";
-                                                else
-                                                    query += "1";
-                                            }
-                                        }
-
-                                        if (appStates[currentAppStateIndex] != "stocktake") {
-                                            var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
-                                            var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
-                                            if (firstpart != "" && secondpart != "") {
-                                                var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
-                                                var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
-                                                var prd = query.replaceAll(rg, "");
-                                                query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
-                                            }
-                                        } else {
-                                            var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
-                                            var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
-                                            var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d{0,}\\.{0,1}\\d{0,})(.*)`);
-                                            var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
-
-                                            if (exists) {
-                                                /* find the amount thats already their and add it to */
-                                                var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").match(rgx);
-                                                if (/\./g.test(firsthalf[5])) {
-                                                    var newtotalvalue = eval(firsthalf[5].replace(".", "")) + eval(newvalue.replace(".", ""));
-                                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").replace(rgx, `$1$2$3$4#.${newtotalvalue}$6`).replaceAll(/#\.(\d+)/g, "#p$1");
-                                                } else {
-                                                    var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
-                                                    tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
+                                                extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
+                                                if (extraTransDetails == null || extraTransDetails == "") {
+                                                    throw new Error('Lazima Uingize Aina Ya Malipo ');
                                                 }
+                                                else {
+                                                    if (/Pesa/g.test(currentFocusedProduct))
+                                                        extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
 
-                                                productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                                tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                                                }
+                                                var obj = document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
+                                                /*  var val = document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;*/
+                                                var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
+                                            } else
+                                                var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
 
-                                                setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
-                                                document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
-                                                document.querySelectorAll(".disabled").forEach(el => {
-                                                    el.disabled = false;
-                                                    el.classList.remove("disabled");
-                                                    el.classList.add("enabled");
-                                                });
-                                                return 0;
+                                            if (!/\d+$/.test(query)) {
+                                                if ((appStates[currentAppStateIndex] == "stocktake"))
+                                                    query += "0";
+                                                else {
+                                                    if (/Kony|vant|Valu|Hanson/.test(query))
+                                                        query += ".1";
+                                                    else
+                                                        query += "1";
+                                                }
                                             }
-                                        }
 
-                                        query = `(${warehouseName.toLowerCase()})${query}`;
-                                        date = new Date();
+                                            if (appStates[currentAppStateIndex] != "stocktake") {
+                                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                                                var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
+                                                if (firstpart != "" && secondpart != "") {
+                                                    var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
+                                                    var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
+                                                    var prd = query.replaceAll(rg, "");
+                                                    query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
+                                                }
+                                            } else {
+                                                var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
+                                                var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
+                                                var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d{0,}\\.{0,1}\\d{0,})(.*)`);
+                                                var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
 
-                                        query = (currentTransDateStr.trim() + " " + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
-                                        if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
-                                        if (appStates[currentAppStateIndex] == "stocktake") {
-                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
-                                        } else {
-                                            tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
-                                        }
-                                        productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                        tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
-                                        setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
-                                        document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
-                                        document.querySelectorAll(".disabled").forEach(el => {
-                                            el.disabled = false;
-                                            el.classList.remove("disabled");
-                                            el.classList.add("enabled");
-                                        });
-                                        document.getElementById("submitbuttonholder").classList.remove("hyper");
-                                        document.getElementById("myinputbar").classList.remove("hyper");
+                                                if (exists) {
+                                                    /* find the amount thats already their and add it to */
+                                                    var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").match(rgx);
+                                                    if (/\./g.test(firsthalf[5])) {
+                                                        var newtotalvalue = eval(firsthalf[5].replace(".", "")) + eval(newvalue.replace(".", ""));
+                                                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").replace(rgx, `$1$2$3$4#.${newtotalvalue}$6`).replaceAll(/#\.(\d+)/g, "#p$1");
+                                                    } else {
+                                                        var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
+                                                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
+                                                    }
 
-                                        if (appStates[currentAppStateIndex] == "stocktake") {
-                                            var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
-                                            var child = document.querySelector(el).lastChild;
+                                                    productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
+                                                    tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
 
-                                            child.classList.add("hidden");
-                                        }
-                                        document.getElementById('search').value = "";
-                                        /* createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));*/
-                                        document.getElementById("warehouseName").focus();
-                                        keysPressed[currentFocusedProduct] = "";
-                                        
+                                                    setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                                                    document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
+                                                    document.querySelectorAll(".disabled").forEach(el => {
+                                                        el.disabled = false;
+                                                        el.classList.remove("disabled");
+                                                        el.classList.add("enabled");
+                                                    });
+                                                    return 0;
+                                                }
+                                            }
+
+                                            query = `(${warehouseName.toLowerCase()})${query}`;
+                                            date = new Date();
+
+                                            query = (currentTransDateStr.trim() + " " + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
+                                            if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
+                                            if (appStates[currentAppStateIndex] == "stocktake") {
+                                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
+                                            } else {
+                                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
+                                            }
+                                            productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
+                                            tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                                            document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
+                                            document.querySelectorAll(".disabled").forEach(el => {
+                                                el.disabled = false;
+                                                el.classList.remove("disabled");
+                                                el.classList.add("enabled");
+                                            });
+                                            document.getElementById("submitbuttonholder").classList.remove("hyper");
+                                            document.getElementById("myinputbar").classList.remove("hyper");
+
+                                            if (appStates[currentAppStateIndex] == "stocktake") {
+                                                var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
+                                                var child = document.querySelector(el).lastChild;
+
+                                                child.classList.add("hidden");
+                                            }
+                                            document.getElementById('search').value = "";
+
+                                            keysPressed[currentFocusedProduct] = "";
+                                            document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
+
+                                          /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
+                                            if (nextInput.lastChild) {
+                                                nextInput.lastChild.dispatchEvent(new Event('focus'));
+                                            } */
                                         }
                                     }
                                 });
                                 input.addEventListener('input', function (e) {
-                                   
+
                                     var clickedvalue = e.srcElement.getAttribute("name");
                                     var target = e.target.id;
                                     if (typeof keysPressed[currentFocusedProduct] == "undefined")
@@ -1569,9 +1571,9 @@
                                     }
 
                                 });
-                                
+
                                 input.addEventListener('keyup', function (e) {
-                                   
+
                                     var clickedvalue = e.srcElement.getAttribute("name");
                                     var target = e.target.id;
                                     if (typeof keysPressed[currentFocusedProduct] == "undefined")
@@ -1584,7 +1586,6 @@
                                         /* click enter insid 1 of the products in the results productview: submittransacions*/
                                         e.preventDefault();
                                         e.target.blur();
-                                        
                                     }
 
                                 });
@@ -2207,7 +2208,7 @@
             if (json_response[id].transType == "sent2_bank")
                 var old_mulitplier = json_response[id].priceTotal;
             else
-            var old_mulitplier = (json_response[id].multiplier < 1) ? "." + (json_response[id].transCarton * json_response[id].multiplier) : json_response[id].multiplier;
+                var old_mulitplier = (json_response[id].multiplier < 1) ? "." + (json_response[id].transCarton * json_response[id].multiplier) : json_response[id].multiplier;
             editingquery = `${json_response[id].transMsg}`;
 
             var ConfirmDialogContent = `<div id="myModal">
@@ -2502,7 +2503,10 @@
                             document.getElementById("warehouseName").focus();
                         }
                         else if (target == "editTransDate") {
-                            document.getElementById('editTransDate').dispatchEvent(eventClick);
+                            document.getElementById('editTransDate').dispatchEvent(new Event('click', {
+                                bubbles: false,
+                                cancelable: false
+                            }));
                         }
                         else if (target == "editCustomerName") {
                             var val = (e.target.value == "") ? staffName : e.target.value;
@@ -3154,9 +3158,9 @@
 
         document.getElementById("warehouseName").innerHTML = warehouseName;
         /* disable clicks on link */
-          document.querySelector("a").addEventListener("click", (e) => {
-              e.preventDefault();
-          }); 
+        document.querySelector("a").addEventListener("click", (e) => {
+            e.preventDefault();
+        });
 
         try {
             var ALRADADATE = day + " / " + month;
