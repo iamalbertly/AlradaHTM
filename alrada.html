@@ -1127,6 +1127,7 @@
             suppliers_jsonString = {},
             customers_jsonString = {},
             productsJsonString = undefined,
+            isoncurrenttime = true,
             dontsubmit = false,
             currentAppStateIndex = 0,
             keysPressed = [],
@@ -2373,6 +2374,7 @@
             });
 
             document.getElementById('editTransDateSubmit').addEventListener('click', function (e) {
+                isoncurrenttime = false;
                 var val = document.getElementById("editTransDate").value;
                 if (/^(0{0,1}[1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(val)) {
                     currentTransDateStr = (val == "") ? currentTransDateStr : val;
@@ -2711,7 +2713,6 @@
                         }
                         closeFilterDialog();
                     };
-
                     break;
                 case "TransactionEditDate":
                     document.getElementById("filter-dialog-transDate").classList.remove("hidden");
