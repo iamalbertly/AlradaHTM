@@ -1128,6 +1128,7 @@
             customers_jsonString = {},
             productsJsonString = undefined,
             isoncurrenttime = true,
+            daystakeawayfromcurrent = 0;
             dontsubmit = false,
             currentAppStateIndex = 0,
             keysPressed = [],
@@ -1203,7 +1204,7 @@
 
             var year = timeAppRefreshed.getFullYear(),
                 month = timeAppRefreshed.getMonth() + 1,
-                day = timeAppRefreshed.getDate(),
+                day = timeAppRefreshed.getDate() + daystakeawayfromcurrent,
                 hour = (timeAppRefreshed.getUTCHours() + 3),
                 minute = timeAppRefreshed.getMinutes(),
                 seconds = timeAppRefreshed.getSeconds();
@@ -2384,18 +2385,14 @@
             });
 
             document.getElementById('editTransDateleft').addEventListener('click', function () {
-                var dateElement = document.getElementById('editTransDate');
-                var date = new Date(dateElement.value.split('/').reverse().join('-'));
-                date.setDate(date.getDate() - 1);
-                var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-                dateElement.value = newDate;
+             
+                daystakeawayfromcurrent = daystakeawayfromcurrent -1;
+
             });
             document.getElementById('editTransDateRight').addEventListener('click', function () {
-                var dateElement = document.getElementById('editTransDate');
-                var date = new Date(dateElement.value.split('/').reverse().join('-'));
-                date.setDate(date.getDate() + 1);
-                var newDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-                dateElement.value = newDate;
+              
+                daystakeawayfromcurrent = daystakeawayfromcurrent +1;
+
             });
 
             document.getElementById("resultpad").addEventListener("click", (e) => {
