@@ -1129,7 +1129,7 @@
             productsJsonString = undefined,
             isoncurrenttime = true,
             daystakeawayfromcurrent = 0;
-            dontsubmit = false,
+        dontsubmit = false,
             currentAppStateIndex = 0,
             keysPressed = [],
             ProductNamesLiWithInput = [],
@@ -1554,10 +1554,10 @@
                                             keysPressed[currentFocusedProduct] = "";
                                             document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
 
-                                          /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
-                                            if (nextInput.lastChild) {
-                                                nextInput.lastChild.dispatchEvent(new Event('focus'));
-                                            } */
+                                            /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
+                                              if (nextInput.lastChild) {
+                                                  nextInput.lastChild.dispatchEvent(new Event('focus'));
+                                              } */
                                         }
                                     }
                                 });
@@ -2385,13 +2385,13 @@
             });
 
             document.getElementById('editTransDateleft').addEventListener('click', function () {
-             
-                daystakeawayfromcurrent = daystakeawayfromcurrent -1;
+
+                daystakeawayfromcurrent = daystakeawayfromcurrent - 1;
 
             });
             document.getElementById('editTransDateRight').addEventListener('click', function () {
-              
-                daystakeawayfromcurrent = daystakeawayfromcurrent +1;
+
+                daystakeawayfromcurrent = daystakeawayfromcurrent + 1;
 
             });
 
@@ -3032,9 +3032,10 @@
                                         if (whole_multiplier || whole_multiplier == 0)
                                             unitprice = item.w_price_a,
                                                 priceTotal += item.w_price_a * whole_multiplier;
-                                        if (retail_multiplier)
-                                            unitprice = ((unitprice == "") ? item.w_price_a : unitprice) / item.carton,
-                                                priceTotal += unitprice * retail_multiplier;
+                                        if (retail_multiplier) {
+                                            unitprice = item.p_price_a;
+                                            priceTotal += unitprice * retail_multiplier;
+                                        }
                                     }
                                     product = product.replace(new RegExp(`(${getendvalue.replaceAll(/(\+)/gm, "\\$1")})`), `@${unitprice}$1`);
                                 } else {
