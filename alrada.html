@@ -3008,7 +3008,7 @@
                                 retail_multiplier = (getendvalue.indexOf("p") == -1) ? 0 : eval(getendvalue.match(/[r,p]\d+/)[0].replace("p", ""));
                                 multiplier = whole_multiplier + (retail_multiplier / item.carton);
 
-                                if ((transType == "purchase") || (transType == "stocktake")) {
+                                if ((appStates[currentAppStateIndex] == "purchase") || (appStates[currentAppStateIndex] == "stocktake")) {
                                     var profitfromwholesale = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier)));
                                     var profitfromretail = ((item.p_price_a * retail_multiplier) - (((item.w_purchase_a / item.carton) * retail_multiplier)));
                                     projectedProfit = ((item.w_price_a * whole_multiplier) - ((item.w_purchase_a * whole_multiplier))) + profitfromretail;
