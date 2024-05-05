@@ -1109,10 +1109,7 @@
             appStateMarks = ['ӿ', '$', '++', '#'],
             AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz0MTsq8zYg3Fc2sZI9HrsVWLYPhg_BcUbeegi1DwvQ1hnmUT4-ju46CYXNeuahMeZ2/exec";
 
-        var settingsObj = {
-            "products": undefined,
-            "staff_suppliers_customers": undefined
-        },
+        var settingsObj = undefined,
 
             eventKeyUpEnter = new KeyboardEvent('keyup', {
                 key: "Enter",
@@ -1126,6 +1123,7 @@
             suppliers_jsonString = {},
             customers_jsonString = {},
             productsJsonString = undefined,
+            originalFocusedProduct = "",
             isoncurrenttime = true,
             daystakeawayfromcurrent = 0;
         dontsubmit = false,
@@ -1246,41 +1244,7 @@
             document.getElementById('filter-dialog-transDate').classList.remove('hidden');
             document.querySelector('#filter-dialog-transDate>div>input').focus();
         }
-
         try {
-            if (global('ALDSETTING')) {
-                var settingsObj = JSON.parse(global('ALDSETTING'));
-                createProductsView();
-                loadCachedTrans();
-            }
-            else if (settingsObj.products != undefined) {
-                createProductsView();
-                loadCachedTrans();
-            }
-            else {
-                fetch('https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json')
-                    .then(response => {
-                        responseClone = response.clone();
-                        if (!response.ok) {
-                            responseClone.text()
-                                .then(function (bodyText) {
-                                    show("recieved the following: " + bodyText);
-                                });
-                            return response.text().then(text => {
-                                throw new Error('Server response: ' + text, true, true);
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        settingsObj = data;
-                        setGlobal('ALDSETTING', JSON.stringify(settingsObj));
-                        createProductsView();
-                        loadCachedTrans();
-
-                    })
-                    .catch((error) => { });
-            }
 
             if (global('ALRADAUSER'))
                 staffName = global('ALRADAUSER');
@@ -1448,9 +1412,9 @@
                                         }, 0);
                                         if (!Number.isNaN(val) && val != "") {
                                             document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
-
-                                            try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
-                                            var originalFocusedProduct = currentFocusedProduct;
+                                            if (originalFocusedProduct != currentFocusedProduct)
+                                                try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
+                                            originalFocusedProduct = currentFocusedProduct;
 
                                             if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
 
@@ -1463,8 +1427,7 @@
                                                         extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
 
                                                 }
-                                                var obj = document.querySelector(`a[name="${originalFocusedProduct}"]>input`);
-                                                /*  var val = document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value;*/
+
                                                 var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
                                             } else
                                                 var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
@@ -1553,6 +1516,8 @@
                                             keysPressed[currentFocusedProduct] = "";
                                             document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
 
+                                            document.querySelector(`a[name="${originalFocusedProduct}"]>input`).focus();
+
                                             /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
                                               if (nextInput.lastChild) {
                                                   nextInput.lastChild.dispatchEvent(new Event('focus'));
@@ -1585,7 +1550,7 @@
                                     }
                                     else if (e.key === 'Enter') {
                                         /* click enter insid 1 of the products in the results productview: submittransacions*/
-                                        e.preventDefault();
+
                                         e.target.blur();
                                     }
 
@@ -1674,12 +1639,15 @@
                             }
                         });
                     });
-
                 }
 
             } catch (e) {
                 show(e.stack + " -- error creating list");
             }
+        }
+
+        function createwebdb() {
+
         }
 
         function createProductsView() {
@@ -1691,7 +1659,6 @@
                 case "wholesale_purchase_delivered":
                 case "stocktake": {
                     products_jsonString = JSON.parse(settingsObj.data.alradaitemnames).slice(1);
-
                     products_jsonString.sort((a, b) => {
 
                         if (/Pesa/g.test(a.OfficialName)) {
@@ -1749,6 +1716,33 @@
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, false);
                     });
+
+                    products_jsonString.forEach(product => {
+                        const category = product.category_breakdown.split("_")[2].toLowerCase(); if (!categories[category]) {
+                            categories[category] = [];
+                        }
+                        if (!categories[category][product.OfficialName]) {
+                            categories[category][product.OfficialName] = [];
+                        }
+
+                        categories[category][product.OfficialName].push({
+                            name: product.OfficialName,
+                            classes: category.split(".").map(part => part.toLowerCase()).join(" ")
+                        });
+
+                        const financialnps = product.category_breakdown.split("_")[3];
+                        if (!npsValues[financialnps]) {
+                            npsValues[financialnps] = [];
+                        }
+                        npsValues[financialnps].push(product);
+
+                        const speed = (product.category_breakdown.split("_")[4]) ? product.category_breakdown.split("_")[4] : 0;
+                        if (!runningSpeedRanges[speed]) {
+                            runningSpeedRanges[speed] = [];
+                        }
+                        runningSpeedRanges[speed].push(product);
+                    });
+
                     break;
                 }
                 case "sent2_bank": {
@@ -1766,32 +1760,9 @@
                     break;
                 }
             }
+            createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
+            createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
 
-            products_jsonString.forEach(product => {
-                const category = product.category_breakdown.split("_")[2].toLowerCase(); if (!categories[category]) {
-                    categories[category] = [];
-                }
-                if (!categories[category][product.OfficialName]) {
-                    categories[category][product.OfficialName] = [];
-                }
-
-                categories[category][product.OfficialName].push({
-                    name: product.OfficialName,
-                    classes: category.split(".").map(part => part.toLowerCase()).join(" ")
-                });
-
-                const financialnps = product.category_breakdown.split("_")[3];
-                if (!npsValues[financialnps]) {
-                    npsValues[financialnps] = [];
-                }
-                npsValues[financialnps].push(product);
-
-                const speed = (product.category_breakdown.split("_")[4]) ? product.category_breakdown.split("_")[4] : 0;
-                if (!runningSpeedRanges[speed]) {
-                    runningSpeedRanges[speed] = [];
-                }
-                runningSpeedRanges[speed].push(product);
-            });
             var filterDialogProducts2CategoriesStr = "";
             for (const category in categories) {
                 filterDialogProducts2CategoriesStr += `<li onClick="handleFilterDialogFilterSelection(event)">
@@ -1802,8 +1773,7 @@
             document.querySelector("#filter-dialog-products2>#filterCategories").innerHTML = filterDialogProducts2CategoriesStr;
 
             hideExistingInputs();
-            createList(ProductNamesLiWithOutInput, document.querySelector("#filter-dialog-products>.selectproduct"));
-            createList(ProductNamesLiWithInput, document.querySelector("#productsview>#results"));
+
             addInputEventListeners();
         }
 
@@ -1919,10 +1889,10 @@
         }
 
         window.onload = function () {
+
             try {
                 if (global('ALDSTATE'))
                     currentAppStateIndex = eval(global("ALDSTATE"));
-
 
                 if (global('ALDSETTING') && ShouldWeCheckUpdates()) {
                     settingsObj = JSON.parse(global('ALDSETTING'));
@@ -1935,6 +1905,7 @@
 
                 }
                 initializeListeners();
+
             } catch (e) {
                 show(e.stack + "-- error trying to load", true, true);
             }
@@ -1958,28 +1929,18 @@
             var sndClient = "";
 
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
-            if (typeof settingsObj.products != "undefined") {
+            if (typeof settingsObj != "undefined") {
                 params.append('version', settingsObj.products.unixTime);
             } else
                 params.append('version', 0);
             const geturl = AppScriptPostUrl + "?" + params;
             var options = {};
             if (typeof createScene == 'undefined') {
-                /* not in tasker and not localhost*/
-                var finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+
+                var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
                 options = {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded',
-                        'X-RapidAPI-Key': 'ed66f1ba3fmsh2df55bb1aaf3489p155a57jsnb67785beedcf',
-                        'X-RapidAPI-Host': 'cors-proxy3.p.rapidapi.com'
-                    },
-                    body: new URLSearchParams({ 'my-url': geturl })
+                    method: 'GET'
                 };
-                /* var finalurl = 'https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alradasettings.json';
-                options = {
-                     method: 'GET'
-                 }; */
                 sndClient = "Web-Proxy";
             }
             else { /* inside Tasker*/
@@ -2010,14 +1971,16 @@
                 })
                 .then(data => {
                     if (data.data) {
-                        settingsObj.data.alradaitemnames = data.data.alradaitemnames;
-                        settingsObj.products = data.products;
+                        if (typeof settingsObj == "undefined") settingsObj = data;
+                        else {
+                            settingsObj.data.alradaitemnames = data.data.alradaitemnames;
+                            settingsObj.products = data.products;
+                        }
                         setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     }
                     else show("nothing to update.");
 
-                    reLoadSettingsData();
-                    loadCachedTrans();
+                    ChangeView(currentAppStateIndex);
 
                     if (callback)
                         callback();
@@ -2028,6 +1991,8 @@
                     goto("command||beep");
                     hideLoadingScreen();
                     createProductsView();
+                    loadCachedTrans();
+
                     clearvalues();
                 })
                 .catch((error) => {
