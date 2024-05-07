@@ -967,7 +967,7 @@
             </button>
         </div>
         <button onclick="getwarehouseName()" id="warehouseName">HQ</button>
-        <button id="showTransDate" onclick="getShopDate()"><span> </span></button>
+        <button id="showTransDate" onclick="getShopDate()"><span>29/04/2024</span></button>
 
     </div>
 </div>
@@ -1200,10 +1200,10 @@
 
         function updateTime() {
             var timeAppRefreshed = new Date();
-            timeAppRefreshed.setDate(timeAppRefreshed.getDate() + daystakeawayfromcurrent);
+
             var year = timeAppRefreshed.getFullYear(),
                 month = timeAppRefreshed.getMonth() + 1,
-                day = timeAppRefreshed.getDate(),
+                day = timeAppRefreshed.getDate() + daystakeawayfromcurrent,
                 hour = (timeAppRefreshed.getUTCHours() + 3),
                 minute = timeAppRefreshed.getMinutes(),
                 seconds = timeAppRefreshed.getSeconds();
@@ -2128,6 +2128,7 @@
                         if (!response.ok) {
                             return response.text().then(text => {
                                 if (text == "") {
+
                                     cachedTransObjectString[transactionType] = "";
                                     cachedTransactionQueries[transactionType] = "";
                                     cachedTransCount[transactionType] = 0;
@@ -2143,6 +2144,7 @@
                         return response.json();
                     })
                     .then(data => {
+
                         try {
                             responseClone.text()
                                 .then(bodyText => {
@@ -2160,6 +2162,7 @@
 
                                         setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                                     }
+
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
 
@@ -2218,13 +2221,15 @@
             <input type="text" id="edit_multiplier"  placeholder="${old_mulitplier}" value="${old_mulitplier}" />
             </div>
             <div class="buttonholder" style="display:flex">
+
             <button onclick="confirmFormYes()">🚮 ONDOA KABISA</button>`;
 
             if (appStates[currentAppStateIndex] == "wholesale_sale") ConfirmDialogContent += `<button onclick="confirmFormEdit('isLoan')">⚠️ DENI</button>`;
 
             ConfirmDialogContent += `<button onclick="confirmFormEdit()">🛠️ REKEBISHA MPYA</button>
             <button onclick="confirmFormNo()">👌🏽 USIBADILISHE</button></div>
-            </div>    </div>`;
+            </div>
+            </div>`;
             confirmFormNo = function () {
                 hideLoadingScreen();
             };
@@ -2318,6 +2323,7 @@
         function showLoadingScreen(loadingTitle = "", loadingSubTitle = "", loadingMsg = "") {
             hideLoadingScreen();
             closeFilterDialog();
+
             /*   document.getElementById("news_display").style.pointerEvents = "none"; document.getElementById("mywebview2").style.pointerEvents = "none"; */
 
             document.getElementById("loading-title").innerHTML = loadingTitle; document.getElementById("loading-subtitle").innerHTML = loadingSubTitle; document.getElementById("loading-text").innerHTML = loadingMsg;
@@ -2341,7 +2347,7 @@
             for (const itemcount in cachedTransObjectJson[appStates[currentAppStateIndex]].json_response) {
                 var row = cachedTransObjectJson[appStates[currentAppStateIndex]].json_response[itemcount];
                 if (row.transMsg == 'undefined') break;
-                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/.test(row.transMsg) ? /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1] : "1";
+                var displaymultiplier = /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/.test(row.transMsg) ? /((\-\-|\+\+|#|=|\+|ӿ|-|\$)\d{0,}[p]{0,1}\d+)$/g.exec(row.transMsg)[1] : 1;
                 dialogContent += `<li id="confirmCachedEntry" name="confirmCachedEntry_${itemcount}" >
        <div class="flex-column" >
         <span class="flex-row"><a href="#" id="confirmCachedEntry" name="TransactionEditDate_${itemcount}" title="${row.transDate}" onClick="handleTransEvent(event)">${row.transDate}</a>
@@ -2349,7 +2355,7 @@
         <div class="flex-row"><div class="flex-row">
         <a href="#" id="confirmCachedEntry" name="TransactionEditDrinkName_${itemcount}" title="${row.rawproductname}" onClick="handleTransEvent(event)">${row.rawproductname}${row.transExtraDetails}</a>
         <a href="#" id="confirmCachedEntry" name="TransactionEditUnitPrice_${itemcount}" rel="@" type="Kiasi" title="${row.unitprice}" onClick="handleTransEvent(event)">${((row.unitprice == "") || (row.unitprice == 1)) ? "" : "@" + row.unitprice}</a>
-        <a href="#" id="confirmCachedEntry" name="TransactionEditMultiplier_${itemcount}" title="${displaymultiplier.toString().match(/\d+\.{0,1}\d{0,}/g)[0]}" onClick="handleTransEvent(event)" type="" rel="${appStateMarks[currentAppStateIndex]}">${displaymultiplier}</a></div>
+        <a href="#" id="confirmCachedEntry" name="TransactionEditMultiplier_${itemcount}" title="${displaymultiplier.match(/\d+\.{0,1}\d{0,}/g)[0]}" onClick="handleTransEvent(event)" type="" rel="${appStateMarks[currentAppStateIndex]}">${displaymultiplier}</a></div>
        <button id="confirmCachedEntry" name="TransactionDelete_${itemcount}" onClick="handleTransEvent(event)">❌</button></div>
        </div></li>`;
             }
