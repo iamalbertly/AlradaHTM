@@ -1326,8 +1326,8 @@
                     for (const TransType in appStates) {
                         if (global(`ALDTMP${appStates[TransType]}`)) {
                             tempTransQuery[appStates[TransType]] = global(`ALDTMP${appStates[TransType]}`);
-                            if (TransType == '0' && typeof tempTransQuery['wholesale_sale'] != "undefined" && (tempTransQuery['wholesale_sale'] != "")) {
-                                productdetails_string = GetProductDetails(tempTransQuery['wholesale_sale']);
+                            if (typeof tempTransQuery[appStates[currentAppStateIndex]] != "undefined") {
+                                productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]]);
                                 tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
 
                                 document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
@@ -1772,9 +1772,6 @@
       </li>`;
             }
             document.querySelector("#filter-dialog-products2>#filterCategories").innerHTML = filterDialogProducts2CategoriesStr;
-
-            hideExistingInputs();
-
             addInputEventListeners();
         }
 
@@ -1832,11 +1829,6 @@
 
         function productNameWithContact(name, contactName, contactPhone = "") {
             return (contactName && (name != contactName)) ? `${name} -${contactName}${(contactPhone != "") ? "<br><span>" + contactPhone + "</span>" : "<span> - </span>"}` : name;
-        }
-
-        function hideExistingInputs() {
-            const existingInput = document.querySelector("a > input");
-            existingInput?.classList.add("hidden");
         }
 
         function addInputEventListeners() {
@@ -1991,7 +1983,6 @@
                     goto("command||beep");
                     hideLoadingScreen();
                     ChangeView(currentAppStateIndex);
-                    createProductsView();
                     loadCachedTrans();
                     clearvalues();
                 })
