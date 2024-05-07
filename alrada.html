@@ -984,7 +984,7 @@
         <button disabled id="btnSend2Cache" onClick="addTransactionToCache(event)"
             class="functionpad disabled">➡️</button>
         <button id="cachedTrans" class="flex-row notbutton">
-            <span class="hiddenpreview">BADO REPOTI <sub>👇🏽 HAIJATUMWA !
+            <span class="hiddenpreview">REPOTI<sub>👇🏽 HAIJATUMWA !
                     👇🏽</sub></span>
             <span>
                 <span class="part2 highlight-border">-</span>
@@ -1697,7 +1697,7 @@
                         var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake)) ? /(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1] : "";
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
-                            stockstring = (stockstring + " p" + (product.carton * (eval("." + secondpart)))).trim();
+                            stockstring = ( Math.round(stockstring) + " p" + (product.carton * (eval("." + secondpart)))).trim();
                         }
 
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
