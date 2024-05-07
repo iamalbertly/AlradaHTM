@@ -116,6 +116,7 @@
             font-weight: 100;
             letter-spacing: 1px;
             text-decoration-line: none;
+            text-wrap: nowrap;
         }
 
         h2 {
@@ -984,8 +985,7 @@
         <button disabled id="btnSend2Cache" onClick="addTransactionToCache(event)"
             class="functionpad disabled">➡️</button>
         <button id="cachedTrans" class="flex-row notbutton">
-            <span class="hiddenpreview">REPOTI<sub>👇🏽 HAIJATUMWA !
-                    👇🏽</sub></span>
+            <span class="hiddenpreview">REPOTI<br /><sub>👇🏽HAIJATUMWA👇🏽</sub></span>
             <span>
                 <span class="part2 highlight-border">-</span>
                 <span class="part1 highlight-border">-</span>
@@ -1103,7 +1103,6 @@
             console.log("goto: " + location);
         }
     }
-
     try {
         const appStates = ['wholesale_sale', 'sent2_bank', 'wholesale_purchase_delivered', 'stocktake'],
             appStateMarks = ['ӿ', '$', '++', '#'],
@@ -1304,6 +1303,8 @@
                     document.querySelector("#result_display>ul").innerHTML = "";
             }
 
+
+
             document.getElementById("mywebview").classList.value = "";
             document.getElementById("mywebview").classList.add(local_appstate);
             document.getElementById("productsview").classList.add(local_appstate);
@@ -1354,8 +1355,8 @@
                             cachedTransCashTotal[appStates[TransType]] = 0;
                         }
                     }
-                    document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[0]];
-                    document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[0]];
+                    document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[appStates[currentAppStateIndex]];
+                    document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[appStates[currentAppStateIndex]];
                     document.querySelectorAll(".hiddenpreview").forEach(el => {
                         el.classList.remove("hiddenpreview");
                         el.classList.add("shownpreview");
@@ -1697,7 +1698,7 @@
                         var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake)) ? /(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1] : "";
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
-                            stockstring = ( Math.round(stockstring) + " p" + (product.carton * (eval("." + secondpart)))).trim();
+                            stockstring = (Math.round(stockstring) + " p" + (product.carton * (eval("." + secondpart)))).trim();
                         }
 
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
@@ -1980,7 +1981,6 @@
                     }
                     else show("nothing to update.");
 
-                    ChangeView(currentAppStateIndex);
 
                     if (callback)
                         callback();
@@ -1990,9 +1990,9 @@
                     show(sndClient + ": Successfully Updated Settings...");
                     goto("command||beep");
                     hideLoadingScreen();
+                    ChangeView(currentAppStateIndex);
                     createProductsView();
                     loadCachedTrans();
-
                     clearvalues();
                 })
                 .catch((error) => {
@@ -2007,7 +2007,7 @@
                     }
                     if (global('ALDSETTING')) {
                         var settingsObj = JSON.parse(global('ALDSETTING'));
-                        loadCachedTrans();
+
                         reLoadSettingsData();
                         ChangeView(currentAppStateIndex);
                     }
