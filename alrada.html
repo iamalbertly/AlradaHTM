@@ -1698,8 +1698,9 @@
                         var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake)) ? /(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1] : "";
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
-                            stockstring = (Math.round(stockstring) + " p" + (product.carton * (eval("." + secondpart)))).trim();
+                            stockstring = (Math.round(stockstring) + " p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
                         }
+                        stockstring = stockstring.replace(/^0 /, "");
 
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
                     });
@@ -1712,8 +1713,9 @@
                         var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake)) ? /(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1] : "";
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
-                            stockstring = (stockstring + " p" + (product.carton * (eval("." + secondpart)))).trim();
+                            stockstring = (stockstring + " p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
                         }
+
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, false);
                     });
@@ -1800,7 +1802,7 @@
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
             var inputstocktakeclass = (/^\-/g.test(thysaylaststocktakeamt)) ? "attention" : "";
 
-            if (/^$|0/g.test(thysaylaststocktakeamt)) {
+            if (/^$|^0$/g.test(thysaylaststocktakeamt)) {
                 if (/supplier|customer/g.test(category)) {
                     thysaylaststocktakeamt = "";
                 } else
@@ -1842,7 +1844,7 @@
             });
         }
         function reLoadSettingsData() {
-            setGlobal("ALDLOG", `${partOfDay}_${currentTransDateStr}_clr:`);
+
             if (typeof settingsObj == "undefined") return false;
             if (typeof settingsObj.data.customers != "undefined") {
                 customers_jsonString = JSON.parse(settingsObj.data.customers).slice(1);
@@ -1869,13 +1871,14 @@
             }
         }
         function ShouldWeCheckUpdates() {
+            var tss = currentTransDateStr.slice(0, 14);
             if (typeof createScene != 'undefined') {
                 /* is in tasker */
                 return true;
 
             } else {
-                var rgx = new RegExp(`${partOfDay}_${currentTransDateStr}_clr`, "g");
-                return rgx.test(global("ALDLOG"));
+                var rgx = new RegExp(`${partOfDay}_${tss}.*_clr`, "g");
+                return !rgx.test(global("ALDLOG"));
             }
 
             return false;
@@ -1887,16 +1890,16 @@
                 if (global('ALDSTATE'))
                     currentAppStateIndex = eval(global("ALDSTATE"));
 
-                if (global('ALDSETTING') && ShouldWeCheckUpdates()) {
+                if (global('ALDSETTING')) {
                     settingsObj = JSON.parse(global('ALDSETTING'));
                     loadCachedTrans();
                     reLoadSettingsData();
                     ChangeView(currentAppStateIndex);
-                } else {
-
+                }
+                if (ShouldWeCheckUpdates())
                     fetchProductUpdate(false, false, reLoadSettingsData);
 
-                }
+                setGlobal("ALDLOG", `${partOfDay}_${currentTransDateStr}_clr:`);
                 initializeListeners();
 
             } catch (e) {
@@ -1996,12 +1999,7 @@
                             });
                         show("Error! " + error.message + "\n" + error.stack);
                     }
-                    if (global('ALDSETTING')) {
-                        var settingsObj = JSON.parse(global('ALDSETTING'));
 
-                        reLoadSettingsData();
-                        ChangeView(currentAppStateIndex);
-                    }
                     hideLoadingScreen();
                 });
 
