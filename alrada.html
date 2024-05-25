@@ -14,7 +14,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            width: 99.708%;
+            width: min-content;
+            min-width: 53%;
         }
 
         h4,
@@ -2053,7 +2054,7 @@
 
                 else if (typeof createScene == 'undefined') {
                     /* not in tasker and not localhost*/
-                     finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
+                    finalurl = 'https://cors-proxy3.p.rapidapi.com/api';
                     options = {
                         method: 'POST',
                         headers: {
@@ -2330,7 +2331,7 @@
             document.getElementById('editTransDateSubmit').addEventListener('click', function (e) {
                 isoncurrenttime = false;
                 var val = document.getElementById("editTransDate").value;
-                if (/^(0{0,1}[1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d$/.test(val)) {
+                if (/^(0{0,1}[1-9]|[12][0-9]|3[01])\/([0-9]{0,2}|1[012])\/(19|20)\d\d/.test(val)) {
                     currentTransDateStr = (val == "") ? currentTransDateStr : val;
                     document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
                 } else show("Not a Valid Date", true);
