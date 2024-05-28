@@ -1990,7 +1990,6 @@
                     hideLoadingScreen();
                     ChangeView(currentAppStateIndex);
                     loadCachedTrans();
-                    clearvalues();
                 })
                 .catch((error) => {
                     if (error.message.includes('Failed to fetch')) {
@@ -3097,6 +3096,9 @@
             });
 
             query = "",
+                currentFocusedProduct = "",
+                originalFocusedProduct = "",
+                isMultTextArray = {},
                 warehouseName = staffName,
                 sign_mult = "",
                 sign_wholesale_remain = "",
