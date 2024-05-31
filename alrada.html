@@ -2009,6 +2009,7 @@
 
         function sendCachedTrans(event) {
             var sndClient = "";
+            var sndClient = "";
             try {
                 var transactionType = appStates[currentAppStateIndex],
                     JsonObj_BeingProcessed = cachedTransObjectJson[transactionType],
@@ -2017,7 +2018,7 @@
                     show("Hujafadhi chochote...");
                     return 0;
                 };
-                hideLoadingScreen();
+                
                 var transObjStr = cachedTransObjectString[transactionType];
                 if (global(`ALDLSTTransStr${appStates[currentAppStateIndex]}`) == transObjStr) {
                     show("Hakuna Data Mpya, Hii Inajirudiya!");
@@ -2029,11 +2030,13 @@
                 const snapshotUnixTime = Math.floor(Date.now() / 1000);
                 const data = json_response.map(entry => [`${entry.transDate} ${entry.transTime}`, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
                 const values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
-
+try{
                 setClip(values, "", function (x) {
                     showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
                 });
-
+            }catch(e){
+                show("error:"+e.message);
+            }
                 const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
                 params.append('payload', values);
                 const geturl = AppScriptPostUrl + "?" + params;
@@ -2075,7 +2078,7 @@
                     };
                     sndClient = "Tasker";
                 }
-
+                hideLoadingScreen();
                 fetch(finalurl, options)
                     .then(response => {
                         responseClone = response.clone();
