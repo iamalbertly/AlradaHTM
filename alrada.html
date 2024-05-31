@@ -1200,11 +1200,12 @@
 
 
         function updateTime() {
-            var timeAppRefreshed = new Date();
+            var timeAppRefreshed = new Date() ;
+          timeAppRefreshed.setDate(timeAppRefreshed.getDate() + daystakeawayfromcurrent);
 
             var year = timeAppRefreshed.getFullYear(),
                 month = timeAppRefreshed.getMonth() + 1,
-                day = timeAppRefreshed.getDate() + daystakeawayfromcurrent,
+                day = timeAppRefreshed.getDate(),
                 hour = (timeAppRefreshed.getUTCHours() + 3),
                 minute = timeAppRefreshed.getMinutes(),
                 seconds = timeAppRefreshed.getSeconds();
@@ -2008,7 +2009,7 @@
         }
 
         function sendCachedTrans(event) {
-            var sndClient = "";
+           
             var sndClient = "";
             try {
                 var transactionType = appStates[currentAppStateIndex],
@@ -2078,14 +2079,15 @@ try{
                     };
                     sndClient = "Tasker";
                 }
-                hideLoadingScreen();
+              
                 fetch(finalurl, options)
                     .then(response => {
                         responseClone = response.clone();
                         if (!response.ok) {
+                            clearvalues();
                             return response.text().then(text => {
                                 if (text == "") {
-
+                                    
                                     cachedTransObjectString[transactionType] = "";
                                     cachedTransactionQueries[transactionType] = "";
                                     cachedTransCount[transactionType] = 0;
@@ -2094,6 +2096,11 @@ try{
                                     document.getElementById("btnSend2Cache").disabled = false;
                                     document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                                     document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                                    show(sndClient + ": Repoti Imetumwa...");
+                            goto("command||beep");
+
+                            createProductsView();
+                            hideLoadingScreen();
                                 } else
                                     throw new Error('ErrServer response: ' + text, false, true);
                             });
@@ -2107,7 +2114,7 @@ try{
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
                                         goto(`command||sendupdate_${transactionType}_${JsonObj_BeingProcessed.finalTextResponseMsg}`);
-                                        clearvalues();
+                                   /*     clearvalues();
                                         cachedTransObjectString[transactionType] = "";
                                         cachedTransactionQueries[transactionType] = "";
                                         cachedTransCount[transactionType] = 0;
@@ -2116,18 +2123,14 @@ try{
                                         document.getElementById("btnSend2Cache").disabled = false;
                                         document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                                         document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-
+*/
                                         setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                                     }
 
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
 
-                            show(sndClient + ": Repoti Imetumwa...");
-                            goto("command||beep");
-
-                            createProductsView();
-                            hideLoadingScreen();
+                            
                         } catch (e) {
                             document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
@@ -2151,6 +2154,7 @@ try{
                 document.getElementById("btnSend2Cache").disabled = true;
                 document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                 document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                hideLoadingScreen();
                 show("Tunatuma repoti...");
             }
             catch (e) {
@@ -2207,7 +2211,7 @@ try{
 
                 cachedTransactionQueries[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery;
                 cachedTransCashTotal[appStates[currentAppStateIndex]] = eval(cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseTotal);
-
+                cachedTransCount[appStates[currentAppStateIndex]] = cachedTransObjectJson[appStates[currentAppStateIndex]].finalQuery.split(",").length;
                 var result_display = cachedTransObjectJson[appStates[currentAppStateIndex]].finalResponseMsg;
 
                 if (cachedTempTrans2Process[appStates[currentAppStateIndex]])
