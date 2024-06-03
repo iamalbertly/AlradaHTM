@@ -1200,8 +1200,8 @@
 
 
         function updateTime() {
-            var timeAppRefreshed = new Date() ;
-          timeAppRefreshed.setDate(timeAppRefreshed.getDate() + daystakeawayfromcurrent);
+            var timeAppRefreshed = new Date();
+            timeAppRefreshed.setDate(timeAppRefreshed.getDate() + daystakeawayfromcurrent);
 
             var year = timeAppRefreshed.getFullYear(),
                 month = timeAppRefreshed.getMonth() + 1,
@@ -1372,6 +1372,144 @@
 
         }
 
+        function handleInputEnterEvent(e) {
+
+            if (typeof keysPressed[currentFocusedProduct] == "undefined")
+                keysPressed[currentFocusedProduct] = "";
+            var value = e.target.value;
+            if (value.includes('-')) {
+                var parts = value.split('-');
+                var sum = parts.reduce(function (a, b) {
+                    return Number(a) + Number(b);
+                }, 0);
+                e.target.value = sum;
+            }
+            if (e.target.parentNode.parentNode.parentNode.id == "results") {
+                /* trigger an enter keyup event' see if its a an enter key */
+                show("keypressed: " + e.key);
+                if (e.key != "enter")
+                    var parts = keysPressed[currentFocusedProduct].split("-");
+                var val = parts.reduce(function (a, b) {
+                    if (a == 0)
+                        return b;
+                    return Number(a) + Number(b);
+                }, 0);
+                if (!Number.isNaN(val) && val != "") {
+                    document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
+                    if (originalFocusedProduct != currentFocusedProduct)
+                        try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
+                    originalFocusedProduct = currentFocusedProduct;
+
+                    if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
+
+                        extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
+                        if (extraTransDetails == null || extraTransDetails == "") {
+                            throw new Error('Lazima Uingize Aina Ya Malipo ');
+                        }
+                        else {
+                            if (/Pesa/g.test(currentFocusedProduct))
+                                extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
+
+                        }
+
+                        var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
+                    } else
+                        var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
+
+                    if (!/\d+$/.test(query)) {
+                        if ((appStates[currentAppStateIndex] == "stocktake"))
+                            query += "0";
+                        else {
+                            if (/Kony|vant|Valu|Hanson/.test(query))
+                                query += ".1";
+                            else
+                                query += "1";
+                        }
+                    }
+
+                    if (appStates[currentAppStateIndex] != "stocktake") {
+                        var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
+                        var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
+                        if (firstpart != "" && secondpart != "") {
+                            var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
+                            var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
+                            var prd = query.replaceAll(rg, "");
+                            query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
+                        }
+                    } else {
+                        var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
+                        var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
+                        var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d{0,}\\.{0,1}\\d{0,})(.*)`);
+                        var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
+
+                        if (exists) {
+                            /* find the amount thats already their and add it to */
+                            var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").match(rgx);
+                            if (/\./g.test(firsthalf[5])) {
+                                var newtotalvalue = eval(firsthalf[5].replace(".", "")) + eval(newvalue.replace(".", ""));
+                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").replace(rgx, `$1$2$3$4#.${newtotalvalue}$6`).replaceAll(/#\.(\d+)/g, "#p$1");
+                            } else {
+                                var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
+                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
+                            }
+
+                            productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
+                            tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+
+                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                            document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
+                            document.querySelectorAll(".disabled").forEach(el => {
+                                el.disabled = false;
+                                el.classList.remove("disabled");
+                                el.classList.add("enabled");
+                            });
+                            return 0;
+                        }
+                    }
+
+                    query = `(${warehouseName.toLowerCase()})${query}`;
+                    date = new Date();
+
+                    query = (currentTransDateStr.trim() + " " + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
+                    if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
+                    if (appStates[currentAppStateIndex] == "stocktake") {
+                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
+                    } else {
+                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
+                    }
+                    productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
+                    tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
+                    setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
+                    document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
+                    document.querySelectorAll(".disabled").forEach(el => {
+                        el.disabled = false;
+                        el.classList.remove("disabled");
+                        el.classList.add("enabled");
+                    });
+                    document.getElementById("submitbuttonholder").classList.remove("hyper");
+                    document.getElementById("myinputbar").classList.remove("hyper");
+
+                    if (appStates[currentAppStateIndex] == "stocktake") {
+                        var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
+                        var child = document.querySelector(el).lastChild;
+
+                        child.classList.add("hidden");
+                    }
+                    document.getElementById('search').value = "";
+
+                    keysPressed[currentFocusedProduct] = "";
+                    document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
+
+                    document.querySelector(`a[name="${originalFocusedProduct}"]>input`).focus();
+
+                    /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
+                      if (nextInput.lastChild) {
+                          nextInput.lastChild.dispatchEvent(new Event('focus'));
+                      } */
+                }
+            }
+        }
+
         function createList(products = ProductNamesLiWithInput, holderElement, hasinput = true) {
 
             try {
@@ -1396,140 +1534,8 @@
                                 input.removeEventListener('blur', function (e) { });
 
                                 input.addEventListener('blur', function (e) {
-
-                                    if (typeof keysPressed[currentFocusedProduct] == "undefined")
-                                        keysPressed[currentFocusedProduct] = "";
-                                    var value = e.target.value;
-                                    if (value.includes('-')) {
-                                        var parts = value.split('-');
-                                        var sum = parts.reduce(function (a, b) {
-                                            return Number(a) + Number(b);
-                                        }, 0);
-                                        e.target.value = sum;
-                                    }
-                                    if (e.target.parentNode.parentNode.parentNode.id == "results") {
-                                        /* trigger an enter keyup event */
-
-                                        var parts = keysPressed[currentFocusedProduct].split("-");
-                                        var val = parts.reduce(function (a, b) {
-                                            if (a == 0)
-                                                return b;
-                                            return Number(a) + Number(b);
-                                        }, 0);
-                                        if (!Number.isNaN(val) && val != "") {
-                                            document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = val;
-                                            if (originalFocusedProduct != currentFocusedProduct)
-                                                try { document.querySelector("a.product.pressed").parentNode.classList.remove("hovering"); } catch (e) { }
-                                            originalFocusedProduct = currentFocusedProduct;
-
-                                            if (/MATUMIZI_MENGINE|Transport|Food|Pesa/g.test(currentFocusedProduct) && (appStates[currentAppStateIndex] != "stocktake")) {
-
-                                                extraTransDetails = prompt("Elezeya Malipo ya " + currentFocusedProduct, "");
-                                                if (extraTransDetails == null || extraTransDetails == "") {
-                                                    throw new Error('Lazima Uingize Aina Ya Malipo ');
-                                                }
-                                                else {
-                                                    if (/Pesa/g.test(currentFocusedProduct))
-                                                        extraTransDetails = (appStates[currentAppStateIndex] == "wholesale_purchase_delivered") ? "Amelipa " + extraTransDetails : "Hakulipa " + extraTransDetails;
-
-                                                }
-
-                                                var query = `${currentFocusedProduct}::${extraTransDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
-                                            } else
-                                                var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${e.target.value.replace(/^0/, ".")}`;;
-
-                                            if (!/\d+$/.test(query)) {
-                                                if ((appStates[currentAppStateIndex] == "stocktake"))
-                                                    query += "0";
-                                                else {
-                                                    if (/Kony|vant|Valu|Hanson/.test(query))
-                                                        query += ".1";
-                                                    else
-                                                        query += "1";
-                                                }
-                                            }
-
-                                            if (appStates[currentAppStateIndex] != "stocktake") {
-                                                var firstpart = (/\d+\.\d+$/.test(query)) ? /(\d+)\.\d+$/.exec(query)[1] : "";
-                                                var secondpart = /\.\d+$/.test(query) ? /\.(\d+)$/.exec(query)[1] : "";
-                                                if (firstpart != "" && secondpart != "") {
-                                                    var rg = new RegExp("[\+\+|\-|\+|\#|ӿ]" + firstpart + "." + secondpart, "g");
-                                                    var adding = new RegExp("([\+\+|\-|\+|\#|ӿ])" + firstpart + "." + secondpart, "g").exec(query);
-                                                    var prd = query.replaceAll(rg, "");
-                                                    query = prd + adding[1] + firstpart + "," + prd + adding[1] + "." + secondpart
-                                                }
-                                            } else {
-                                                var newvalue = query.match(/\d{0,}\.{0,1}\d{0,}$/)[0];
-                                                var prd = query.match(/(.*)#\d{0,}\.{0,1}\d{0,}$/)[1];
-                                                var rgx = new RegExp(`(.*)(\\(${warehouseName.toLowerCase()}\\))(${prd})(@{0,1}\\d+)#(\\d{0,}\\.{0,1}\\d{0,})(.*)`);
-                                                var exists = rgx.test(tempTransQuery[appStates[currentAppStateIndex]]);
-
-                                                if (exists) {
-                                                    /* find the amount thats already their and add it to */
-                                                    var firsthalf = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").match(rgx);
-                                                    if (/\./g.test(firsthalf[5])) {
-                                                        var newtotalvalue = eval(firsthalf[5].replace(".", "")) + eval(newvalue.replace(".", ""));
-                                                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(/p(\d+)/g, "\.$1").replace(rgx, `$1$2$3$4#.${newtotalvalue}$6`).replaceAll(/#\.(\d+)/g, "#p$1");
-                                                    } else {
-                                                        var newtotalvalue = eval(firsthalf[5]) + eval(newvalue);
-                                                        tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replace(rgx, `$1$2$3$4#${newtotalvalue}$6`);
-                                                    }
-
-                                                    productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                                    tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
-
-                                                    setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
-                                                    document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
-                                                    document.querySelectorAll(".disabled").forEach(el => {
-                                                        el.disabled = false;
-                                                        el.classList.remove("disabled");
-                                                        el.classList.add("enabled");
-                                                    });
-                                                    return 0;
-                                                }
-                                            }
-
-                                            query = `(${warehouseName.toLowerCase()})${query}`;
-                                            date = new Date();
-
-                                            query = (currentTransDateStr.trim() + " " + query.replaceAll(/\.(\d+)$/gm, "p$1")).trim();
-                                            if (!tempTransQuery[appStates[currentAppStateIndex]]) tempTransQuery[appStates[currentAppStateIndex]] = "";
-                                            if (appStates[currentAppStateIndex] == "stocktake") {
-                                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].replaceAll(query + ",", "").concat(`,${query}`).replace(/^,/, "");
-                                            } else {
-                                                tempTransQuery[appStates[currentAppStateIndex]] = tempTransQuery[appStates[currentAppStateIndex]].concat((`,${query}`).replace("undefined", "").replace(/\n/, "").trim());
-                                            }
-                                            productdetails_string = GetProductDetails(tempTransQuery[appStates[currentAppStateIndex]].replace(/^,/, ""));
-                                            tempTransObj[appStates[currentAppStateIndex]] = JSON.parse(productdetails_string);
-                                            setGlobal(`ALDTMP${appStates[currentAppStateIndex]}`, tempTransObj[appStates[currentAppStateIndex]].finalQuery);
-                                            document.querySelector("#result_display>ul").innerHTML = tempTransObj[appStates[currentAppStateIndex]].finalResponseMsg.replaceAll("\n", "<br/>");
-                                            document.querySelectorAll(".disabled").forEach(el => {
-                                                el.disabled = false;
-                                                el.classList.remove("disabled");
-                                                el.classList.add("enabled");
-                                            });
-                                            document.getElementById("submitbuttonholder").classList.remove("hyper");
-                                            document.getElementById("myinputbar").classList.remove("hyper");
-
-                                            if (appStates[currentAppStateIndex] == "stocktake") {
-                                                var el = "li.product[name='" + e.target.name.replace("/", "") + "']";
-                                                var child = document.querySelector(el).lastChild;
-
-                                                child.classList.add("hidden");
-                                            }
-                                            document.getElementById('search').value = "";
-
-                                            keysPressed[currentFocusedProduct] = "";
-                                            document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
-
-                                            document.querySelector(`a[name="${originalFocusedProduct}"]>input`).focus();
-
-                                            /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
-                                              if (nextInput.lastChild) {
-                                                  nextInput.lastChild.dispatchEvent(new Event('focus'));
-                                              } */
-                                        }
-                                    }
+                                    if (e.srcElement.value != "")
+                                        handleInputEnterEvent(e);
                                 });
                                 input.addEventListener('input', function (e) {
 
@@ -1537,10 +1543,12 @@
                                     var target = e.target.id;
                                     if (typeof keysPressed[currentFocusedProduct] == "undefined")
                                         keysPressed[currentFocusedProduct] = "";
-
-                                    if (!isNaN(e.data) || e.data === '+' || e.data === '-' || e.data === '.') {
-                                        keysPressed[currentFocusedProduct] += e.data;
-                                    }
+                                    if (e.inputType == "deleteContentBackward") {
+                                        keysPressed[currentFocusedProduct] = keysPressed[currentFocusedProduct].slice(0, -1);
+                                    } else
+                                        if (!isNaN(e.data) || e.data === '+' || e.data === '-' || e.data === '.') {
+                                            keysPressed[currentFocusedProduct] += e.data;
+                                        }
 
                                 });
 
@@ -1551,13 +1559,13 @@
                                     if (typeof keysPressed[currentFocusedProduct] == "undefined")
                                         keysPressed[currentFocusedProduct] = "";
 
-                                    if (e.key === "Backspace") {
-                                        keysPressed[currentFocusedProduct] = keysPressed[currentFocusedProduct].slice(0, -1);
-                                    }
-                                    else if (e.key === 'Enter') {
+                                    if (e.key === 'Enter') {
                                         /* click enter insid 1 of the products in the results productview: submittransacions*/
 
-                                        e.target.blur();
+                                        /* e.target.blur(); */
+                                        /*  const enterKeyEvent = new KeyboardEvent('keypress', { key: 'Enter' });
+                                       e.dispatchEvent(enterKeyEvent); */
+                                        handleInputEnterEvent(e);
                                     }
 
                                 });
@@ -2009,7 +2017,7 @@
         }
 
         function sendCachedTrans(event) {
-           
+
             var sndClient = "";
             try {
                 var transactionType = appStates[currentAppStateIndex],
@@ -2019,7 +2027,7 @@
                     show("Hujafadhi chochote...");
                     return 0;
                 };
-                
+
                 var transObjStr = cachedTransObjectString[transactionType];
                 if (global(`ALDLSTTransStr${appStates[currentAppStateIndex]}`) == transObjStr) {
                     show("Hakuna Data Mpya, Hii Inajirudiya!");
@@ -2031,13 +2039,13 @@
                 const snapshotUnixTime = Math.floor(Date.now() / 1000);
                 const data = json_response.map(entry => [`${entry.transDate} ${entry.transTime}`, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
                 const values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
-try{
-                setClip(values, "", function (x) {
-                    showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
-                });
-            }catch(e){
-                show("error:"+e.message);
-            }
+                try {
+                    setClip(values, "", function (x) {
+                        showLoadingScreen("Tunatuma Repoti...", "<h1>♻️</h1>", "<span class='tunatumaMsg'>" + JSON.parse(cachedTransObjectString[transactionType]).finalResponseMsg.replaceAll(/(\=\s\d+\,{0,}\d+)(\s)/gm, "$1<br/>").replaceAll(/\@\d+\.{0,1}\d{0,}/gm, "").replaceAll(/(TOTAL.*)/gm, "<br/>$1") + "</span>");
+                    });
+                } catch (e) {
+                    show("error:" + e.message);
+                }
                 const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
                 params.append('payload', values);
                 const geturl = AppScriptPostUrl + "?" + params;
@@ -2079,15 +2087,15 @@ try{
                     };
                     sndClient = "Tasker";
                 }
-              
+
                 fetch(finalurl, options)
                     .then(response => {
                         responseClone = response.clone();
                         if (!response.ok) {
-                            clearvalues();
+                            clearvalues(); hideLoadingScreen();
                             return response.text().then(text => {
                                 if (text == "") {
-                                    
+
                                     cachedTransObjectString[transactionType] = "";
                                     cachedTransactionQueries[transactionType] = "";
                                     cachedTransCount[transactionType] = 0;
@@ -2097,10 +2105,10 @@ try{
                                     document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                                     document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
                                     show(sndClient + ": Repoti Imetumwa...");
-                            goto("command||beep");
+                                    goto("command||beep");
 
-                            createProductsView();
-                            hideLoadingScreen();
+                                    createProductsView();
+
                                 } else
                                     throw new Error('ErrServer response: ' + text, false, true);
                             });
@@ -2114,23 +2122,23 @@ try{
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
                                         goto(`command||sendupdate_${transactionType}_${JsonObj_BeingProcessed.finalTextResponseMsg}`);
-                                   /*     clearvalues();
-                                        cachedTransObjectString[transactionType] = "";
-                                        cachedTransactionQueries[transactionType] = "";
-                                        cachedTransCount[transactionType] = 0;
-                                        cachedTransCashTotal[transactionType] = 0;
-                                        document.getElementById("btnSend2Cache").classList.remove("disabled");
-                                        document.getElementById("btnSend2Cache").disabled = false;
-                                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-                                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-*/
+                                        /*     clearvalues();
+                                             cachedTransObjectString[transactionType] = "";
+                                             cachedTransactionQueries[transactionType] = "";
+                                             cachedTransCount[transactionType] = 0;
+                                             cachedTransCashTotal[transactionType] = 0;
+                                             document.getElementById("btnSend2Cache").classList.remove("disabled");
+                                             document.getElementById("btnSend2Cache").disabled = false;
+                                             document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+     */
                                         setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                                     }
 
                                     show('txtServer responded: ' + bodyText, false, true, false);
                                 });
 
-                            
+
                         } catch (e) {
                             document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
@@ -2342,6 +2350,10 @@ try{
                     document.querySelector("#showTransDate>span").innerHTML = currentTransDateStr;
                 } else show("Not a Valid Date", true);
                 document.getElementById("filter-dialog-transDate").classList.add("hidden");
+
+                confirmFormEdit(e);
+                confirmFormEdit = function () { }
+
             });
 
             document.getElementById('editTransDateleft').addEventListener('click', function () {
@@ -2675,7 +2687,7 @@ try{
                     document.getElementById("filter-dialog-transDate").classList.remove("hidden");
                     document.getElementById("filter-dialog-transDate").name = target.name + "__" + editing;
                     confirmFormEdit = function (e) {
-                        if (e.key != "Enter") return;
+
                         var newval = document.querySelector("#filter-dialog-transDate>div>input").value;
                         var newediting = editing.replace(sign + oldval, sign + newval);
                         var newquery = oldquery.replace(editing, newediting);
@@ -3101,11 +3113,14 @@ try{
             document.querySelectorAll("#results>li.product.active").forEach(product => {
                 product.classList.remove("processed");
             });
-
+            document.querySelectorAll("input").forEach(input => {
+                input.value = "";
+            })
             query = "",
                 currentFocusedProduct = "",
                 originalFocusedProduct = "",
                 isMultTextArray = {},
+                keysPressed = [],
                 warehouseName = staffName,
                 sign_mult = "",
                 sign_wholesale_remain = "",
