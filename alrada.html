@@ -1387,8 +1387,8 @@
             }
             if (e.target.parentNode.parentNode.parentNode.id == "results") {
                 /* trigger an enter keyup event' see if its a an enter key */
-                show("keypressed: " + e.key);
-                if (e.key != "enter")
+                /* show("keypressed: " + e.key); */
+                if (e.key != "enter")    
                     var parts = keysPressed[currentFocusedProduct].split("-");
                 var val = parts.reduce(function (a, b) {
                     if (a == 0)
