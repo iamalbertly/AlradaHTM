@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^localhost$ [NC]
+RewriteRule ^$ http://127.0.0.1:3000/alrada.html [L,R=301]
