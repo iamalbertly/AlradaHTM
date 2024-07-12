@@ -2053,9 +2053,13 @@
 
                 const snapshotUnixTime = Math.floor(Date.now() / 1000);
                 const data = json_response.map(entry => [`${entry.transDate} ${entry.transTime}`, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
-                const values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
+                if(param == "sms")
+                var values = cachedTransObjectJson[appStates[currentAppStateIndex]].finalTextResponseMsg;
+            else
+                var values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
+            
                 try {
-                    if (param == "sms") {
+                    if ((param == "sms")||(param == "smscode")) {
                         setClip(values, "", function (x) {
 
                             cachedTransObjectString[transactionType] = "";
@@ -2158,7 +2162,7 @@
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
                                         goto(`command||sendupdate_${transactionType}_${JsonObj_BeingProcessed.finalTextResponseMsg}`);
-                                        /*     clearvalues();
+                                             clearvalues();
                                              cachedTransObjectString[transactionType] = "";
                                              cachedTransactionQueries[transactionType] = "";
                                              cachedTransCount[transactionType] = 0;
@@ -2167,7 +2171,7 @@
                                              document.getElementById("btnSend2Cache").disabled = false;
                                              document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
                                              document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-     */
+     
                                         setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                                     }
 
@@ -2367,7 +2371,7 @@
             dialogContent += `</ul></code>`;
             document.getElementById("loading-text").innerHTML = dialogContent;
             document.getElementById("loading-screen").classList.remove("hidden");
-            document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = `<button onClick="clearCachedTrans()" >Futa Zote<br/>${cachedTransCashTotal[appStates[currentAppStateIndex]]}</button><button onclick='sendCachedTrans(event,"sms")'>Tuma<BR>kwa SMS</button><button onclick='sendCachedTrans()'>Tuma<BR>Kwa Internet</button><button id='btnClose' onClick='hideLoadingScreen();clearvalues()'> X </button>`;
+            document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = `<button onClick="clearCachedTrans()" >Futa Zote<br/>${cachedTransCashTotal[appStates[currentAppStateIndex]]}</button><div class='flex row' style='min-width: 40%;'><button onclick='sendCachedTrans(event,"sms")'>Tuma<BR>kwa SMS</button><button onclick='sendCachedTrans(event,"smscode")'>Code<BR>kwa SMS</button></div><button onclick='sendCachedTrans()'>Tuma<BR>Kwa Internet</button><button id='btnClose' onClick='hideLoadingScreen();clearvalues()'> X </button>`;
             document.getElementById("loading-title").innerHTML = `Angalia vizuri na Sahihisha ripoti,<br/><sub>kabla ya kutuma. ${JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]).finalResponseTotal.toLocaleString('en-US').replace(/\.00/g, "")}</sub>`
         }
 
