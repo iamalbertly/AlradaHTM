@@ -3085,7 +3085,7 @@
                 getendvalue = (getendvalue) ? getendvalue : "";
 
                 response = `${response}<li id="confirmTransactionEntry" name="confirmTransactionEntry_${realitemcount}" >`;
-                response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}.</small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
+                response += `<div class="flex-row"><div class="flex-row"><small>${itemcount}. </small><a id="confirmTransactionEntry" href="#" name="TransactionEditDrinkName_${realitemcount}" title="${rawproductname}${transExtraDetails}" onClick="handleTransEvent(event)" > ${rawproductname}${transExtraDetails}</a>`;
                 response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditUnitPrice_${realitemcount}" rel="@" type="Kiasi" title="${unitprice}" onClick="handleTransEvent(event)"> ${((unitprice == "") || (unitprice == 1)) ? "" : "@" + unitprice}</a>`;
                 if (appStateMark == "=") {
                     response += `<a id="confirmTransactionEntry" href="#" name="TransactionEditMultiplier_${realitemcount}" rel="${appStateMark}" title="${priceTotal}" onClick="handleTransEvent(event)">${realeditmultipliersign}  =${priceTotal.toLocaleString('en-US').replace(/\.00/g, "").trim()} </a>`;
