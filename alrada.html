@@ -1178,7 +1178,7 @@
                     }
                 } else {
                     localStorage.setItem(variableName, value);
-                }
+                } 
             }
             function global(variableName = "", par2 = "") {
                 var storedValue = localStorage.getItem(variableName);
@@ -1680,17 +1680,24 @@
                         if (/Pesa/g.test(a.OfficialName)) {
                             return 1;
                         }
-
-                        /* If a is "Pesa", put b before a */
+                        
+                        if(a.thysaylaststocktakeamt  ==0) return 1;
+                        
+                        if(b.thysaylaststocktakeamt  ==0) return -1;
                         if (/Crate Tupu|Chupa|Casha/g.test(a.OfficialName)) return 1;
 
                         /* Group closely matching OfficialNames together */
                         if (a.OfficialName.includes(b.OfficialName.slice(0, 4)) || b.OfficialName.includes(a.OfficialName.slice(0, 4))) {
                             return 0;
                         }
-
+                                              
+                        
+                        if (/Crate Tupu|Chupa|Casha/g.test(a.OfficialName)) return 1;
+                         /* If a is "Pesa", put b before a */
+                         if (!/Crate Tupu|Chupa|Casha/g.test(b.OfficialName)) return 1;
+                        
                         if (a.category_breakdown < b.category_breakdown) return 1;
-
+        
                         if (b.laststocktakedate < a.laststocktakedate) {
                             return -1;
                         }
@@ -1700,6 +1707,7 @@
                         }
 
                         if (a.category_breakdown > b.category_breakdown) return -1;
+
                         return 0;
                     });
 
@@ -2019,6 +2027,7 @@
         }
         function clearCachedTrans() {
             var transactionType = appStates[currentAppStateIndex];
+            localStorage.removeItem(`ALDCACHE${transactionType}`);
             cachedTransObjectString[transactionType] = "",
                 cachedTransObjectJson[transactionType] = "",
                 cachedTransCount[transactionType] = 0,
