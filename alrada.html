@@ -1178,7 +1178,7 @@
                     }
                 } else {
                     localStorage.setItem(variableName, value);
-                } 
+                }
             }
             function global(variableName = "", par2 = "") {
                 var storedValue = localStorage.getItem(variableName);
@@ -1389,7 +1389,7 @@
             if (e.target.parentNode.parentNode.parentNode.id == "results") {
                 /* trigger an enter keyup event' see if its a an enter key */
                 /* show("keypressed: " + e.key); */
-                if (e.key != "enter")    
+                if (e.key != "enter")
                     var parts = keysPressed[currentFocusedProduct].split("-");
                 var val = parts.reduce(function (a, b) {
                     if (a == 0)
@@ -1501,13 +1501,20 @@
 
                     keysPressed[currentFocusedProduct] = "";
                     document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
+                    var identifier = 0;
+                    for (let drink of products_jsonString) {
+                        var drinkid = drink.OfficialName.replaceAll(" ", "_");
+                        if (drinkid !== currentFocusedProduct) {
+                            identifier++;
+                            continue;
+                        } else {
+                            var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ","_");
+                            currentFocusedProduct = nextDrinkId;
+                            document.querySelector(`a[name="${nextDrinkId}"]`).focus();
+                            break;
+                        }
+                    }
 
-                    document.querySelector(`a[name="${originalFocusedProduct}"]>input`).focus();
-
-                    /*  var nextInput = e.target.parentNode.parentNode.nextElementSibling;
-                      if (nextInput.lastChild) {
-                          nextInput.lastChild.dispatchEvent(new Event('focus'));
-                      } */
                 }
             }
         }
@@ -1680,24 +1687,24 @@
                         if (/Pesa/g.test(a.OfficialName)) {
                             return 1;
                         }
-                        
-                        if(a.thysaylaststocktakeamt  ==0) return 1;
-                        
-                        if(b.thysaylaststocktakeamt  ==0) return -1;
+
+                        if (a.thysaylaststocktakeamt == 0) return 1;
+
+                        if (b.thysaylaststocktakeamt == 0) return -1;
                         if (/Crate Tupu|Chupa|Casha/g.test(a.OfficialName)) return 1;
 
                         /* Group closely matching OfficialNames together */
                         if (a.OfficialName.includes(b.OfficialName.slice(0, 4)) || b.OfficialName.includes(a.OfficialName.slice(0, 4))) {
                             return 0;
                         }
-                                              
-                        
+
+
                         if (/Crate Tupu|Chupa|Casha/g.test(a.OfficialName)) return 1;
-                         /* If a is "Pesa", put b before a */
-                         if (!/Crate Tupu|Chupa|Casha/g.test(b.OfficialName)) return 1;
-                        
+                        /* If a is "Pesa", put b before a */
+                        if (!/Crate Tupu|Chupa|Casha/g.test(b.OfficialName)) return 1;
+
                         if (a.category_breakdown < b.category_breakdown) return 1;
-        
+
                         if (b.laststocktakedate < a.laststocktakedate) {
                             return -1;
                         }
@@ -2026,20 +2033,25 @@
 
         }
         function clearCachedTrans() {
-            var transactionType = appStates[currentAppStateIndex];
-            localStorage.removeItem(`ALDCACHE${transactionType}`);
-            cachedTransObjectString[transactionType] = "",
-                cachedTransObjectJson[transactionType] = "",
-                cachedTransCount[transactionType] = 0,
-                cachedTransCashTotal[transactionType] = 0,
-                cachedTempTrans2Process[transactionType] = "",
-                cachedTransactionQueries[transactionType] = "";
-            document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-            document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-            clearvalues();
-            hideLoadingScreen();
-            createProductsView();
-            goto("command||beep");
+
+            try {
+                var transactionType = appStates[currentAppStateIndex];
+                localStorage.removeItem(`ALDCACHE${transactionType}`);
+                cachedTransObjectString[transactionType] = "",
+                    cachedTransObjectJson[transactionType] = "",
+                    cachedTransCount[transactionType] = 0,
+                    cachedTransCashTotal[transactionType] = 0,
+                    cachedTempTrans2Process[transactionType] = "",
+                    cachedTransactionQueries[transactionType] = "";
+                document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+                clearvalues();
+                hideLoadingScreen();
+                createProductsView();
+                goto("command||beep");
+            } catch (e) {
+                show("error in clearing values:" + e.message);
+            }
         }
         function sendCachedTrans(event, param = "api") {
 
@@ -2063,13 +2075,13 @@
 
                 const snapshotUnixTime = Math.floor(Date.now() / 1000);
                 const data = json_response.map(entry => [`${entry.transDate} ${entry.transTime}`, staffName.slice(0, 2) + " " + entry.transMsg.replace(/\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}\s/, ""), entry.currentUnixTime]);
-                if(param == "sms")
-                var values = cachedTransObjectJson[appStates[currentAppStateIndex]].finalTextResponseMsg;
-            else
-                var values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
-            
+                if (param == "sms")
+                    var values = cachedTransObjectJson[appStates[currentAppStateIndex]].finalTextResponseMsg;
+                else
+                    var values = JSON.stringify({ usr: staffName, data: data, time: snapshotUnixTime, cmd: "add_transaction" });
+
                 try {
-                    if ((param == "sms")||(param == "smscode")) {
+                    if ((param == "sms") || (param == "smscode")) {
                         setClip(values, "", function (x) {
 
                             cachedTransObjectString[transactionType] = "";
@@ -2172,16 +2184,16 @@
                                 .then(bodyText => {
                                     if (!/Muda wa huduma umeisha/g.test(bodyText)) {
                                         goto(`command||sendupdate_${transactionType}_${JsonObj_BeingProcessed.finalTextResponseMsg}`);
-                                             clearvalues();
-                                             cachedTransObjectString[transactionType] = "";
-                                             cachedTransactionQueries[transactionType] = "";
-                                             cachedTransCount[transactionType] = 0;
-                                             cachedTransCashTotal[transactionType] = 0;
-                                             document.getElementById("btnSend2Cache").classList.remove("disabled");
-                                             document.getElementById("btnSend2Cache").disabled = false;
-                                             document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
-                                             document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
-     
+                                        clearvalues();
+                                        cachedTransObjectString[transactionType] = "";
+                                        cachedTransactionQueries[transactionType] = "";
+                                        cachedTransCount[transactionType] = 0;
+                                        cachedTransCashTotal[transactionType] = 0;
+                                        document.getElementById("btnSend2Cache").classList.remove("disabled");
+                                        document.getElementById("btnSend2Cache").disabled = false;
+                                        document.querySelector("#cachedTrans>span>.part1").innerHTML = cachedTransCount[transactionType];
+                                        document.querySelector("#cachedTrans>span>.part2").innerHTML = cachedTransCashTotal[transactionType];
+
                                         setGlobal(`ALDCACHE${transactionType}`, cachedTransactionQueries[transactionType]);
                                     }
 
