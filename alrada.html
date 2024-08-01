@@ -1953,7 +1953,7 @@
 
         function fetchProductUpdate(ShowUpdateScreen = true, JustGetDB = false, callback = undefined) {
             var sndClient = "";
-
+            
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
             if (typeof settingsObj != "undefined") {
                 params.append('version', settingsObj.products.unixTime);
@@ -2004,7 +2004,6 @@
                         }
                         setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     }
-                    else show("nothing to update.");
 
                     if (callback)
                         callback();
@@ -2032,6 +2031,7 @@
                 });
 
         }
+        
         function clearCachedTrans() {
 
             try {
