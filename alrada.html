@@ -292,18 +292,6 @@
             border-color: #e1e1e1 !important;
         }
 
-        .products>li,
-        .customers>li,
-        .suppliers>li {
-            border: .2px solid #ccc;
-            display: flex;
-            flex: 1 0 auto;
-            flex-basis: auto;
-            flex-grow: 1;
-            margin-bottom: 6px;
-            text-align: -webkit-center;
-        }
-
         #CustomersList>li>a,
         #results>li>a {
             flex-flow: column;
@@ -928,7 +916,23 @@
             height: 200px;
             overflow-y: auto;
             flex-flow: wrap;
+            background-color: oldlace;
         }
+
+        .selectproduct>li {
+            border: 2px solid #ccc;
+            display: flex;
+            flex: 1 0 auto;
+            flex-basis: auto;
+            flex-grow: 1;
+            margin-bottom: 6px;
+            text-align: -webkit-center;
+            padding: 0 2px;
+            background-color: white;
+            font-family: cursive;
+        }
+
+
 
         .selectproduct>li>a>input {
             display: none;
@@ -1508,7 +1512,7 @@
                             identifier++;
                             continue;
                         } else {
-                            var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ","_");
+                            var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ", "_");
                             currentFocusedProduct = nextDrinkId;
                             document.querySelector(`a[name="${nextDrinkId}"]`).focus();
                             break;
@@ -1953,7 +1957,7 @@
 
         function fetchProductUpdate(ShowUpdateScreen = true, JustGetDB = false, callback = undefined) {
             var sndClient = "";
-            
+
             const params = new URLSearchParams(new URL(AppScriptPostUrl).search);
             if (typeof settingsObj != "undefined") {
                 params.append('version', settingsObj.products.unixTime);
@@ -1985,53 +1989,57 @@
             else
                 show("Fetching updates...");
 
-            fetch(finalurl, options)
-                .then(response => {
-                    responseClone = response.clone();
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error('ErrServer response: ' + text, false, true);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.data) {
-                        if (typeof settingsObj == "undefined") settingsObj = data;
-                        else {
-                            settingsObj.data.alradaitemnames = data.data.alradaitemnames;
-                            settingsObj.products = data.products;
+            const fetchSettings = fetch(finalurl, options).then(response => response.json());
+            const fetchHTML = !JustGetDB ? fetch("https://raw.githubusercontent.com/iamalbertly/AlradaHTM/main/alrada-min.html").then(response => response.text()) : Promise.resolve(null);
+
+
+            Promise.all([fetchSettings, fetchHTML])
+                .then(([settingsData, htmlData]) => {
+                    if (settingsData.data) {
+                        var HaveUpdates = false;
+                        if (typeof settingsObj == "undefined") {
+                            settingsObj = settingsData;
+                            HaveUpdates = true;
                         }
+                        if (HaveUpdates == false) {
+                            if (settingsObj.products.unixTime < settingsData.products.unixTime) {
+                                settingsObj.data.alradaitemnames = settingsData.data.alradaitemnames;
+                                settingsObj.products = settingsData.products;
+                                HaveUpdates = true;
+                            }
+                            if (settingsObj.staffsupplierscustomers.unixTime < settingsData.staffsupplierscustomers.unixTime) {
+                                settingsObj.data.customers = settingsData.data.customers;
+                                settingsObj.data.staff = settingsData.data.staff;
+                                settingsObj.data.suppliers = settingsData.data.suppliers;
+                                settingsObj.staffsupplierscustomers = settingsData.staffsupplierscustomers;
+                                HaveUpdates = true;
+                            }
+                        }
+                        if (HaveUpdates == false) return;
                         setGlobal('ALDSETTING', JSON.stringify(settingsObj));
                     }
 
-                    if (callback)
-                        callback();
+                    if (htmlData) setGlobal("ALDHTM", htmlData);
 
-                    if (!JustGetDB)
-                        fetchHTMUpdate();
-                    show(sndClient + ": Successfully Updated Settings...");
-                    goto("command||beep");
+                    if (callback) callback();
+
                     hideLoadingScreen();
                     ChangeView(currentAppStateIndex);
                     loadCachedTrans();
+                    show(sndClient + ": Successfully Updated Settings...");
+                    goto("command||beep");
                 })
                 .catch((error) => {
                     if (error.message.includes('Failed to fetch')) {
                         show("Tatizo la Network. Cheki internet alafu Jaribu Tena. " + error.stack, true, true);
                     } else {
-                        responseClone.text()
-                            .then(bodyText => {
-                                if (bodyText == "#NAME?") show(" database is busy '#NAME?'");
-                            });
                         show("Error! " + error.message + "\n" + error.stack);
                     }
-
                     hideLoadingScreen();
                 });
 
         }
-        
+
         function clearCachedTrans() {
 
             try {
