@@ -360,7 +360,7 @@
             margin: 0;
             order: -1;
             position: sticky;
-            min-width: 60%;
+            min-width: 98%;
             opacity: 1;
             top: 0px;
             z-index: 90;
@@ -699,7 +699,7 @@
 
         @media (min-width: 900px) {
             .products>li {
-                flex-basis: calc(20% - 10px)
+                flex-basis: calc(32% - 10px)
             }
         }
 
@@ -2411,7 +2411,7 @@
             dialogContent += `</ul></code>`;
             document.getElementById("loading-text").innerHTML = dialogContent;
             document.getElementById("loading-screen").classList.remove("hidden");
-            document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = `<button onClick="clearCachedTrans()" >Futa Zote<br/>${cachedTransCashTotal[appStates[currentAppStateIndex]]}</button><div class='flex row' style='min-width: 40%;'><button onclick='sendCachedTrans(event,"sms")'>Tuma<BR>kwa SMS</button><button onclick='sendCachedTrans(event,"smscode")'>Code<BR>kwa SMS</button></div><button onclick='sendCachedTrans()'>Tuma<BR>Kwa Internet</button><button id='btnClose' onClick='hideLoadingScreen();clearvalues()'> X </button>`;
+            document.querySelector("#loading-screen .loading-content .buttonholder").innerHTML = `<button onClick="clearCachedTrans()" >Futa Zote<br/>${cachedTransCashTotal[appStates[currentAppStateIndex]]}</button><div class='flex row' style='min-width: 40%;'><button onclick='sendCachedTrans(event,"sms")'>Tuma<BR>kwa SMS</button><button onclick='sendCachedTrans(event,"smscode")'>Code</button></div><button onclick='sendCachedTrans()'>Tuma<BR>Kwa Internet</button><button id='btnClose' onClick='hideLoadingScreen();clearvalues()'> X </button>`;
             document.getElementById("loading-title").innerHTML = `Angalia vizuri na Sahihisha ripoti,<br/><sub>kabla ya kutuma. ${JSON.parse(cachedTransObjectString[appStates[currentAppStateIndex]]).finalResponseTotal.toLocaleString('en-US').replace(/\.00/g, "")}</sub>`
         }
 
