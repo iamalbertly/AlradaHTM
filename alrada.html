@@ -22,7 +22,7 @@
         small {
             margin-bottom: 4px;
         }
-
+ 
         small,
         .small,
         #cachedTrans>span {
@@ -56,13 +56,17 @@
         #loading-text {
             overflow-y: auto;
         }
-        #CustomersList, #results {
+
+        #CustomersList,
+        #results {
             background-color: oldlace;
         }
-        #CustomersList>li,#results>li{
-            background-color:white;
+
+        #CustomersList>li,
+        #results>li {
+            background-color: white;
         }
-    
+
         #loading-text>code>ul {
             margin-left: 0;
             margin-top: 0;
@@ -104,6 +108,7 @@
             min-height: 100%;
             width: -webkit-fill-available;
             height: -webkit-fill-available;
+            place-content: center;
         }
 
         ul {
@@ -138,7 +143,14 @@
             top: 0;
             z-index: 10;
         }
-
+        #sent2_bank_add{
+    color: transparent;
+    text-shadow: 0 0 green;
+}
+        #sent2_bank_loss{
+    color: transparent;
+    text-shadow: 0 0 red;
+}
         #news_display,
         #loading-screen>div>div.buttonholder {
             display: flex;
@@ -659,7 +671,7 @@
             justify-content: center;
         }
 
-       
+
 
         @media (min-width: 100px) {
 
@@ -679,13 +691,13 @@
 
         @media (min-width: 400px) {
 
-.products>li {
-    flex-basis: calc(49% - 10px)
-}
-}
-     
+            .products>li {
+                flex-basis: calc(49% - 10px)
+            }
+        }
+
         @media (min-width: 500px) {
-            
+
             #results>li>a {
                 font-size: 3vw
             }
@@ -752,14 +764,27 @@
             margin-right: 4px;
             padding-left: 3px;
             padding-right: 2px;
-            padding-top: 12px;
-            padding-bottom: 12px;
         }
 
         #choose-mode>ul>li>a {
             height: 63px;
             align-items: center;
+            text-align: center;
+            justify-content: space-between;
         }
+        #choose-mode>ul>li>a>*{
+            min-width:50%;
+        }
+        #choose-mode > ul > li > a > div{
+            display: contents;
+        }
+        #choose-mode > ul > li > a > div > button
+{
+    font-size: 38pt;
+    line-height: 40pt;
+    border-radius: 10px;
+    border: 2px solid palevioletred;
+}
 
         .mypopupdialog>.buttonholder {
             display: flex;
@@ -1040,16 +1065,26 @@
     <div id="choose-mode" class="hidden mypopupdialog">
         <h2 id="selectmode">Select Mode</h2>
         <ul>
-            <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>💰</span><span>MAUZO</span></a>
+            <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>MAUZO</span>
+                    <div><span>💰</span></div>
+                </a>
             </li>
             <li class="wholesale_purchase"> <a href="#"
-                    onclick="ChangeView('2',event)"><span>➕</span><span>UPOKEZI</span></a>
+                    onclick="ChangeView('2',event)"><span>UPOKEZI</span>
+                    <div><span>➕</span></div>
+                </a>
             </li>
-            <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>🤌🏽</span><span>MALIPO</span></a>
+            <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span>
+                    <div><button id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></div>
+                </a>
             </li>
-            <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>#️⃣</span><span>STOCK</span></a>
+            <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
+                    <div><span>#️⃣</span></div>
+                </a>
             </li>
-            <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>💱</span><span>MANUNUZI</span></a></li>
+            <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
+                    <div><span>💱</span></div>
+                </a></li>
         </ul>
         <a id="updateStr" href="#" class="small" onClick="fetchProductUpdate()">update<span> </span> </a>
     </div><textarea id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard"></textarea>
@@ -3216,6 +3251,11 @@
         /* disable clicks on link */
         document.querySelector("a").addEventListener("click", (e) => {
             e.preventDefault();
+        });
+        document.querySelector("#sent2_bank_loss").addEventListener("click", (e) =>{
+            e.preventDefault();
+            document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
+
         });
 
         try {
