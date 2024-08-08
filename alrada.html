@@ -22,7 +22,7 @@
         small {
             margin-bottom: 4px;
         }
- 
+
         small,
         .small,
         #cachedTrans>span {
@@ -143,14 +143,17 @@
             top: 0;
             z-index: 10;
         }
-        #sent2_bank_add{
-    color: transparent;
-    text-shadow: 0 0 green;
-}
-        #sent2_bank_loss{
-    color: transparent;
-    text-shadow: 0 0 red;
-}
+
+        #sent2_bank_add {
+            color: transparent;
+            text-shadow: 0 0 green;
+        }
+
+        #sent2_bank_loss {
+            color: transparent;
+            text-shadow: 0 0 red;
+        }
+
         #news_display,
         #loading-screen>div>div.buttonholder {
             display: flex;
@@ -772,19 +775,21 @@
             text-align: center;
             justify-content: space-between;
         }
-        #choose-mode>ul>li>a>*{
-            min-width:50%;
+
+        #choose-mode>ul>li>a>* {
+            min-width: 50%;
         }
-        #choose-mode > ul > li > a > div{
+
+        #choose-mode>ul>li>a>div {
             display: contents;
         }
-        #choose-mode > ul > li > a > div > button
-{
-    font-size: 38pt;
-    line-height: 40pt;
-    border-radius: 10px;
-    border: 2px solid palevioletred;
-}
+
+        #choose-mode>ul>li>a>div>button {
+            font-size: 38pt;
+            line-height: 40pt;
+            border-radius: 10px;
+            border: 2px solid palevioletred;
+        }
 
         .mypopupdialog>.buttonholder {
             display: flex;
@@ -1069,8 +1074,7 @@
                     <div><span>💰</span></div>
                 </a>
             </li>
-            <li class="wholesale_purchase"> <a href="#"
-                    onclick="ChangeView('2',event)"><span>UPOKEZI</span>
+            <li class="wholesale_purchase"> <a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span>
                     <div><span>➕</span></div>
                 </a>
             </li>
@@ -1774,7 +1778,8 @@
                         const cat = categoryArr.join(" ");
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
                         const laststocktake = product.thysaylaststocktakeamt.toString();
-                        var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake)) ? /(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1] : "";
+                        const calclaststocktake = product.calclaststocktake.toString();
+                        var stockstring = (/^[1-9]\d{0,}\.{0,1}\d{0,}$/.test(laststocktake))?  `${/(\d+)\.{0,1}\d{0,}$/.exec(laststocktake)[1]} | ${calclaststocktake}` : "";
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
                             stockstring = (Math.round(stockstring) + " p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
@@ -1877,7 +1882,7 @@
                 return purchaseprice.toString().replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, '$&,');
         }
 
-        function createProductLi(name, formattedname, category, price, categorySign, thysaylaststocktakeamt, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
+        function createProductLi(name, formattedname, category, price, categorySign, thysaylaststocktakeamt, calclaststocktake, localAppState, hasinput = false, contactName = "", contactPhone = "", onLiClickEvent = "") {
             const inputType = localAppState === "wholesale_sale" ? "inputnumber" : "inputremaining";
             var inputstocktakeclass = (/^\-/g.test(thysaylaststocktakeamt)) ? "attention" : "";
 
@@ -1902,7 +1907,8 @@
               ${productNameWithContact(name, contactName, contactPhone)}`;
             if (price != 0)
                 re = re + `<em>${inputprice}</em>`;
-            re = re + `<span class="${inputstocktakeclass}"><span class="stockamt">${thysaylaststocktakeamt}</span><span class="classification">${categorySign}</span></span>`;
+            var stockmessage = (calclaststocktake) ? `⌛ ${calclaststocktake}| ✍🏾 ${thysaylaststocktakeamt}` : "";
+            re = re + `<span class="${inputstocktakeclass}"><span class="stockamt">${stockmessage}</span><span class="classification">${categorySign}</span></span>`;
             re = re + `${hasinput}</a></li>`;
 
             return re;
@@ -1944,7 +1950,7 @@
 
                 CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
                     const name = customer.customer_name;
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "","CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
                 });
                 createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
             }
@@ -3252,11 +3258,28 @@
         document.querySelector("a").addEventListener("click", (e) => {
             e.preventDefault();
         });
-        document.querySelector("#sent2_bank_loss").addEventListener("click", (e) =>{
-            e.preventDefault();
-            document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
 
+        document.querySelector("#sent2_bank_add").addEventListener("click", (e) => {
+            e.preventDefault();
+            if (appStates[currentAppStateIndex] != "sent2_bank") {
+                ChangeView('1', e); }
+                setTimeout(() => {
+                    document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").click();
+                    document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").focus();
+                }, 400);
         });
+        document.querySelector("#sent2_bank_loss").addEventListener("click", (e) => {
+            e.preventDefault();
+            if (appStates[currentAppStateIndex] != "sent2_bank") {
+                ChangeView('1', e); }
+                setTimeout(() => {
+                    document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
+                    document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").focus();
+                }, 400);
+            
+        });
+
+
 
         try {
             var ALRADADATE = day + " / " + month;
