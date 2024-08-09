@@ -1860,16 +1860,15 @@
                         const categoryArr = product.category_breakdown.split("_");
                         const cat = categoryArr.join(" ");
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
-                        var laststocktake = product.thysaylaststocktakeamt.toString();
-                        const calclaststocktake = product.calclaststocktake.toString();
+                        var laststocktake = (product.thysaylaststocktakeamt) ? product.thysaylaststocktakeamt.toString() : "";
+                        const calclaststocktake = (product.calclaststocktake) ? product.calclaststocktake.toString() : "";
 
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
                             laststocktake = (Math.round(laststocktake) + "p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
                         }
                         var stockstring = `${calclaststocktake} / ${laststocktake}✍🏾`;
-                        /* stockstring = stockstring.replace(/^0 /, "");*/
-
+                       
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
                     });
                     ProductNamesLiWithOutInput = products_jsonString.map(product => {
