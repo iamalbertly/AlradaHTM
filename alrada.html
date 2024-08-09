@@ -1646,7 +1646,15 @@
                         } else {
                             var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ", "_");
                             currentFocusedProduct = nextDrinkId;
-                            document.querySelector(`a[name="${nextDrinkId}"]`).focus();
+
+                            setTimeout(function () {
+                                try {
+                                    document.querySelector(`a[name="${nextDrinkId}"]`).click();
+                                    document.querySelector(`a[name="${nextDrinkId}"]`).focus();
+                                } catch (e) { }
+                            }, 500);
+
+
                             break;
                         }
                     }
@@ -1752,7 +1760,9 @@
                                 const newlink = clickedvalue + appStateMarks[currentAppStateIndex] + num;
                                 document.getElementById("submitbutton").innerHTML = newlink;
                                 document.getElementById("submitbutton").href = "/" + newlink;
-                                try { input.focus(); } catch (e) { }
+                                try {
+                                    input.focus();
+                                } catch (e) { }
                             }
                         });
                     };
@@ -1868,7 +1878,7 @@
                             laststocktake = (Math.round(laststocktake) + "p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
                         }
                         var stockstring = `${calclaststocktake} / ${laststocktake}✍🏾`;
-                       
+
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
                     });
                     ProductNamesLiWithOutInput = products_jsonString.map(product => {
@@ -2150,7 +2160,7 @@
                                     settingsObj.staffsupplierscustomers = settingsData.staffsupplierscustomers;
                                     HaveUpdates = true;
                                 }
-                            } catch (e) { show("Error! " + e.message + "\n" + e.stack); }
+                            } catch (e) { show("Error! " + e.message + "\n" + e.stack +`\n settings.products:${settings.products}`); }
 
                         }
                         if (HaveUpdates == true) {
@@ -2635,7 +2645,14 @@
             document.getElementById("selectmode").addEventListener("click", e => {
                 document.getElementById("choose-mode").classList.add("hidden");
                 document.getElementById("querydialog").classList.remove("hidden");
-                document.querySelector("#querydialog>input").focus();
+
+                setTimeout(function () {
+                    try {
+                        document.querySelector("#querydialog>input").click();
+                        document.querySelector("#querydialog>input").focus();
+                    } catch (e) { }
+                }, 500);
+
 
             });
             document.querySelectorAll("#traditionalQueryInput,#editCustomerName,#editTransDate").forEach(el => {
@@ -3048,7 +3065,14 @@
             event.stopPropagation();
             createProductsView();
 
-            try { document.querySelector("#filter-dialog>div>input").focus(); } catch (e) { }
+            setTimeout(function () {
+                try {
+                    document.querySelector("#filter-dialog>div>input").click();
+                    document.querySelector("#filter-dialog>div>input").focus();
+                } catch (e) { }
+            }, 500);
+
+
 
         }
         function handleFilterDialogFilterSelection(event) {
