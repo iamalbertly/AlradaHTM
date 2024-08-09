@@ -23,6 +23,15 @@
             margin-bottom: 4px;
         }
 
+        .stockamt {
+            font-family: monospace;
+            font-weight: 100;
+            background-color: rgba(0, 0, 0, .19);
+            padding-left: 5px;
+            border: .5px solid rgba(0, 0, 0, .4);
+            border-radius: 5px;
+        }
+
         small,
         .small,
         #cachedTrans>span {
@@ -180,15 +189,24 @@
 
         }
 
+        #warehouseName {
+            display: -webkit-inline-box;
+            -webkit-box-align: center;
+            width: 65px;
+            display: flex;
+            justify-content: right;
+            border-right: .5px solid #e3e3e3;
+        }
+
         #appState,
-        #choose-mode>ul>li {
+        #choose-mode>.tab-container>#tab1>ul>li {
             border: none;
             border: 1px solid #000000de;
             box-shadow: 0px 0px 4px 2px black;
         }
 
         #appState:active,
-        #choose-mode>ul>li:active {
+        #choose-mode>.tab-container>#tab1>ul>li:active {
             box-shadow: inset 0px 0px 4px 2px black;
         }
 
@@ -205,26 +223,8 @@
             padding-top: 4px;
         }
 
-        #warehouseName {
-            display: -webkit-inline-box;
-            -webkit-box-align: center;
-            width: 65px;
-            display: flex;
-            justify-content: right;
-            border-right: .5px solid #e3e3e3;
-        }
 
 
-        #filter-dialog>div>li {
-            border-bottom: 1px solid #a7a7a7;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 100%;
-            padding-top: 4px;
-            padding-bottom: 4px;
-            margin: 0;
-        }
 
         .flex-row,
         li {
@@ -519,7 +519,7 @@
             box-shadow: 0 -1px .1px 3px #0000003d inset;
             font-weight: bolder;
             text-align: center;
-            width: 100%
+            width: 100%;
         }
 
         #myinputbar>div>input:active {
@@ -622,7 +622,7 @@
             height: 97%;
             margin: 0;
             padding: 0;
-            width: 100%
+            width: 100%;
         }
 
         .loading-content {
@@ -640,8 +640,7 @@
         }
 
         #mysubmitbar,
-        li.product>span,
-        .mypopupdialog>div>div {
+        li.product>span {
             display: flex;
             place-content: space-between
         }
@@ -744,6 +743,7 @@
             top: 110px;
         }
 
+        #choose-mode>.tab-container>#tab1>ul>li>a,
         .mypopupdialog>*>li>a {
             border: none;
             text-decoration: none;
@@ -759,7 +759,7 @@
         }
 
         #filterCategories>li,
-        #choose-mode>ul>li {
+        #choose-mode>.tab-container>#tab1>ul>li {
             font-size: larger;
             place-content: center;
             border: .5px solid #b4b0b0;
@@ -769,22 +769,44 @@
             padding-right: 2px;
         }
 
-        #choose-mode>ul>li>a {
+        #choose-mode>.tab-container>#tab1>ul>li,
+        #filter-dialog>div>li {
+            border-bottom: 1px solid #a7a7a7;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            margin: 0;
+        }
+
+        #choose-mode>.tab-container {
+            width: 95%;
+        }
+
+
+        #choose-mode>.tab-container>#tab1>ul>li>a {
             height: 63px;
             align-items: center;
             text-align: center;
             justify-content: space-between;
         }
 
-        #choose-mode>ul>li>a>* {
+        #choose-mode>.tab-container>#tab1>ul>li>a>* {
             min-width: 50%;
+            display: flex;
+            min-height: 100%;
+            align-items: center;
+            height: -webkit-fill-available;
+            place-content: center;
         }
 
-        #choose-mode>ul>li>a>div {
+        #choose-mode>.tab-container>#tab1>ul>li>a>div {
             display: contents;
         }
 
-        #choose-mode>ul>li>a>div>button {
+        #choose-mode>.tab-container>#tab1>ul>li>a>div>button {
             font-size: 38pt;
             line-height: 40pt;
             border-radius: 10px;
@@ -822,8 +844,6 @@
         #filter-categories input[type="checkbox"] {
             margin-left: 5px
         }
-
-
 
         li.product.active {
             display: block !important
@@ -1009,6 +1029,58 @@
             padding-left: 9px;
             padding-top: 12px;
         }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-buttons {
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        .tab-buttons button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        .tab-buttons button:hover {
+            background-color: #ddd;
+        }
+
+        .tab-buttons button.active {
+            background-color: #ccc;
+        }
+
+        #selectmode ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #selectmode li {
+            margin-bottom: 10px;
+        }
+
+        #selectmode a {
+            display: block;
+            padding: 10px;
+            background-color: #f0f0f0;
+            text-decoration: none;
+            color: black;
+        }
+
+        #selectmode a:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <div id="mywebview" class="wholesale_sale">
@@ -1068,29 +1140,40 @@
         </div>
     </div>
     <div id="choose-mode" class="hidden mypopupdialog">
-        <h2 id="selectmode">Select Mode</h2>
-        <ul>
-            <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>MAUZO</span>
-                    <div><span>💰</span></div>
-                </a>
-            </li>
-            <li class="wholesale_purchase"> <a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span>
-                    <div><span>➕</span></div>
-                </a>
-            </li>
-            <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span>
-                    <div><button id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></div>
-                </a>
-            </li>
-            <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
-                    <div><span>#️⃣</span></div>
-                </a>
-            </li>
-            <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
-                    <div><span>💱</span></div>
-                </a></li>
-        </ul>
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab(event, 'tab1')">Select Mode</button>
+                <button class="tab-button" onclick="openTab(event, 'tab2')">Recent Transactions</button>
+            </div>
+            <div id="tab1" class="tab-content active">
+                <ul>
+                    <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>MAUZO</span>
+                            <span>💰</span></a></li>
+                    <li class="wholesale_purchase"><a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span>
+                            <span>➕</span></a></li>
+                    <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span> <span><button
+                                    id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></span></a>
+                    </li>
+                    <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
+                            <span>#️⃣</span></a></li>
+                    <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
+                            <span>💱</span></a></li>
+                </ul>
+            </div>
+
+            <div id="tab2" class="tab-content">
+                <h2>Recent Transactions</h2>
+                <ul>
+                    <li>Transaction 1: $100</li>
+                    <li>Transaction 2: $75</li>
+                    <li>Transaction 3: $50</li>
+                    <li>Transaction 4: $200</li>
+                </ul>
+            </div>
+        </div>
+
         <a id="updateStr" href="#" class="small" onClick="fetchProductUpdate()">update<span> </span> </a>
+        <a id="selectmode" href="#">==</a>
     </div><textarea id="clipboard" class="hidden" value="Alrada" placeholder="" title="clipboard"></textarea>
     <div id="filter-dialog" class="hidden mypopupdialog"></div>
     <div id="querydialog" class="hidden mypopupdialog"><input id="traditionalQueryInput" title="query" placeholder=""
@@ -1779,13 +1862,13 @@
                         const price = formatPrice(product.w_price_a, product.w_purchase_a);
                         var laststocktake = product.thysaylaststocktakeamt.toString();
                         const calclaststocktake = product.calclaststocktake.toString();
-                       
+
                         var secondpart = /\.\d+$/.test(laststocktake) ? /\.(\d+)$/.exec(laststocktake)[1] : "";
                         if (secondpart) {
-                            laststocktake = (Math.round(laststocktake) + " p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
+                            laststocktake = (Math.round(laststocktake) + "p" + Math.round(product.carton * (eval("." + secondpart)))).trim();
                         }
-                        var stockstring =  `${calclaststocktake} /${laststocktake}✍🏾`;
-                       /* stockstring = stockstring.replace(/^0 /, "");*/
+                        var stockstring = `${calclaststocktake} / ${laststocktake}✍🏾`;
+                        /* stockstring = stockstring.replace(/^0 /, "");*/
 
                         return createProductLi(name, name.replaceAll(" ", "_").replaceAll("'", '').replaceAll(",", "-").replaceAll("(", "[").replaceAll(")", "]"), cat, price, categorySign, stockstring, localAppState, true);
                     });
@@ -1952,7 +2035,7 @@
 
                 CustomerNamesLiWithOutInput = customers_jsonString.map(customer => {
                     const name = customer.customer_name;
-                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "","CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
+                    return createProductLi(name, name.replaceAll(" ", "_").replaceAll(/\\/g, " na ").replaceAll("'", '').replaceAll(",", "").replaceAll("(", "[").replaceAll(")", "]"), "customer", customer.net30dept, "", "", "", "CustomerFilter", false, customer.customer_name, customer.customer_numbers, "confirmCustomerPick(event)");
                 });
                 createList(CustomerNamesLiWithOutInput, document.querySelector("#filter-dialog-customers>.selectproduct"));
             }
@@ -2055,18 +2138,21 @@
                             HaveUpdates = true;
                         }
                         if (HaveUpdates == false) {
-                            if (settingsObj.products.unixTime < settingsData.products.unixTime) {
-                                settingsObj.data.alradaitemnames = settingsData.data.alradaitemnames;
-                                settingsObj.products = settingsData.products;
-                                HaveUpdates = true;
-                            }
-                            if (settingsObj.staffsupplierscustomers.unixTime < settingsData.staffsupplierscustomers.unixTime) {
-                                settingsObj.data.customers = settingsData.data.customers;
-                                settingsObj.data.staff = settingsData.data.staff;
-                                settingsObj.data.suppliers = settingsData.data.suppliers;
-                                settingsObj.staffsupplierscustomers = settingsData.staffsupplierscustomers;
-                                HaveUpdates = true;
-                            }
+                            try {
+                                if (settingsObj.products.unixTime < settingsData.products.unixTime) {
+                                    settingsObj.data.alradaitemnames = settingsData.data.alradaitemnames;
+                                    settingsObj.products = settingsData.products;
+                                    HaveUpdates = true;
+                                }
+                                if (settingsObj.staffsupplierscustomers.unixTime < settingsData.staffsupplierscustomers.unixTime) {
+                                    settingsObj.data.customers = settingsData.data.customers;
+                                    settingsObj.data.staff = settingsData.data.staff;
+                                    settingsObj.data.suppliers = settingsData.data.suppliers;
+                                    settingsObj.staffsupplierscustomers = settingsData.staffsupplierscustomers;
+                                    HaveUpdates = true;
+                                }
+                            } catch (e) { show("Error! " + e.message + "\n" + e.stack); }
+
                         }
                         if (HaveUpdates == true) {
                             setGlobal('ALDSETTING', JSON.stringify(settingsObj));
@@ -3264,31 +3350,48 @@
         document.querySelector("#sent2_bank_add").addEventListener("click", (e) => {
             e.preventDefault();
             if (appStates[currentAppStateIndex] != "sent2_bank") {
-                ChangeView('1', e); }
-                setTimeout(() => {
-                    document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").click();
-                    document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").focus();
-                }, 400);
+                ChangeView('1', e);
+            }
+            setTimeout(() => {
+                document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").click();
+                document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").focus();
+            }, 400);
         });
         document.querySelector("#sent2_bank_loss").addEventListener("click", (e) => {
             e.preventDefault();
             if (appStates[currentAppStateIndex] != "sent2_bank") {
-                ChangeView('1', e); }
-                setTimeout(() => {
-                    document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
-                    document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").focus();
-                }, 400);
-            
+                ChangeView('1', e);
+            }
+            setTimeout(() => {
+                document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
+                document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").focus();
+            }, 400);
         });
-
-
 
         try {
             var ALRADADATE = day + " / " + month;
         } catch (e) { }
 
+
+
+        function openTab(evt, tabName) {
+            var i, tabContent, tabButtons;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
     }
     catch (e) {
         show("Main Err: " + e.stack, true, true);
     }
+
+
 </script>
