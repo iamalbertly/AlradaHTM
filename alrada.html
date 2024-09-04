@@ -1155,7 +1155,8 @@
                                     id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></span></a>
                     </li>
                     <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
-                            <span>#️⃣</span></a></li>
+                        <span><button
+                            id="stocktake_opening">🌅</button><button id="stocktake_midday">🕒</button><button id="stocktake_closing">🌃</button></span></a></li>
                     <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
                             <span>💱</span></a></li>
                 </ul>
@@ -1652,7 +1653,7 @@
                                     document.querySelector(`a[name="${nextDrinkId}"]`).click();
                                     document.querySelector(`a[name="${nextDrinkId}"]`).focus();
                                 } catch (e) { }
-                            }, 500);
+                            }, 200);
 
 
                             break;
@@ -2651,7 +2652,7 @@
                         document.querySelector("#querydialog>input").click();
                         document.querySelector("#querydialog>input").focus();
                     } catch (e) { }
-                }, 500);
+                }, 200);
 
 
             });
@@ -3070,9 +3071,7 @@
                     document.querySelector("#filter-dialog>div>input").click();
                     document.querySelector("#filter-dialog>div>input").focus();
                 } catch (e) { }
-            }, 500);
-
-
+            }, 200);
 
         }
         function handleFilterDialogFilterSelection(event) {
