@@ -199,14 +199,14 @@
         }
 
         #appState,
-        #choose-mode>.tab-container>#tab1>ul>li {
+        #MainMenu>.tab-container>#tab1>ul>li {
             border: none;
             border: 1px solid #000000de;
             box-shadow: 0px 0px 4px 2px black;
         }
 
         #appState:active,
-        #choose-mode>.tab-container>#tab1>ul>li:active {
+        #MainMenu>.tab-container>#tab1>ul>li:active {
             box-shadow: inset 0px 0px 4px 2px black;
         }
 
@@ -743,7 +743,7 @@
             top: 110px;
         }
 
-        #choose-mode>.tab-container>#tab1>ul>li>a,
+        #MainMenu>.tab-container>#tab1>ul>li>a,
         .mypopupdialog>*>li>a {
             border: none;
             text-decoration: none;
@@ -759,7 +759,7 @@
         }
 
         #filterCategories>li,
-        #choose-mode>.tab-container>#tab1>ul>li {
+        #MainMenu>.tab-container>#tab1>ul>li {
             font-size: larger;
             place-content: center;
             border: .5px solid #b4b0b0;
@@ -769,7 +769,7 @@
             padding-right: 2px;
         }
 
-        #choose-mode>.tab-container>#tab1>ul>li,
+        #MainMenu>.tab-container>#tab1>ul>li,
         #filter-dialog>div>li {
             border-bottom: 1px solid #a7a7a7;
             display: flex;
@@ -781,19 +781,19 @@
             margin: 0;
         }
 
-        #choose-mode>.tab-container {
+        #MainMenu>.tab-container {
             width: 95%;
         }
 
 
-        #choose-mode>.tab-container>#tab1>ul>li>a {
+        #MainMenu>.tab-container>#tab1>ul>li>a {
             height: 63px;
             align-items: center;
             text-align: center;
             justify-content: space-between;
         }
 
-        #choose-mode>.tab-container>#tab1>ul>li>a>* {
+        #MainMenu>.tab-container>#tab1>ul>li>a>* {
             min-width: 50%;
             display: flex;
             min-height: 100%;
@@ -802,11 +802,11 @@
             place-content: center;
         }
 
-        #choose-mode>.tab-container>#tab1>ul>li>a>div {
+        #MainMenu>.tab-container>#tab1>ul>li>a>div {
             display: contents;
         }
 
-        #choose-mode>.tab-container>#tab1>ul>li>a>div>button {
+        #MainMenu>.tab-container>#tab1>ul>li>a>div>button {
             font-size: 38pt;
             line-height: 40pt;
             border-radius: 10px;
@@ -1139,7 +1139,7 @@
             <div class="buttonholder"></div>
         </div>
     </div>
-    <div id="choose-mode" class="hidden mypopupdialog">
+    <div id="MainMenu" class="hidden mypopupdialog">
         <div class="tab-container">
             <div class="tab-buttons">
                 <button class="tab-button active" onclick="openTab(event, 'tab1')">Select Mode</button>
@@ -1149,14 +1149,11 @@
                 <ul>
                     <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>MAUZO</span>
                             <span>💰</span></a></li>
-                    <li class="wholesale_purchase"><a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span>
-                            <span>➕</span></a></li>
-                    <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span> <span><button
-                                    id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></span></a>
+                    <li class="wholesale_purchase"><a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span><button id="wholesale_purchase_moneyrecieved">💲</button></a></li>
+                    <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span> <span><button id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></span></a>
                     </li>
                     <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
-                        <span><button
-                            id="stocktake_opening">🌅</button><button id="stocktake_midday">🕒</button><button id="stocktake_closing">🌃</button></span></a></li>
+                        <span><button id="stocktake_opening">🌅</button><button id="stocktake_midday">🕒</button><button id="stocktake_closing">🌃</button></span></a></li>
                     <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
                             <span>💱</span></a></li>
                 </ul>
@@ -1645,9 +1642,12 @@
                             identifier++;
                             continue;
                         } else {
-                            var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ", "_");
+                           try { var nextDrinkId = products_jsonString[identifier + 1].OfficialName.replaceAll(" ", "_");
+                            } catch (e) {
+                                nextDrinkId = products_jsonString[1].OfficialName.replaceAll(" ", "_");
+                            }
                             currentFocusedProduct = nextDrinkId;
-
+ 
                             setTimeout(function () {
                                 try {
                                     document.querySelector(`a[name="${nextDrinkId}"]`).click();
@@ -2621,7 +2621,7 @@
 
             document.getElementById("appState").addEventListener("click", e => {
 
-                document.getElementById("choose-mode").classList.remove("hidden");
+                document.getElementById("MainMenu").classList.remove("hidden");
                 document.querySelectorAll("button").forEach(btn => {
                     btn.classList.remove("pressed");
                 });
@@ -2644,7 +2644,7 @@
             });
 
             document.getElementById("selectmode").addEventListener("click", e => {
-                document.getElementById("choose-mode").classList.add("hidden");
+                document.getElementById("MainMenu").classList.add("hidden");
                 document.getElementById("querydialog").classList.remove("hidden");
 
                 setTimeout(function () {
@@ -3369,26 +3369,44 @@
             e.preventDefault();
         });
 
-        document.querySelector("#sent2_bank_add").addEventListener("click", (e) => {
-            e.preventDefault();
-            if (appStates[currentAppStateIndex] != "sent2_bank") {
-                ChangeView('1', e);
-            }
-            setTimeout(() => {
-                document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").click();
-                document.querySelector("#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true").focus();
-            }, 400);
-        });
-        document.querySelector("#sent2_bank_loss").addEventListener("click", (e) => {
-            e.preventDefault();
-            if (appStates[currentAppStateIndex] != "sent2_bank") {
-                ChangeView('1', e);
-            }
-            setTimeout(() => {
-                document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").click();
-                document.querySelector("#inputremaining_sent2_bank_MATUMIZI_MENGINE_true").focus();
-            }, 400);
-        });
+        const MainMenuContainer = document.querySelector("#MainMenu"); // Assuming all buttons are within this container
+
+const MainMenuButtonMappings = {
+    "sent2_bank_add": {
+        view: '1',
+        state: "sent2_bank",
+        inputSelector: "#inputremaining_sent2_bank_FADHI_BANK_crdb_boss_true"
+    },
+    "sent2_bank_loss": {
+        view: '1',
+        state: "sent2_bank",
+        inputSelector: "#inputremaining_sent2_bank_MATUMIZI_MENGINE_true"
+    },
+    "wholesale_purchase_moneyrecieved": {
+        view: '2',
+        state: "wholesale_purchase",
+        inputSelector: "#inputremaining_wholesale_purchase_delivered_Pesa_true"
+    }
+};
+
+MainMenuContainer.addEventListener("click", (e) => {
+    const targetId = e.target.id;
+    if (MainMenuButtonMappings[targetId]) {
+        e.preventDefault();
+        const { view, state, inputSelector } = MainMenuButtonMappings[targetId];
+        if (appStates[currentAppStateIndex] != state) {
+            ChangeView(view, e);
+        }
+        setTimeout(() => {
+            const inputElement = document.querySelector(inputSelector);
+            inputElement.click();
+            inputElement.focus();
+        }, 300);
+    }
+});
+
+
+        
 
         try {
             var ALRADADATE = day + " / " + month;
