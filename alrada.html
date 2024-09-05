@@ -580,7 +580,11 @@
             width: 100%;
             font-size: small;
         }
-
+        .buttonicon
+        {
+            font-size: xxx-large;
+            line-height: 0px;
+        }
 
 
         div#result_display>ul>li.total {
@@ -1148,14 +1152,14 @@
             <div id="tab1" class="tab-content active">
                 <ul>
                     <li class="wholesale_sale"><a href="#" onclick="ChangeView('0',event)"><span>MAUZO</span>
-                            <span>💰</span></a></li>
-                    <li class="wholesale_purchase"><a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span><button id="wholesale_purchase_moneyrecieved">💲</button></a></li>
-                    <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span> <span><button id="sent2_bank_add">➕</button><button id="sent2_bank_loss">➖</button></span></a>
+                            <span class="buttonicon">💰</span></a></li>
+                    <li class="wholesale_purchase"><a href="#" onclick="ChangeView('2',event)"><span>UPOKEZI</span><button id="wholesale_purchase_moneyrecieved" class="buttonicon">💲</button></a></li>
+                    <li class="sent2_bank"><a href="#" onclick="ChangeView('1',event)"><span>MALIPO</span> <span><button id="sent2_bank_add" class="buttonicon">➕</button><button id="sent2_bank_loss" class="buttonicon">➖</button></span></a>
                     </li>
                     <li class="stocktake"><a href="#" onclick="ChangeView('3',event)"><span>STOCK</span>
-                        <span><button id="stocktake_opening">🌅</button><button id="stocktake_midday">🕒</button><button id="stocktake_closing">🌃</button></span></a></li>
+                        <span><button id="stocktake_opening" class="buttonicon">🌅</button><button id="stocktake_midday" class="buttonicon">🕒</button><button id="stocktake_closing" class="buttonicon">🌃</button></span></a></li>
                     <li class="hidden"><a href="#" onclick="ChangeView('4',event)"><span>MANUNUZI</span>
-                            <span>💱</span></a></li>
+                            <span class="buttonicon">💱</span></a></li>
                 </ul>
             </div>
 
@@ -3369,7 +3373,7 @@
             e.preventDefault();
         });
 
-        const MainMenuContainer = document.querySelector("#MainMenu"); // Assuming all buttons are within this container
+        const MainMenuContainer = document.querySelector("#MainMenu"); 
 
 const MainMenuButtonMappings = {
     "sent2_bank_add": {
