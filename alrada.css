@@ -1,0 +1,28 @@
+/* Extract all CSS from alrada.html into this file */
+/* Keep the original CSS content but optimize it */
+
+/* Optimize frequently used styles */
+.flex {
+    display: flex;
+}
+
+.flex-row {
+    composes: flex;
+    flex-direction: row;
+}
+
+.flex-col {
+    composes: flex;
+    flex-direction: column;
+}
+
+/* Use CSS containment for better performance */
+#productsview {
+    contain: content;
+    min-height: 390px;
+}
+
+/* Optimize list item styles */
+.product {
+    contain: layout style;
+} 

@@ -1,0 +1,312 @@
+/* Base styles */
+html, body, button {
+    font-size: 11px;
+    min-height: 100%;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    place-content: center;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 99.708%;
+}
+
+/* Typography */
+h2 {
+    margin-block-start: 19px;
+    margin-top: 0;
+    margin-bottom: 0px;
+}
+
+h4, small {
+    margin-bottom: 4px;
+}
+
+span {
+    font-weight: bolder;
+}
+
+sub {
+    font-weight: 100;
+    letter-spacing: 1px;
+    text-decoration-line: none;
+    text-wrap: nowrap;
+}
+
+/* Lists */
+ul {
+    padding-left: 0;
+    align-items: baseline;
+    width: 99%;
+}
+
+li {
+    margin-bottom: 1px;
+}
+
+/* Components */
+.stockamt {
+    font-family: monospace;
+    font-weight: 100;
+    background-color: rgba(0, 0, 0, .19);
+    padding-left: 5px;
+    border: .5px solid rgba(0, 0, 0, .4);
+    border-radius: 5px;
+}
+
+small, .small, #cachedTrans > span {
+    font-size: xx-small;
+    align-self: center;
+}
+
+/* Layout */
+#mywebview {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.half-row {
+    display: flex;
+    flex: 0 0 50% !important;
+}
+
+#news_display, #loading-screen > div > div.buttonholder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 27px;
+    border-bottom: .5px solid lightgray;
+}
+
+/* Buttons and Controls */
+.btn-color-wholesale_sale {
+    --background-color: #00c853;
+    --border-color: #00a243;
+    --color: #fff;
+}
+
+#appState, #MainMenu > .tab-container > #tab1 > ul > li {
+    border: 1px solid #000000de;
+    box-shadow: 0px 0px 4px 2px black;
+}
+
+.tab-buttons button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+}
+
+/* Lists and Results */
+#CustomersList, #results {
+    background-color: oldlace;
+}
+
+#CustomersList > li, #results > li {
+    background-color: white;
+}
+
+#loading-text {
+    overflow-y: auto;
+}
+
+#loading-text > code > ul {
+    margin-left: 0;
+    margin-top: 0;
+    padding-left: 0;
+    text-align: left;
+}
+
+#loading-text > code > ul > li {
+    overflow-x: auto;
+    margin-right: 20px;
+    width: 100%;
+}
+
+/* Special Elements */
+#sent2_bank_add {
+    color: transparent;
+    text-shadow: 0 0 green;
+}
+
+#sent2_bank_loss {
+    color: transparent;
+    text-shadow: 0 0 red;
+}
+
+#showTransDate, #warehouseName {
+    display: flex;
+    flex-flow: wrap;
+    background: center;
+    color: black;
+    align-items: center;
+    max-width: 100px;
+    border: none;
+    text-align: right;
+    font-family: monospace;
+}
+
+#warehouseName {
+    width: 65px;
+    justify-content: right;
+    border-right: .5px solid #e3e3e3;
+}
+
+/* Products View */
+#productsview {
+    border: 1px solid #000;
+    overflow-x: hidden;
+}
+
+#filter-categories {
+    list-style: none;
+    padding: 0;
+}
+
+/* Cached Entries */
+.tunatumaMsg > * > * > .buttonholder {
+    display: none;
+}
+
+li#confirmCachedEntry > div,
+li#confirmTransactionEntry > div {
+    width: 100%;
+    justify-content: space-between;
+}
+
+li#confirmCachedEntry > div > div {
+    justify-content: space-between;
+}
+
+li#confirmCachedEntry > div > div > button {
+    right: 0px;
+    height: 20px;
+    width: 30px;
+    min-height: unset;
+}
+
+li#confirmCachedEntry > div > div > div > a,
+li#confirmTransactionEntry > span > a {
+    text-wrap: nowrap;
+    text-decoration: none;
+    padding-right: 5px;
+    width: 100%;
+    background: none;
+}
+
+li#confirmCachedEntry > div > div > div > a {
+    color: white;
+}
+
+/* Modal Styles */
+#extraTransDetailsPopup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#extraTransDetailsPopup .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#extraTransDetailsPopup h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+#extraTransDetailsPopup .subtitle {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: normal;
+}
+
+#extraTransDetailsPopup .input-container {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#extraTransDetailsPopup input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+#extraTransDetailsPopup .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#extraTransDetailsPopup button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    min-height: 35px;
+}
+
+#extraTransDetailsPopup .btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+#extraTransDetailsPopup .btn-submit {
+    background-color: var(--background-color, #00c853);
+    color: white;
+}
+
+#extraTransDetailsPopup .autocomplete-items {
+    position: absolute;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+}
+
+#extraTransDetailsPopup .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+#extraTransDetailsPopup .autocomplete-items div:hover {
+    background-color: #e9e9e9;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
