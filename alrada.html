@@ -1225,7 +1225,7 @@
         <button disabled id="btnSend2Cache" onClick="addTransactionToCache(event)"
             class="functionpad disabled">➡️</button>
         <button id="cachedTrans" class="flex-row notbutton">
-            <span class="hiddenpreview"><sub>👇🏽REPOTI👇🏽</sub></span>
+            <span class="hiddenpreview"><sub>���🏽REPOTI👇🏽</sub></span>
             <span>
                 <span class="part2 highlight-border">-</span>
                 <span class="part1 highlight-border">-</span>
@@ -1371,26 +1371,24 @@
             appStateMarks = ['ӿ', '$', '++', '#'],
             AppScriptPostUrl = "https://script.google.com/macros/s/AKfycbz0MTsq8zYg3Fc2sZI9HrsVWLYPhg_BcUbeegi1DwvQ1hnmUT4-ju46CYXNeuahMeZ2/exec";
 
+        // Initialize staffName first since other variables depend on it
+
+        var staffName = (typeof staffName == "undefined") ? "Al" : staffName,
+            warehouseName = staffName;
+
+        // Then initialize all other variables
         var settingsObj = undefined,
-
-            eventKeyUpEnter = new KeyboardEvent('keyup', {
-                key: "Enter",
-                keyCode: 13
-            }),
-
-            specialTransType = "", extraTransDetails = "",extraTransDetailsPopupInput="",extraTransDetailsPopupSubmitButton="",
+            specialTransType = "", oldFocusedProduct="",
+            extraTransDetails = "",
             BreakException = {},
-            isMultTextArray = {},
-            products_jsonString = {},
-            suppliers_jsonString = {},
-            customers_jsonString = {},
-            productsJsonString = undefined,
-            originalFocusedProduct = "",
+            keysPressed = {},
+            products = {},
+            suppliers = {},
+            customers = {},
             isoncurrenttime = true,
-            daystakeawayfromcurrent = 0;
-        dontsubmit = false,
+            daystakeawayfromcurrent = 0,
+            dontsubmit = false,
             currentAppStateIndex = 0,
-            keysPressed = [],
             ProductNamesLiWithInput = [],
             ProductNamesLiWithOutInput = [],
             CustomerNamesLiWithoutInput = [],
@@ -1404,18 +1402,7 @@
             writtenInSearch = "",
             editingquery = "",
             productdetails_string = "",
-            staffName = (typeof staffName == "undefined") ? "Al" : staffName,
-            warehouseName = staffName,
-            responseClone = "",
-            confirmAddReportToCache = function () { },
-            confirmSendReportRightAway = function () { },
-            confirmFormYes = function () { },
-            confirmFormNo = function () { },
-            confirmFormEdit = function () { },
-            confirmFormPick = function () { },
-            finalResponseMsg = "",
-            newlink = "", inputnum = "", iswholesale_purchaseText = "", prefix = "",
-            currentFocusedProduct = "", oldFocusedProduct = "",
+            currentFocusedProduct = "",
             tempTransQuery = [],
             tempTransObj = [],
             cachedTransObjectString = [],
@@ -1423,8 +1410,7 @@
             cachedTransCount = [],
             cachedTransCashTotal = [],
             cachedTempTrans2Process = [],
-            cachedTransactionQueries = [],
-            results = document.getElementById('results');
+            cachedTransactionQueries = [];
 
         if (typeof createScene !== "function") { /* not in tasker*/
             function setGlobal(variableName = "", value = "") {
@@ -1640,7 +1626,7 @@
     }
 
     if (e.target.parentNode.parentNode.parentNode.id === "results") {
-        if (e.key !== "Enter") {
+        
             const val = keysPressed[currentFocusedProduct]
                 .split("-")
                 .reduce((a, b) => (a === 0 ? b : Number(a) + Number(b)), 0);
@@ -1662,7 +1648,7 @@
                         return;
                     }
 
-                    console.log("User submitted:", extraDetails);
+                    console.log(`Paid ${val} for ${extraDetails}`);
                     var query = `${currentFocusedProduct}::${extraDetails.trim()}=${document.querySelector(`a[name="${originalFocusedProduct}"]>input`).value}`;
                 } else {
                     var query = `${currentFocusedProduct.replaceAll("_", " ")}${appStateMarks[currentAppStateIndex]}${
@@ -1675,9 +1661,9 @@
 
                 keysPressed[currentFocusedProduct] = "";
                 document.querySelector(`a[name="${currentFocusedProduct}"]>input`).value = "";
-                focusNextProduct();
+                if (!/MATUMIZI_MENGINE|Transport|Food|Pesa/.test(currentFocusedProduct)) focusNextProduct();
             }
-        }
+        
     }
 }
 
@@ -3546,12 +3532,9 @@ function focusNextProduct() {
         });
 
 
-
-
         try {
             var ALRADADATE = day + " / " + month;
         } catch (e) { }
-
 
 
         function openTab(evt, tabName) {
